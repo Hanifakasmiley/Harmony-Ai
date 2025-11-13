@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI-Powered Mental Health System Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f9fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.09);
+            width: 310px;
+            text-align: center;
+        }
+        select, button {
+            width: 100%;
+            margin: 0.7rem 0;
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #b3b3b3;
+        }
+        button {
+            background-color: #007afc;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #005bb5;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Enter Mental Health System</h2>
+        <form id="loginForm">
+            <label for="user-type">Choose User Type</label>
+            <select id="user-type" required>
+                <option value="" disabled selected>Select user type</option>
+                <option value="patient">Patient</option>
+                <option value="doctor">Doctor</option>
+                <option value="admin">Admin</option>
+                <option value="counsellor">Counsellor</option>
+                <option value="researcher">Researcher</option>
+                <option value="emergency">Emergency Support</option>
+            </select>
+            <button type="submit">Continue</button>
+        </form>
+    </div>
+    <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var userType = document.getElementById('user-type').value;
+        if (userType === 'admin') {
+            window.location.href = 'index.html';
+        } else if (userType === 'patient') {
+            window.location.href = 'feature1.html';
+        } else if (userType === 'doctor') {
+            window.location.href = 'feature2.html';
+        } else if (userType === 'counsellor') {
+            window.location.href = 'feature4.html';
+        } else if (userType === 'researcher') {
+            window.location.href = 'feature3.html';
+        } else if (userType === 'emergency') {
+            window.location.href = 'feature6.html';
+        }
+    });
+    </script>
+</body>
+</html>
