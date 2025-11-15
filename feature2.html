@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feature 2 - Counsellor & Sessions Management</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+</head>
+
+<body>
+  <!-- Top Navigation -->
+  <nav class="top-navbar">
+    <div class="nav-container">
+      <a href="./index.html" class="nav-logo">🧠 Hermony AI</a>
+      <ul class="nav-menu">
+        <li><a href="./index.html">🏠 Dashboard</a></li>
+        <li><a href="./feature1.html">📋 Mood Logging</a></li>
+        <li><a href="./feature2.html">👨‍⚕️ Counsellors</a></li>
+        <li><a href="./feature3.html">🧘 Recommendations</a></li>
+        <li><a href="./feature4.html">⭐ Feedback</a></li>
+        <li><a href="./feature5.html">🤖 AI Analysis</a></li>
+        <li><a href="./feature6.html">👤 Profiles</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="mobile-menu-btn" aria-label="Toggle menu" title="Open navigation">
+          <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+            focusable="false">
+            <rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor" />
+            <rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor" />
+            <rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor" />
+          </svg>
+        </button>
+        <button class="theme-toggle" title="Toggle dark mode">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <h2>Feature 2: Counsellor & Sessions Management</h2>
+    <p>Manage counsellors and track user sessions.</p>
+
+    <!-- ===== COUNSELLORS SECTION ===== -->
+    <section class="mt-5">
+      <h3>👨‍⚕️ Counsellors</h3>
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <input type="text" id="searchCounsellors" class="form-control w-50"
+          placeholder="🔍 Search by name or specialization...">
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCounsellorModal">➕ Add
+          Counsellor</button>
+      </div>
+
+      <table class="table table-hover mt-4" id="counsellorsTable">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Specialization</th>
+            <th>Schedule</th>
+            <th>Contact</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- populated from IndexedDB -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===== SESSIONS SECTION ===== -->
+    <section class="mt-5 mb-5">
+      <h3>📅 Sessions</h3>
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <input type="text" id="searchSessions" class="form-control w-50"
+          placeholder="🔍 Search by user or counsellor...">
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addSessionModal">➕ Book
+          Session</button>
+      </div>
+
+      <table class="table table-hover mt-4" id="sessionsTable">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>User ID</th>
+            <th>Counsellor ID</th>
+            <th>Time</th>
+            <th>Feedback</th>
+            <th>Session Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- populated from IndexedDB -->
+        </tbody>
+      </table>
+    </section>
+    </main>
+  </div>
+
+  <!-- ===== ADD COUNSELLOR MODAL ===== -->
+  <div class="modal fade" id="addCounsellorModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Counsellor</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" id="counsellorName" class="form-control mb-2" placeholder="Counsellor Name">
+          <input type="text" id="counsellorSpecialization" class="form-control mb-2"
+            placeholder="Specialization (e.g., Anxiety, Depression)">
+          <input type="text" id="counsellorSchedule" class="form-control mb-2"
+            placeholder="Schedule (e.g., Mon-Fri 9AM-5PM)">
+          <input type="text" id="counsellorContact" class="form-control mb-2" placeholder="Contact (phone/email)">
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn btn-success" id="saveCounsellor">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ADD SESSION MODAL ===== -->
+  <div class="modal fade" id="addSessionModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Book Session</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" id="sessionUserId" class="form-control mb-2" placeholder="User ID">
+          <input type="number" id="sessionCounsellorId" class="form-control mb-2" placeholder="Counsellor ID">
+          <input type="datetime-local" id="sessionTime" class="form-control mb-2">
+          <textarea id="sessionFeedback" class="form-control mb-2" placeholder="Feedback (optional)"></textarea>
+          <textarea id="sessionNotes" class="form-control mb-2" placeholder="Session Notes (optional)"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn btn-success" id="saveSession">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/db-crud-operations.js"></script>
+  <script src="assets/js/comprehensive-seed-data.js"></script>
+  <script src="assets/js/dummy-data.js"></script>
+  <script src="assets/js/designation-features-mapping.js"></script>
+  <script src="assets/js/designation-data-tables.js"></script>
+  <script src="assets/js/main.js"></script>
+
+  <script>
+    // ===== COUNSELLORS SECTION =====
+    async function populateCounsellors() {
+      const tbody = document.querySelector('#counsellorsTable tbody');
+      tbody.innerHTML = '';
+      try {
+        const counsellors = await window.DailyDB.getAllCounsellors();
+        for (const item of counsellors) {
+          const tr = document.createElement('tr');
+          tr.dataset.id = item.id;
+          tr.innerHTML = `
+            <td>${item.id}</td>
+            <td>${item.name || ''}</td>
+            <td>${item.specialization || ''}</td>
+            <td>${item.schedule || ''}</td>
+            <td>${item.contact || ''}</td>
+            <td>
+              <button class="btn btn-sm btn-info viewCounsellorBtn">View</button>
+              <button class="btn btn-sm btn-danger deleteCounsellorBtn">Delete</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        }
+      } catch (err) {
+        console.error('Failed to load counsellors', err);
+      }
+    }
+
+    // Search Counsellors
+    document.getElementById('searchCounsellors').addEventListener('keyup', function () {
+      const filter = this.value.toLowerCase();
+      document.querySelectorAll('#counsellorsTable tbody tr').forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(filter) ? '' : 'none';
+      });
+    });
+
+    // Save Counsellor
+    document.getElementById('saveCounsellor').addEventListener('click', async function () {
+      const name = document.getElementById('counsellorName').value.trim();
+      const specialization = document.getElementById('counsellorSpecialization').value.trim();
+      const schedule = document.getElementById('counsellorSchedule').value.trim();
+      const contact = document.getElementById('counsellorContact').value.trim();
+
+      if (!name || !specialization) return alert('Please fill Name and Specialization');
+
+      const entry = { name, specialization, schedule, contact };
+      try {
+        await window.DailyDB.addCounsellor(entry);
+        populateCounsellors();
+        ['counsellorName', 'counsellorSpecialization', 'counsellorSchedule', 'counsellorContact'].forEach(id =>
+          document.getElementById(id).value = ''
+        );
+        bootstrap.Modal.getInstance(document.getElementById('addCounsellorModal')).hide();
+      } catch (err) {
+        console.error('Failed to save counsellor', err);
+        alert('Failed to save counsellor');
+      }
+    });
+
+    // Delete Counsellor
+    document.addEventListener('click', async e => {
+      if (e.target.classList.contains('deleteCounsellorBtn')) {
+        if (!confirm('Delete this counsellor?')) return;
+        const id = e.target.closest('tr').dataset.id;
+        try {
+          await window.DailyDB.deleteCounsellor(id);
+          populateCounsellors();
+        } catch (err) {
+          console.error('Failed to delete', err);
+        }
+      }
+      if (e.target.classList.contains('viewCounsellorBtn')) {
+        alert('View Counsellor:\n' + e.target.closest('tr').innerText);
+      }
+    });
+
+    // ===== SESSIONS SECTION =====
+    async function populateSessions() {
+      const tbody = document.querySelector('#sessionsTable tbody');
+      tbody.innerHTML = '';
+      try {
+        const sessions = await window.DailyDB.getAllSessions();
+        sessions.sort((a, b) => (b.time || '').localeCompare(a.time || ''));
+        for (const item of sessions) {
+          const tr = document.createElement('tr');
+          tr.dataset.id = item.id;
+          tr.innerHTML = `
+            <td>${item.id}</td>
+            <td>${item.userId || ''}</td>
+            <td>${item.counsellorId || ''}</td>
+            <td>${item.time || ''}</td>
+            <td>${item.feedback || ''}</td>
+            <td>${item.notes || ''}</td>
+            <td>
+              <button class="btn btn-sm btn-info viewSessionBtn">View</button>
+              <button class="btn btn-sm btn-danger deleteSessionBtn">Delete</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        }
+      } catch (err) {
+        console.error('Failed to load sessions', err);
+      }
+    }
+
+    // Search Sessions
+    document.getElementById('searchSessions').addEventListener('keyup', function () {
+      const filter = this.value.toLowerCase();
+      document.querySelectorAll('#sessionsTable tbody tr').forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(filter) ? '' : 'none';
+      });
+    });
+
+    // Save Session
+    document.getElementById('saveSession').addEventListener('click', async function () {
+      const userId = document.getElementById('sessionUserId').value.trim();
+      const counsellorId = document.getElementById('sessionCounsellorId').value.trim();
+      const time = document.getElementById('sessionTime').value.trim();
+      const feedback = document.getElementById('sessionFeedback').value.trim();
+      const notes = document.getElementById('sessionNotes').value.trim();
+
+      if (!userId || !counsellorId || !time) return alert('Please fill User ID, Counsellor ID, and Time');
+
+      const entry = { userId, counsellorId: Number(counsellorId), time, feedback, notes };
+      try {
+        await window.DailyDB.addSession(entry);
+        populateSessions();
+        ['sessionUserId', 'sessionCounsellorId', 'sessionTime', 'sessionFeedback', 'sessionNotes'].forEach(id =>
+          document.getElementById(id).value = ''
+        );
+        bootstrap.Modal.getInstance(document.getElementById('addSessionModal')).hide();
+      } catch (err) {
+        console.error('Failed to save session', err);
+        alert('Failed to save session');
+      }
+    });
+
+    // Delete Session
+    document.addEventListener('click', async e => {
+      if (e.target.classList.contains('deleteSessionBtn')) {
+        if (!confirm('Delete this session?')) return;
+        const id = e.target.closest('tr').dataset.id;
+        try {
+          await window.DailyDB.deleteSession(id);
+          populateSessions();
+        } catch (err) {
+          console.error('Failed to delete', err);
+        }
+      }
+      if (e.target.classList.contains('viewSessionBtn')) {
+        alert('View Session:\n' + e.target.closest('tr').innerText);
+      }
+    });
+
+    // ===== ROLE-BASED DATA DISPLAY =====
+    async function displayRoleData() {
+      const userRole = localStorage.getItem('userRole') || 'patient';
+      const designation = localStorage.getItem('designation') || 'Patient/User';
+
+      if (userRole === 'patient') return;
+
+      const mainContent = document.querySelector('.main-content');
+      const roleDataSection = document.createElement('section');
+      roleDataSection.id = 'roleDataSection';
+      roleDataSection.style.cssText = 'margin-top: 3rem; border-top: 2px solid #ddd; padding-top: 2rem;';
+
+      const heading = document.createElement('h3');
+      heading.textContent = '📊 ' + designation + ' Dashboard - Data Overview';
+      heading.style.marginBottom = '2rem';
+      roleDataSection.appendChild(heading);
+
+      const contentDiv = document.createElement('div');
+      contentDiv.id = 'roleDataContent';
+      roleDataSection.appendChild(contentDiv);
+      mainContent.appendChild(roleDataSection);
+
+      try {
+        await window.ComprehensiveSeedData.initializeAllSeedData();
+
+        let html = '';
+        if (userRole === 'software_engineer') {
+          html += await window.DesignationDataTables.getSoftwareEngineerTable();
+        } else if (userRole === 'ai_engineer') {
+          html += await window.DesignationDataTables.getAIEngineerTable();
+        } else if (userRole === 'data_scientist') {
+          html += await window.DesignationDataTables.getDataScientistTable();
+        } else if (userRole === 'mental_health_admin') {
+          html += await window.DesignationDataTables.getMentalHealthAdminTable();
+        } else if (userRole === 'emergency_team') {
+          html += await window.DesignationDataTables.getEmergencyTeamTable();
+        } else if (userRole === 'security_analyst') {
+          html += await window.DesignationDataTables.getSecurityAnalystTable();
+        } else if (userRole === 'financial_team') {
+          html += await window.DesignationDataTables.getFinancialTeamTable();
+        } else if (userRole === 'system_admin') {
+          html += await window.DesignationDataTables.getSystemAdminTable();
+        }
+        contentDiv.innerHTML = html;
+      } catch (error) {
+        console.error('Error displaying role data:', error);
+        contentDiv.innerHTML = '<p style="color: red;">Error loading data. Check console for details.</p>';
+      }
+    }
+
+    // ===== INITIALIZE =====
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (window.DailyDB && window.DailyDB.init) {
+        await window.DailyDB.init();
+        populateCounsellors();
+        populateSessions();
+        displayRoleData();
+      } else {
+        console.warn('DailyDB not available');
+      }
+
+      // Add test helper
+      window.testData = async function (role) {
+        console.log('🧪 Testing role:', role);
+        localStorage.setItem('userRole', role);
+        localStorage.setItem('designation', role.replace(/_/g, ' ').toUpperCase());
+        await displayRoleData();
+      };
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/theme.js"></script>
+</body>
+
+</html>

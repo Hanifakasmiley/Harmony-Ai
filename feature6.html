@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feature 6 – Profiles, Crisis Alerts & Emergency Contacts</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="assets/js/db-crud-operations.js"></script>
+  <script src="assets/js/comprehensive-seed-data.js"></script>
+  <script src="assets/js/dummy-data.js"></script>
+  <script src="assets/js/designation-features-mapping.js"></script>
+  <script src="assets/js/designation-data-tables.js"></script>
+</head>
+
+<body>
+  <!-- Top Navigation -->
+  <nav class="top-navbar">
+    <div class="nav-container">
+      <a href="./index.html" class="nav-logo">🧠 Hermony AI</a>
+      <ul class="nav-menu">
+        <li><a href="./index.html">🏠 Dashboard</a></li>
+        <li><a href="./feature1.html">📋 Mood Logging</a></li>
+        <li><a href="./feature2.html">👨‍⚕️ Counsellors</a></li>
+        <li><a href="./feature3.html">🧘 Recommendations</a></li>
+        <li><a href="./feature4.html">⭐ Feedback</a></li>
+        <li><a href="./feature5.html">🤖 AI Analysis</a></li>
+        <li><a href="./feature6.html">👤 Profiles</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="mobile-menu-btn" aria-label="Toggle menu" title="Open navigation">
+          <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+            focusable="false">
+            <rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor" />
+            <rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor" />
+            <rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor" />
+          </svg>
+        </button>
+        <button class="theme-toggle" title="Toggle dark mode">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <h2>User Profiles, Crisis Alerts & Emergency Contacts</h2>
+    <p>Comprehensive management of user profiles, AI-detected crisis alerts, and emergency contact information for
+      mental health support and intervention.</p>
+
+    <!-- CRISIS ALERTS SECTION -->
+    <section
+      style="margin-top: 3rem; background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+      <h3>⚠️ Crisis Alert Management</h3>
+      <p>Log and monitor AI-detected emergency cases requiring immediate intervention</p>
+
+      <form id="crisisAlertForm">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label">User ID</label>
+            <input type="number" class="form-control" id="crisisUserId" placeholder="Enter user ID" required>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Alert Date & Time</label>
+            <input type="datetime-local" class="form-control" id="crisisDateTime" required>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Severity Level</label>
+            <select class="form-control" id="crisisSeverity" required>
+              <option value="">-- Select Severity --</option>
+              <option value="Low">🟡 Low</option>
+              <option value="Medium">🟠 Medium</option>
+              <option value="High">🔴 High</option>
+              <option value="Critical">⛔ Critical</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Alert Type</label>
+            <select class="form-control" id="crisisType" required>
+              <option value="">-- Select Type --</option>
+              <option value="Suicidal Ideation">🚨 Suicidal Ideation</option>
+              <option value="Self Harm Risk">✂️ Self Harm Risk</option>
+              <option value="Severe Anxiety">😰 Severe Anxiety</option>
+              <option value="Severe Depression">😢 Severe Depression</option>
+              <option value="Psychotic Symptoms">👁️ Psychotic Symptoms</option>
+              <option value="Substance Abuse">🧪 Substance Abuse</option>
+              <option value="Violent Ideation">🤜 Violent Ideation</option>
+              <option value="Other">❓ Other</option>
+            </select>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Contacted Counsellor ID</label>
+            <input type="number" class="form-control" id="crisisCounsellorId"
+              placeholder="Counsellor ID (if contacted)">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Response Status</label>
+            <select class="form-control" id="crisisStatus" required>
+              <option value="Pending">⏳ Pending</option>
+              <option value="Contacted">📞 Contacted</option>
+              <option value="Active Support">🆘 Active Support</option>
+              <option value="Resolved">✅ Resolved</option>
+              <option value="Referred">🔄 Referred</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Alert Description</label>
+          <textarea class="form-control" id="crisisDescription" rows="3"
+            placeholder="Describe the crisis situation and AI-detected risk factors..." required></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Action Taken</label>
+          <textarea class="form-control" id="crisisAction" rows="3"
+            placeholder="Document immediate interventions taken..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-danger">🚨 Log Crisis Alert</button>
+        <button type="reset" class="btn btn-secondary">Clear Form</button>
+      </form>
+    </section>
+
+    <!-- CRISIS ALERTS STATISTICS -->
+    <section style="margin-top: 3rem;">
+      <div class="row">
+        <div class="col-md-6">
+          <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+            <h5>Crisis Alert Statistics</h5>
+            <div class="crisis-stats">
+              <div class="stat-item">
+                <span class="stat-label">Total Alerts</span>
+                <span class="stat-value" id="totalCrisisAlerts">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Active Cases</span>
+                <span class="stat-value" id="activeCrisisCount">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Critical Cases</span>
+                <span class="stat-value" id="criticalCrisisCount">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Resolved Cases</span>
+                <span class="stat-value" id="resolvedCrisisCount">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+            <h5>Severity Distribution</h5>
+            <canvas id="crisisSeverityChart" height="80"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CRISIS ALERTS TABLE -->
+    <section style="margin-top: 3rem;">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>📋 Crisis Alert Log</h3>
+        <input type="text" id="searchCrisisAlerts" class="form-control w-50" placeholder="🔍 Search by user ID or type">
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover" id="crisisAlertsTable">
+          <thead>
+            <tr>
+              <th>Alert ID</th>
+              <th>User ID</th>
+              <th>DateTime</th>
+              <th>Type</th>
+              <th>Severity</th>
+              <th>Counsellor</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Data populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- EMERGENCY CONTACTS SECTION -->
+    <section
+      style="margin-top: 3rem; background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+      <h3>📞 Emergency Contacts Management</h3>
+      <p>Manage helpline numbers and user-designated emergency contacts for immediate support</p>
+
+      <form id="emergencyContactForm">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label">User ID</label>
+            <input type="number" class="form-control" id="emergencyUserId" placeholder="Enter user ID" required>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Contact Type</label>
+            <select class="form-control" id="emergencyType" required>
+              <option value="">-- Select Type --</option>
+              <option value="Family Member">👨‍👩‍👧 Family Member</option>
+              <option value="Friend">👫 Friend</option>
+              <option value="Healthcare Provider">🏥 Healthcare Provider</option>
+              <option value="Therapist">👨‍⚕️ Therapist</option>
+              <option value="Crisis Helpline">☎️ Crisis Helpline</option>
+              <option value="Emergency Service">🚑 Emergency Service</option>
+              <option value="Support Group">👥 Support Group</option>
+              <option value="Other">📌 Other</option>
+            </select>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Contact Name</label>
+            <input type="text" class="form-control" id="emergencyName" placeholder="Name or organization" required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" class="form-control" id="emergencyPhone" placeholder="+1-555-0123" required>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Relationship (if applicable)</label>
+            <input type="text" class="form-control" id="emergencyRelationship"
+              placeholder="e.g., Sister, Best Friend, Psychiatrist">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Availability</label>
+            <select class="form-control" id="emergencyAvailability" required>
+              <option value="24/7">24/7 Always Available</option>
+              <option value="Daytime">🌅 Daytime Only</option>
+              <option value="Evening">🌙 Evening Only</option>
+              <option value="Weekends">📅 Weekends Only</option>
+              <option value="On Call">📱 On Call</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Address/Location (optional)</label>
+          <input type="text" class="form-control" id="emergencyAddress" placeholder="Physical address if applicable">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Notes</label>
+          <textarea class="form-control" id="emergencyNotes" rows="2"
+            placeholder="Any special notes (e.g., 'Call between 9-5 PM', 'Text preferred')"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">💾 Add Emergency Contact</button>
+        <button type="reset" class="btn btn-secondary">Clear Form</button>
+      </form>
+    </section>
+
+    <!-- EMERGENCY CONTACTS TABLE -->
+    <section style="margin-top: 3rem;">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>📋 Emergency Contacts Directory</h3>
+        <input type="text" id="searchEmergencyContacts" class="form-control w-50"
+          placeholder="🔍 Search by user, name, or type">
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover" id="emergencyContactsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User ID</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Phone</th>
+              <th>Relationship</th>
+              <th>Availability</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Data populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VIEW CRISIS ALERT MODAL -->
+    <div class="modal fade" id="viewCrisisModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Crisis Alert Details</h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="crisisDetailsContent">
+            <!-- Content populated by JavaScript -->
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW EMERGENCY CONTACT MODAL -->
+    <div class="modal fade" id="viewEmergencyModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Emergency Contact Details</h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="emergencyDetailsContent">
+            <!-- Content populated by JavaScript -->
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="assets/js/main.js"></script>
+
+  <script>
+    // ===== CRISIS ALERTS SECTION =====
+    let crisisChart = null;
+
+    // Form submission for Crisis Alert
+    document.getElementById('crisisAlertForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = {
+        userId: parseInt(document.getElementById('crisisAlertUserId').value) || 0,
+        dateTime: document.getElementById('crisisAlertDateTime').value || new Date().toISOString(),
+        type: document.getElementById('crisisAlertType').value || 'Other',
+        severity: document.getElementById('crisisSeverity').value || 'Medium',
+        counsellorId: parseInt(document.getElementById('crisisCounsellor').value) || null,
+        status: document.getElementById('crisisStatus').value || 'Pending',
+        description: document.getElementById('crisisDescription').value.trim(),
+        actionTaken: document.getElementById('crisisAction').value.trim(),
+        timestamp: new Date().toISOString()
+      };
+
+      if (!formData.userId || !formData.description) {
+        return alert('Please fill User ID and Description');
+      }
+
+      try {
+        await window.DailyDB.addCrisisAlert(formData);
+        alert('Crisis Alert logged successfully!');
+        document.getElementById('crisisAlertForm').reset();
+        await populateCrisisAlertsTable();
+        await updateCrisisStats();
+        await updateCrisisSeverityChart();
+      } catch (err) {
+        console.error('Failed to log crisis alert', err);
+        alert('Failed to log crisis alert');
+      }
+    });
+
+    // Populate Crisis Alerts Table
+    async function populateCrisisAlertsTable() {
+      const tbody = document.querySelector('#crisisAlertsTable tbody');
+      tbody.innerHTML = '';
+      try {
+        const alerts = await window.DailyDB.getAllCrisisAlerts();
+        const sortedAlerts = alerts.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+
+        for (const alert of sortedAlerts) {
+          const tr = document.createElement('tr');
+          tr.dataset.id = alert.id;
+
+          // Severity badge color
+          const severityColors = {
+            'Low': 'badge-info',
+            'Medium': 'badge-warning',
+            'High': 'badge-danger',
+            'Critical': 'badge-dark'
+          };
+
+          // Status badge color
+          const statusColors = {
+            'Pending': 'badge-secondary',
+            'Contacted': 'badge-primary',
+            'Active Support': 'badge-warning',
+            'Resolved': 'badge-success',
+            'Referred': 'badge-info'
+          };
+
+          const date = new Date(alert.dateTime).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+
+          tr.innerHTML = `
+            <td>${alert.userId}</td>
+            <td>${date}</td>
+            <td><span class="badge ${severityColors[alert.severity] || 'badge-secondary'}">${alert.severity}</span></td>
+            <td>${alert.type}</td>
+            <td>${alert.counsellorId || 'N/A'}</td>
+            <td><span class="badge ${statusColors[alert.status] || 'badge-secondary'}">${alert.status}</span></td>
+            <td>
+              <button class="btn btn-sm btn-info viewCrisisBtn">View</button>
+              <button class="btn btn-sm btn-warning updateCrisisBtn">Update</button>
+              <button class="btn btn-sm btn-danger deleteCrisisBtn">Delete</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        }
+      } catch (err) {
+        console.error('Failed to load crisis alerts', err);
+      }
+    }
+
+    // Update Crisis Statistics
+    async function updateCrisisStats() {
+      try {
+        const alerts = await window.DailyDB.getAllCrisisAlerts();
+        const totalAlerts = alerts.length;
+        const activeAlerts = alerts.filter(a => ['Pending', 'Active Support'].includes(a.status)).length;
+        const criticalAlerts = alerts.filter(a => a.severity === 'Critical').length;
+        const resolvedAlerts = alerts.filter(a => a.status === 'Resolved').length;
+
+        document.getElementById('totalAlerts').textContent = totalAlerts;
+        document.getElementById('activeAlerts').textContent = activeAlerts;
+        document.getElementById('criticalAlerts').textContent = criticalAlerts;
+        document.getElementById('resolvedAlerts').textContent = resolvedAlerts;
+      } catch (err) {
+        console.error('Failed to update stats', err);
+      }
+    }
+
+    // Update Crisis Severity Chart
+    async function updateCrisisSeverityChart() {
+      try {
+        const alerts = await window.DailyDB.getAllCrisisAlerts();
+        const severityData = {
+          'Low': alerts.filter(a => a.severity === 'Low').length,
+          'Medium': alerts.filter(a => a.severity === 'Medium').length,
+          'High': alerts.filter(a => a.severity === 'High').length,
+          'Critical': alerts.filter(a => a.severity === 'Critical').length
+        };
+
+        const ctx = document.getElementById('crisisSeverityChart');
+        if (!ctx) return;
+
+        if (crisisChart) {
+          crisisChart.data.datasets[0].data = [severityData.Low, severityData.Medium, severityData.High, severityData.Critical];
+          crisisChart.update();
+        } else {
+          crisisChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+              labels: ['Low', 'Medium', 'High', 'Critical'],
+              datasets: [{
+                data: [severityData.Low, severityData.Medium, severityData.High, severityData.Critical],
+                backgroundColor: ['#17a2b8', '#ffc107', '#dc3545', '#343a40'],
+                borderColor: '#fff',
+                borderWidth: 2
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: { position: 'bottom' },
+                tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.parsed}` } }
+              }
+            }
+          });
+        }
+      } catch (err) {
+        console.error('Failed to update chart', err);
+      }
+    }
+
+    // Search Crisis Alerts
+    document.getElementById('searchCrisisAlerts').addEventListener('keyup', function () {
+      const filter = this.value.toLowerCase();
+      document.querySelectorAll('#crisisAlertsTable tbody tr').forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(filter) ? '' : 'none';
+      });
+    });
+
+    // View / Update / Delete Crisis Alert
+    document.addEventListener('click', async (e) => {
+      if (e.target.classList.contains('viewCrisisBtn')) {
+        const id = e.target.closest('tr').dataset.id;
+        const alerts = await window.DailyDB.getAllCrisisAlerts();
+        const alert = alerts.find(a => a.id == id);
+        if (alert) {
+          const content = `
+            <p><strong>User ID:</strong> ${alert.userId}</p>
+            <p><strong>Date/Time:</strong> ${new Date(alert.dateTime).toLocaleString()}</p>
+            <p><strong>Type:</strong> ${alert.type}</p>
+            <p><strong>Severity:</strong> <span class="badge badge-danger">${alert.severity}</span></p>
+            <p><strong>Description:</strong> ${alert.description}</p>
+            <p><strong>Counsellor ID:</strong> ${alert.counsellorId || 'N/A'}</p>
+            <p><strong>Status:</strong> ${alert.status}</p>
+            <p><strong>Action Taken:</strong> ${alert.actionTaken || 'N/A'}</p>
+          `;
+          document.getElementById('crisisDetailsContent').innerHTML = content;
+          new bootstrap.Modal(document.getElementById('viewCrisisModal')).show();
+        }
+      }
+
+      if (e.target.classList.contains('updateCrisisBtn')) {
+        const id = e.target.closest('tr').dataset.id;
+        const newStatus = prompt('Update status to (Pending/Contacted/Active Support/Resolved/Referred):');
+        if (newStatus && ['Pending', 'Contacted', 'Active Support', 'Resolved', 'Referred'].includes(newStatus)) {
+          try {
+            await window.DailyDB.updateCrisisAlertStatus(id, newStatus);
+            await populateCrisisAlertsTable();
+            await updateCrisisStats();
+          } catch (err) {
+            console.error('Failed to update', err);
+          }
+        }
+      }
+
+      if (e.target.classList.contains('deleteCrisisBtn')) {
+        if (!confirm('Delete this crisis alert?')) return;
+        const id = e.target.closest('tr').dataset.id;
+        try {
+          await window.DailyDB.deleteCrisisAlert(id);
+          await populateCrisisAlertsTable();
+          await updateCrisisStats();
+          await updateCrisisSeverityChart();
+        } catch (err) {
+          console.error('Failed to delete', err);
+        }
+      }
+    });
+
+    // ===== EMERGENCY CONTACTS SECTION =====
+
+    // Form submission for Emergency Contact
+    document.getElementById('emergencyContactForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = {
+        userId: parseInt(document.getElementById('emergencyUserId').value) || 0,
+        type: document.getElementById('emergencyType').value || 'Family Member',
+        name: document.getElementById('emergencyName').value.trim(),
+        phone: document.getElementById('emergencyPhone').value.trim(),
+        relationship: document.getElementById('emergencyRelationship').value.trim(),
+        availability: document.getElementById('emergencyAvailability').value || '24/7',
+        address: document.getElementById('emergencyAddress').value.trim(),
+        notes: document.getElementById('emergencyNotes').value.trim(),
+        dateAdded: new Date().toISOString()
+      };
+
+      if (!formData.userId || !formData.name || !formData.phone) {
+        return alert('Please fill User ID, Name, and Phone');
+      }
+
+      try {
+        await window.DailyDB.addEmergencyContact(formData);
+        alert('Emergency Contact added successfully!');
+        document.getElementById('emergencyContactForm').reset();
+        await populateEmergencyContactsTable();
+      } catch (err) {
+        console.error('Failed to add emergency contact', err);
+        alert('Failed to add emergency contact');
+      }
+    });
+
+    // Populate Emergency Contacts Table
+    async function populateEmergencyContactsTable() {
+      const tbody = document.querySelector('#emergencyContactsTable tbody');
+      tbody.innerHTML = '';
+      try {
+        const contacts = await window.DailyDB.getAllEmergencyContacts();
+        const sortedContacts = contacts.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+
+        for (const contact of sortedContacts) {
+          const tr = document.createElement('tr');
+          tr.dataset.id = contact.id;
+
+          const dateAdded = new Date(contact.dateAdded).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
+
+          tr.innerHTML = `
+            <td>${contact.userId}</td>
+            <td><span class="badge badge-primary">${contact.type}</span></td>
+            <td>${contact.name}</td>
+            <td>${contact.phone}</td>
+            <td>${contact.relationship || 'N/A'}</td>
+            <td>${contact.availability}</td>
+            <td>
+              <button class="btn btn-sm btn-info viewEmergencyBtn">View</button>
+              <button class="btn btn-sm btn-warning editEmergencyBtn">Edit</button>
+              <button class="btn btn-sm btn-danger deleteEmergencyBtn">Delete</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        }
+      } catch (err) {
+        console.error('Failed to load emergency contacts', err);
+      }
+    }
+
+    // Search Emergency Contacts
+    document.getElementById('searchEmergencyContacts').addEventListener('keyup', function () {
+      const filter = this.value.toLowerCase();
+      document.querySelectorAll('#emergencyContactsTable tbody tr').forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(filter) ? '' : 'none';
+      });
+    });
+
+    // View / Edit / Delete Emergency Contact
+    document.addEventListener('click', async (e) => {
+      if (e.target.classList.contains('viewEmergencyBtn')) {
+        const id = e.target.closest('tr').dataset.id;
+        const contacts = await window.DailyDB.getAllEmergencyContacts();
+        const contact = contacts.find(c => c.id == id);
+        if (contact) {
+          const content = `
+            <p><strong>Name:</strong> ${contact.name}</p>
+            <p><strong>Type:</strong> <span class="badge badge-primary">${contact.type}</span></p>
+            <p><strong>Phone:</strong> ${contact.phone}</p>
+            <p><strong>Relationship:</strong> ${contact.relationship || 'N/A'}</p>
+            <p><strong>Availability:</strong> ${contact.availability}</p>
+            <p><strong>Address:</strong> ${contact.address || 'N/A'}</p>
+            <p><strong>Notes:</strong> ${contact.notes || 'N/A'}</p>
+            <p><strong>Added:</strong> ${new Date(contact.dateAdded).toLocaleString()}</p>
+          `;
+          document.getElementById('emergencyDetailsContent').innerHTML = content;
+          new bootstrap.Modal(document.getElementById('viewEmergencyModal')).show();
+        }
+      }
+
+      if (e.target.classList.contains('editEmergencyBtn')) {
+        const id = e.target.closest('tr').dataset.id;
+        const contacts = await window.DailyDB.getAllEmergencyContacts();
+        const contact = contacts.find(c => c.id == id);
+        if (contact) {
+          const newPhone = prompt('Enter new phone number:', contact.phone);
+          if (newPhone) {
+            try {
+              await window.DailyDB.updateEmergencyContact(id, { phone: newPhone });
+              await populateEmergencyContactsTable();
+            } catch (err) {
+              console.error('Failed to update', err);
+            }
+          }
+        }
+      }
+
+      if (e.target.classList.contains('deleteEmergencyBtn')) {
+        if (!confirm('Delete this emergency contact?')) return;
+        const id = e.target.closest('tr').dataset.id;
+        try {
+          await window.DailyDB.deleteEmergencyContact(id);
+          await populateEmergencyContactsTable();
+        } catch (err) {
+          console.error('Failed to delete', err);
+        }
+      }
+    });
+
+    // Initialize on page load
+    async function displayRoleData() {
+      const userRole = localStorage.getItem('userRole') || 'patient';
+      const designation = localStorage.getItem('designation') || 'Patient/User';
+
+      if (userRole === 'patient') return;
+
+      const mainContent = document.querySelector('.main-content');
+      const roleDataSection = document.createElement('section');
+      roleDataSection.id = 'roleDataSection';
+      roleDataSection.style.cssText = 'margin-top: 3rem; border-top: 2px solid #ddd; padding-top: 2rem;';
+
+      const heading = document.createElement('h3');
+      heading.textContent = '📊 ' + designation + ' Dashboard - Data Overview';
+      heading.style.marginBottom = '2rem';
+      roleDataSection.appendChild(heading);
+
+      const contentDiv = document.createElement('div');
+      contentDiv.id = 'roleDataContent';
+      roleDataSection.appendChild(contentDiv);
+      mainContent.appendChild(roleDataSection);
+
+      try {
+        await window.ComprehensiveSeedData.initializeAllSeedData();
+
+        let html = '';
+        if (userRole === 'software_engineer') {
+          html += await window.DesignationDataTables.getSoftwareEngineerTable();
+        } else if (userRole === 'ai_engineer') {
+          html += await window.DesignationDataTables.getAIEngineerTable();
+        } else if (userRole === 'data_scientist') {
+          html += await window.DesignationDataTables.getDataScientistTable();
+        } else if (userRole === 'mental_health_admin') {
+          html += await window.DesignationDataTables.getMentalHealthAdminTable();
+        } else if (userRole === 'emergency_team') {
+          html += await window.DesignationDataTables.getEmergencyTeamTable();
+        } else if (userRole === 'security_analyst') {
+          html += await window.DesignationDataTables.getSecurityAnalystTable();
+        } else if (userRole === 'financial_team') {
+          html += await window.DesignationDataTables.getFinancialTeamTable();
+        } else if (userRole === 'system_admin') {
+          html += await window.DesignationDataTables.getSystemAdminTable();
+        }
+        contentDiv.innerHTML = html;
+      } catch (error) {
+        console.error('Error displaying role data:', error);
+        contentDiv.innerHTML = '<p style="color: red;">Error loading data. Check console for details.</p>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (window.DailyDB && window.DailyDB.init) {
+        await window.DailyDB.init();
+        await populateCrisisAlertsTable();
+        await populateEmergencyContactsTable();
+        await updateCrisisStats();
+        await updateCrisisSeverityChart();
+        await displayRoleData();
+      } else {
+        console.warn('DailyDB not available');
+      }
+
+      // Add test helper
+      window.testData = async function (role) {
+        console.log('🧪 Testing role:', role);
+        localStorage.setItem('userRole', role);
+        localStorage.setItem('designation', role.replace(/_/g, ' ').toUpperCase());
+        await displayRoleData();
+      };
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/theme.js"></script>
+</body>
+
+</html>

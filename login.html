@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Hermony AI</title>
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem;
+      background: var(--bg-primary);
+    }
+
+    body.dark-mode {
+      background: var(--dark-bg-primary);
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .login-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 2.5rem;
+      box-shadow: var(--shadow-lg);
+      animation: slideInUp 0.4s ease;
+    }
+
+    body.dark-mode .login-card {
+      background: var(--dark-bg-secondary);
+      border-color: var(--dark-border-color);
+    }
+
+    .login-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .login-logo {
+      font-size: 2.5rem;
+      line-height: 1;
+    }
+
+    .login-header h1 {
+      font-size: var(--font-2xl);
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    body.dark-mode .login-header h1 {
+      color: var(--dark-text-primary);
+    }
+
+    .login-header p {
+      font-size: var(--font-xs);
+      color: var(--text-tertiary);
+      margin: 0;
+    }
+
+    body.dark-mode .login-header p {
+      color: var(--dark-text-tertiary);
+    }
+
+    .form-group-login {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group-login label {
+      display: block;
+      font-size: var(--font-sm);
+      font-weight: var(--font-weight-semibold);
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    body.dark-mode .form-group-login label {
+      color: var(--dark-text-primary);
+    }
+
+    .form-group-login select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: var(--font-sm);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    body.dark-mode .form-group-login select {
+      background: var(--dark-bg-tertiary);
+      border-color: var(--dark-border-color);
+      color: var(--dark-text-primary);
+    }
+
+    .form-group-login select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .login-submit {
+      width: 100%;
+      padding: 0.875rem;
+      background: var(--primary-gradient);
+      color: white;
+      border: none;
+      border-radius: var(--radius-lg);
+      font-size: var(--font-sm);
+      font-weight: var(--font-weight-semibold);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .login-submit:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .login-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .login-info {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin-top: 1.5rem;
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+    }
+
+    body.dark-mode .login-info {
+      background: var(--dark-bg-tertiary);
+      border-color: var(--dark-border-color);
+      color: var(--dark-text-secondary);
+    }
+
+    .login-info strong {
+      font-weight: var(--font-weight-semibold);
+    }
+
+    @keyframes slideInUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* Responsive for mobile devices */
+    @media (max-width: 480px) {
+      .login-container {
+        max-width: 100%;
+      }
+
+      .login-card {
+        padding: 1.5rem;
+      }
+
+      .login-header {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .login-logo {
+        font-size: 2rem;
+      }
+
+      .login-header h1 {
+        font-size: var(--font-lg);
+      }
+
+      .login-header p {
+        font-size: 0.7rem;
+      }
+
+      .form-group-login {
+        margin-bottom: 1rem;
+      }
+
+      .login-submit {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-logo">🧠</div>
+        <div>
+          <h1>Hermony AI</h1>
+          <p>Select designation and continue</p>
+        </div>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group-login">
+          <label for="designation">Designation</label>
+          <select id="designation" required>
+            <option value="">-- Select Designation --</option>
+            <option value="./index.html">👤 Patient/User</option>
+            <option value="./feature1.html">💻 Software Engineer</option>
+            <option value="./feature2.html">🤖 AI Engineer</option>
+            <option value="./feature3.html">📊 Data Scientist</option>
+            <option value="./feature4.html">🏥 Mental Health Administrator</option>
+            <option value="./feature5.html">🚨 Emergency Contact Team</option>
+            <option value="./feature6.html">🔒 Security Analyst</option>
+            <option value="./feature1.html">💰 Financial Team</option>
+            <option value="./feature2.html">⚙️ System Administrator</option>
+          </select>
+        </div>
+
+        <button class="login-submit" type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="assets/js/theme.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('loginForm');
+      const sel = document.getElementById('designation');
+      if (!form || !sel) return console.error('login elements missing');
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const designation = sel.value && sel.value.trim();
+        if (!designation) { alert('Please select a designation.'); return; }
+
+        // Store user role based on designation
+        const designationText = sel.options[sel.selectedIndex].text.toLowerCase();
+        let selectedRole = 'patient';
+
+        if (designationText.includes('software engineer')) selectedRole = 'software_engineer';
+        else if (designationText.includes('ai engineer')) selectedRole = 'ai_engineer';
+        else if (designationText.includes('data scientist')) selectedRole = 'data_scientist';
+        else if (designationText.includes('mental health')) selectedRole = 'mental_health_admin';
+        else if (designationText.includes('emergency')) selectedRole = 'emergency_team';
+        else if (designationText.includes('security')) selectedRole = 'security_analyst';
+        else if (designationText.includes('financial')) selectedRole = 'financial_team';
+        else if (designationText.includes('system')) selectedRole = 'system_admin';
+
+        localStorage.setItem('userRole', selectedRole);
+        localStorage.setItem('designation', sel.options[sel.selectedIndex].text);
+
+        const btn = form.querySelector('button[type="submit"]');
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '⏳ Loading...';
+        }
+
+        console.log('Redirecting to:', designation, 'as role:', selectedRole);
+        window.location.href = designation;
+      });
+    });
+  </script>
+</body>
+
+</html>
