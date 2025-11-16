@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Mood & Stress Logging - Harmony AI</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .feature-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .log-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .logs-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .logs-table table {
+            margin-bottom: 0;
+        }
+
+        .logs-table table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .stat-mini {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="top-navbar">
+        <div class="nav-container">
+            <a href="./index.html" class="nav-logo">🧠 Harmony AI</a>
+            <ul class="nav-menu">
+                <li><a href="./dashboard.html">📊 Dashboard</a></li>
+                <li><a href="./feature-daily-logs.html" class="active">📝 Daily Logs</a></li>
+                <li><a href="./feature-ai-analysis.html">🤖 AI Analysis</a></li>
+                <li><a href="./feature-recommendations.html">💡 Recommendations</a></li>
+                <li><a href="./feature-sessions.html">👨‍⚕️ Sessions</a></li>
+                <li><a href="./feature-progress.html">📈 Progress</a></li>
+                <li><a href="./feature-crisis.html">🚨 Crisis Support</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="theme-toggle" title="Toggle dark mode">🌙</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Feature Header -->
+        <div class="feature-header">
+            <h1 style="margin: 0; font-size: 2rem;">📝 Daily Mood & Stress Logging</h1>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 1rem;">Track your daily mood, stress levels, and sleep patterns</p>
+        </div>
+
+        <!-- Add New Log Form -->
+        <div class="log-form">
+            <h3 style="margin-top: 0;">➕ Log Today's Entry</h3>
+            <form id="moodLogForm">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="mood" class="form-label">Mood</label>
+                        <select class="form-select" id="mood" required>
+                            <option value="">Select mood...</option>
+                            <option value="Happy">😊 Happy</option>
+                            <option value="Sad">😢 Sad</option>
+                            <option value="Anxious">😰 Anxious</option>
+                            <option value="Calm">😌 Calm</option>
+                            <option value="Energetic">⚡ Energetic</option>
+                            <option value="Tired">😴 Tired</option>
+                            <option value="Neutral">😐 Neutral</option>
+                            <option value="Angry">😠 Angry</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="stressLevel" class="form-label">Stress Level (1-10)</label>
+                        <input type="range" class="form-range" id="stressLevel" min="1" max="10" value="5">
+                        <small id="stressValue" style="color: #667eea; font-weight: 600;">5</small>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="anxietyLevel" class="form-label">Anxiety Level (1-10)</label>
+                        <input type="range" class="form-range" id="anxietyLevel" min="1" max="10" value="5">
+                        <small id="anxietyValue" style="color: #667eea; font-weight: 600;">5</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="sleepHours" class="form-label">Sleep Hours</label>
+                        <input type="number" class="form-control" id="sleepHours" min="0" max="12" step="0.5" value="7" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="notes" class="form-label">Notes / Thoughts</label>
+                    <textarea class="form-control" id="notes" rows="3" placeholder="How are you feeling today?"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">📝 Save Entry</button>
+            </form>
+        </div>
+
+        <!-- Statistics -->
+        <div style="background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem;">
+            <h3 style="margin-top: 0;">📊 Your Statistics</h3>
+            <div id="moodStats" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Recent Logs Table -->
+        <div class="logs-table">
+            <div style="padding: 1.5rem; background: white; border-bottom: 1px solid #eee;">
+                <h3 style="margin-top: 0;">📋 Recent Logs</h3>
+                <input type="text" class="form-control mb-3" id="searchLogs" placeholder="🔍 Search logs...">
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Mood</th>
+                            <th>Stress</th>
+                            <th>Anxiety</th>
+                            <th>Sleep (hrs)</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div style="margin-top: 2rem;">
+            <h3>📈 Trends (Last 14 Days)</h3>
+            <div class="chart-container">
+                <canvas id="moodTrendChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/patient-data.js"></script>
+    <script src="assets/js/charts-manager.js"></script>
+    <script src="assets/js/theme.js"></script>
+
+    <script>
+        // Range input listeners
+        document.getElementById('stressLevel').addEventListener('input', (e) => {
+            document.getElementById('stressValue').textContent = e.target.value;
+        });
+        document.getElementById('anxietyLevel').addEventListener('input', (e) => {
+            document.getElementById('anxietyValue').textContent = e.target.value;
+        });
+
+        // Load and display logs
+        function loadMoodLogs() {
+            const moodLogs = PatientData.getMoodLogs().slice(0, 30);
+            const tbody = document.getElementById('logsTableBody');
+            tbody.innerHTML = '';
+
+            moodLogs.forEach(log => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${log.date}</td>
+                    <td><strong>${log.mood}</strong></td>
+                    <td>${log.stressLevel}</td>
+                    <td>${log.anxietyLevel}</td>
+                    <td>${log.sleepHours}</td>
+                    <td>${log.notes || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Calculate statistics
+            updateMoodStats(moodLogs);
+
+            // Create chart
+            ChartsManager.createMoodTrendChart();
+        }
+
+        function updateMoodStats(logs) {
+            if (logs.length === 0) return;
+
+            const avgStress = (logs.reduce((sum, l) => sum + l.stressLevel, 0) / logs.length).toFixed(1);
+            const avgAnxiety = (logs.reduce((sum, l) => sum + l.anxietyLevel, 0) / logs.length).toFixed(1);
+            const avgSleep = (logs.reduce((sum, l) => sum + l.sleepHours, 0) / logs.length).toFixed(1);
+
+            const statsHtml = `
+                <div class="stat-mini">📊 Avg Stress: ${avgStress}/10</div>
+                <div class="stat-mini">😰 Avg Anxiety: ${avgAnxiety}/10</div>
+                <div class="stat-mini">😴 Avg Sleep: ${avgSleep} hrs</div>
+                <div class="stat-mini">📝 Total Entries: ${logs.length}</div>
+            `;
+
+            document.getElementById('moodStats').innerHTML = statsHtml;
+        }
+
+        // Search functionality
+        document.getElementById('searchLogs').addEventListener('keyup', function () {
+            const filter = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#logsTableBody tr');
+            rows.forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(filter) ? '' : 'none';
+            });
+        });
+
+        // Form submission
+        document.getElementById('moodLogForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('✅ Mood log saved successfully!\n\nIn a real app, this would be saved to a database.');
+            document.getElementById('moodLogForm').reset();
+            document.getElementById('stressValue').textContent = '5';
+            document.getElementById('anxietyValue').textContent = '5';
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadMoodLogs);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counselor Sessions - Harmony AI</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .feature-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; }
+        .session-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 1.5rem; border-top: 4px solid #667eea; }
+        .status-badge { display: inline-block; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.85rem; font-weight: 600; }
+        .status-scheduled { background: #4facfe; color: white; }
+        .status-completed { background: #90ee90; color: #333; }
+        .status-cancelled { background: #ff6b6b; color: white; }
+        .chart-container { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 2rem; }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="top-navbar">
+        <div class="nav-container">
+            <a href="./index.html" class="nav-logo">🧠 Harmony AI</a>
+            <ul class="nav-menu">
+                <li><a href="./dashboard.html">📊 Dashboard</a></li>
+                <li><a href="./feature-daily-logs.html">📝 Daily Logs</a></li>
+                <li><a href="./feature-ai-analysis.html">🤖 AI Analysis</a></li>
+                <li><a href="./feature-recommendations.html">💡 Recommendations</a></li>
+                <li><a href="./feature-sessions.html" class="active">👨‍⚕️ Sessions</a></li>
+                <li><a href="./feature-progress.html">📈 Progress</a></li>
+                <li><a href="./feature-crisis.html">🚨 Crisis Support</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="theme-toggle" title="Toggle dark mode">🌙</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="feature-header">
+            <h1 style="margin: 0; font-size: 2rem;">👨‍⚕️ Counselor & Session Management</h1>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Schedule, track, and review your therapy sessions</p>
+        </div>
+
+        <!-- Schedule New Session -->
+        <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
+            <h3 style="margin-top: 0;">📅 Schedule New Session</h3>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="counselor" class="form-label">Select Counselor</label>
+                    <select class="form-select" id="counselor">
+                        <option>Dr. Emily Smith - Anxiety Disorders</option>
+                        <option>Dr. James Johnson - Depression</option>
+                        <option>Dr. Lisa Williams - Stress Management</option>
+                        <option>Dr. Robert Brown - Sleep Disorders</option>
+                        <option>Dr. Sarah Davis - Cognitive Therapy</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="sessionDate" class="form-label">Preferred Date</label>
+                    <input type="date" class="form-control" id="sessionDate">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="sessionTime" class="form-label">Preferred Time</label>
+                    <input type="time" class="form-control" id="sessionTime">
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="alert('✅ Session request submitted! Counselor will confirm.')">📅 Request Session</button>
+        </div>
+
+        <!-- Sessions Chart -->
+        <div class="chart-container">
+            <h3 style="margin-top: 0;">📊 Session Outcomes</h3>
+            <canvas id="sessionOutcomesChart"></canvas>
+        </div>
+
+        <!-- Sessions List -->
+        <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+            <h3 style="margin-top: 0;">📋 Your Sessions</h3>
+            <div id="sessionsList"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/patient-data.js"></script>
+    <script src="assets/js/charts-manager.js"></script>
+    <script src="assets/js/theme.js"></script>
+
+    <script>
+        function loadSessions() {
+            const sessions = PatientData.getSessions().slice(0, 5);
+            let html = '';
+
+            sessions.forEach(session => {
+                const statusClass = session.status === 'Scheduled' ? 'status-scheduled' : session.status === 'Completed' ? 'status-completed' : 'status-cancelled';
+                html += `
+                    <div class="session-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <h5 style="margin-bottom: 0.5rem;">${session.sessionId} - ${session.type}</h5>
+                                <p style="margin: 0.5rem 0; font-size: 0.9rem;">
+                                    <strong>Counselor:</strong> ${session.counselorName}<br>
+                                    <strong>Date:</strong> ${session.date} at ${session.time}<br>
+                                    <strong>Duration:</strong> ${session.duration} minutes<br>
+                                    <strong>Outcome:</strong> ${session.outcome || 'Pending'}
+                                </p>
+                                ${session.notes ? `<p style="margin: 0.5rem 0; font-size: 0.85rem; color: #666;"><strong>Notes:</strong> ${session.notes}</p>` : ''}
+                            </div>
+                            <span class="status-badge ${statusClass}">${session.status}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('sessionsList').innerHTML = html;
+
+            // Chart
+            ChartsManager.createSessionOutcomesChart();
+        }
+
+        document.addEventListener('DOMContentLoaded', loadSessions);
+    </script>
+</body>
+
+</html>

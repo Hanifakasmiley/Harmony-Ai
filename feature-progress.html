@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Tracking & Feedback - Harmony AI</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .feature-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; }
+        .progress-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 1.5rem; }
+        .metric-badge { display: inline-block; padding: 0.5rem 1rem; border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: 600; margin-right: 0.5rem; margin-bottom: 0.5rem; }
+        .chart-container { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 2rem; }
+        .feedback-item { background: #f5f5f5; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #667eea; }
+        .rating { font-size: 1.2rem; color: #ffc107; }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="top-navbar">
+        <div class="nav-container">
+            <a href="./index.html" class="nav-logo">🧠 Harmony AI</a>
+            <ul class="nav-menu">
+                <li><a href="./dashboard.html">📊 Dashboard</a></li>
+                <li><a href="./feature-daily-logs.html">📝 Daily Logs</a></li>
+                <li><a href="./feature-ai-analysis.html">🤖 AI Analysis</a></li>
+                <li><a href="./feature-recommendations.html">💡 Recommendations</a></li>
+                <li><a href="./feature-sessions.html">👨‍⚕️ Sessions</a></li>
+                <li><a href="./feature-progress.html" class="active">📈 Progress</a></li>
+                <li><a href="./feature-crisis.html">🚨 Crisis Support</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="theme-toggle" title="Toggle dark mode">🌙</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="feature-header">
+            <h1 style="margin: 0; font-size: 2rem;">📈 Progress Tracking & Feedback</h1>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Monitor your improvement journey and therapy outcomes</p>
+        </div>
+
+        <!-- Progress Overview -->
+        <div id="progressOverview"></div>
+
+        <!-- Progress Tracking Chart -->
+        <div class="chart-container">
+            <h3 style="margin-top: 0;">📊 12-Week Progress Tracking</h3>
+            <canvas id="progressTrackingChart"></canvas>
+        </div>
+
+        <!-- Recent Feedback -->
+        <div class="progress-card">
+            <h3 style="margin-top: 0;">💬 Recent Feedback from Counselors</h3>
+            <div id="feedbackList"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/patient-data.js"></script>
+    <script src="assets/js/charts-manager.js"></script>
+    <script src="assets/js/theme.js"></script>
+
+    <script>
+        function loadProgress() {
+            const progress = PatientData.getProgress().slice(0, 1)[0];
+            const feedback = PatientData.getFeedback().slice(0, 3);
+
+            // Progress overview
+            if (progress) {
+                const overviewHtml = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div class="progress-card">
+                            <h5 style="margin-top: 0;">Emotional Stability</h5>
+                            <div style="font-size: 2.5rem; font-weight: bold; color: #667eea;">${progress.emotionalStability}%</div>
+                            <p style="margin: 0.5rem 0 0 0; color: #666; font-size: 0.9rem;">Week ${progress.sessionCount}</p>
+                        </div>
+                        <div class="progress-card">
+                            <h5 style="margin-top: 0;">Functioning Level</h5>
+                            <div style="font-size: 2.5rem; font-weight: bold; color: #764ba2;">${progress.functioningLevel}%</div>
+                            <p style="margin: 0.5rem 0 0 0; color: #666; font-size: 0.9rem;">Overall capacity</p>
+                        </div>
+                        <div class="progress-card">
+                            <h5 style="margin-top: 0;">Coping Skills</h5>
+                            <div style="font-size: 2.5rem; font-weight: bold; color: #f093fb;">${progress.copingSkills}%</div>
+                            <p style="margin: 0.5rem 0 0 0; color: #666; font-size: 0.9rem;">Management ability</p>
+                        </div>
+                        <div class="progress-card">
+                            <h5 style="margin-top: 0;">Overall Improvement</h5>
+                            <div style="font-size: 2.5rem; font-weight: bold; color: #4facfe;">${progress.improvementPercentage}%</div>
+                            <p style="margin: 0.5rem 0 0 0; color: #666; font-size: 0.9rem;">This month</p>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('progressOverview').innerHTML = overviewHtml;
+            }
+
+            // Feedback list
+            let feedbackHtml = '';
+            feedback.forEach(item => {
+                const stars = '⭐'.repeat(item.rating);
+                feedbackHtml += `
+                    <div class="feedback-item">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <h5 style="margin-bottom: 0.5rem;">Session: ${item.sessionId}</h5>
+                                <p style="margin: 0.5rem 0; font-size: 0.9rem;">
+                                    <strong>Counselor Rating:</strong> <span class="rating">${stars}</span><br>
+                                    <strong>Comment:</strong> ${item.comment}<br>
+                                    <strong>Strong Points:</strong> ${item.strongPoints.join(', ')}<br>
+                                    <strong>Improvement Areas:</strong> ${item.improvementAreas.join(', ')}<br>
+                                    <strong>Next Steps:</strong> ${item.nextSteps}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('feedbackList').innerHTML = feedbackHtml;
+
+            // Chart
+            ChartsManager.createProgressTrackingChart();
+        }
+
+        document.addEventListener('DOMContentLoaded', loadProgress);
+    </script>
+</body>
+
+</html>

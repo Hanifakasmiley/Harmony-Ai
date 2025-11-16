@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harmony AI - Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin: 0.5rem 0;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .role-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            position: relative;
+            height: 400px;
+        }
+
+        .chart-container canvas {
+            max-height: 350px;
+        }
+
+        .content-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .btn-logout {
+            background: #ff6b6b;
+            border: none;
+            color: white;
+            transition: background 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: #ff5252;
+            color: white;
+        }
+
+        .crisis-banner {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .crisis-banner.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .data-table {
+            overflow-x: auto;
+        }
+
+        .data-table table {
+            margin-bottom: 0;
+        }
+
+        .data-table table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .data-table table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        body.dark-mode .stat-card {
+            background: var(--dark-bg-secondary);
+        }
+
+        body.dark-mode .content-section {
+            background: var(--dark-bg-secondary);
+        }
+
+        body.dark-mode .chart-container {
+            background: var(--dark-bg-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 1.5rem 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.8rem;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+
+            .content-section {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-navbar">
+        <div class="nav-container">
+            <a href="./index.html" class="nav-logo">🧠 Harmony AI</a>
+            <ul class="nav-menu">
+                <li><a href="./index.html">🏠 Home</a></li>
+                <li><a href="./dashboard.html" class="active">📊 Dashboard</a></li>
+                <li><a href="./feature-daily-logs.html">📝 Daily Logs</a></li>
+                <li><a href="./feature-ai-analysis.html">🤖 AI Analysis</a></li>
+                <li><a href="./feature-recommendations.html">💡 Recommendations</a></li>
+                <li><a href="./feature-sessions.html">👨‍⚕️ Sessions</a></li>
+                <li><a href="./feature-progress.html">📈 Progress</a></li>
+                <li><a href="./feature-crisis.html">🚨 Crisis Support</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="mobile-menu-btn" aria-label="Toggle menu" title="Open navigation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor" />
+                        <rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor" />
+                        <rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor" />
+                    </svg>
+                </button>
+                <button class="theme-toggle" title="Toggle dark mode">🌙</button>
+                <button class="btn btn-logout btn-sm ms-2" onclick="logout()">🔐 Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Crisis Banner (shown only if there are critical alerts) -->
+        <div class="crisis-banner" id="crisisBanner">
+            <h3 style="margin-top: 0;">🚨 Critical Alert</h3>
+            <p id="crisisMessage" style="margin-bottom: 0;"></p>
+        </div>
+
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h1 id="dashboardTitle" style="margin: 0; font-size: 2rem;">Dashboard</h1>
+                    <p id="dashboardSubtitle" style="margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 1rem;">Welcome to Harmony AI</p>
+                </div>
+                <div class="role-badge" id="roleBadge">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div style="font-size: 1.5rem;">👥</div>
+                <div class="stat-value" id="totalPatients">0</div>
+                <div class="stat-label">Total Patients</div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 1.5rem;">🔴</div>
+                <div class="stat-value" id="criticalCount">0</div>
+                <div class="stat-label">Critical Cases</div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 1.5rem;">⚠️</div>
+                <div class="stat-value" id="highRiskCount">0</div>
+                <div class="stat-label">High Risk</div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 1.5rem;">📊</div>
+                <div class="stat-value" id="avgRiskScore">0</div>
+                <div class="stat-label">Avg Risk Score</div>
+            </div>
+        </div>
+
+        <!-- Role-Specific Content -->
+        <div id="roleContent" class="content-section">
+            <!-- Dynamically loaded based on user role -->
+        </div>
+
+        <!-- Charts Section -->
+        <div id="chartsSection" style="display: none;">
+            <h2 class="section-title">📊 Analytics & Visualizations</h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 1.5rem;">
+                <div class="chart-container">
+                    <canvas id="moodTrendChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="riskDistributionChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="stressPatternsChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="sessionOutcomesChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="progressTrackingChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="conditionChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="aiConfidenceChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="crisisTimelineChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/patient-data.js"></script>
+    <script src="assets/js/dashboard-generators.js"></script>
+    <script src="assets/js/charts-manager.js"></script>
+    <script src="assets/js/theme.js"></script>
+
+    <script>
+        // Initialize Dashboard
+        function initDashboard() {
+            const userRole = localStorage.getItem('userRole') || 'patient';
+            const designation = localStorage.getItem('designation') || 'Patient/User';
+
+            console.log('👤 Initializing dashboard for role:', userRole);
+
+            // Update header
+            document.getElementById('dashboardTitle').textContent = `${designation} Dashboard`;
+            document.getElementById('roleBadge').textContent = `👤 ${designation}`;
+
+            // Update stats
+            const stats = PatientData.getStatistics();
+            document.getElementById('totalPatients').textContent = stats.totalPatients;
+            document.getElementById('criticalCount').textContent = stats.criticalCount;
+            document.getElementById('highRiskCount').textContent = stats.highRiskCount;
+            document.getElementById('avgRiskScore').textContent = stats.avgRiskScore;
+
+            // Check for critical alerts
+            const criticalAlerts = PatientData.getCrisisAlerts();
+            if (criticalAlerts.length > 0 && userRole !== 'patient') {
+                const banner = document.getElementById('crisisBanner');
+                banner.classList.add('show');
+                document.getElementById('crisisMessage').textContent = 
+                    `${criticalAlerts.length} critical patient(s) require immediate attention. Please review crisis alerts.`;
+            }
+
+            // Generate role-specific content
+            const roleContent = document.getElementById('roleContent');
+            try {
+                const content = DashboardGenerators.generateDashboardByRole(userRole);
+                roleContent.innerHTML = content;
+            } catch (error) {
+                console.error('Error generating dashboard:', error);
+                roleContent.innerHTML = '<p style="color: red;">Error loading dashboard content</p>';
+            }
+
+            // Show charts section for non-patient roles
+            if (userRole !== 'patient') {
+                document.getElementById('chartsSection').style.display = 'block';
+                setTimeout(() => {
+                    ChartsManager.createAllCharts();
+                }, 300);
+            }
+
+            // Mobile menu toggle
+            setupMobileMenu();
+        }
+
+        function setupMobileMenu() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+
+            if (mobileMenuBtn && navMenu) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                });
+
+                document.querySelectorAll('.nav-menu a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        navMenu.classList.remove('active');
+                    });
+                });
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('designation');
+            window.location.href = './login.html';
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const userRole = localStorage.getItem('userRole');
+            if (!userRole) {
+                console.warn('⚠️ No user role found, redirecting to login');
+                window.location.href = './login.html';
+                return;
+            }
+            initDashboard();
+        });
+    </script>
+</body>
+
+</html>

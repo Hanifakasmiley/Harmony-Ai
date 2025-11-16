@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Based Mood & Journal Analysis - Harmony AI</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .feature-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; }
+        .analysis-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 1.5rem; border-left: 4px solid #667eea; }
+        .chart-container { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 2rem; }
+        .risk-badge { display: inline-block; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; color: white; }
+        .risk-critical { background: #ff6b6b; }
+        .risk-high { background: #ffa500; }
+        .risk-moderate { background: #FFD700; color: #333; }
+        .risk-low { background: #90ee90; color: #333; }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="top-navbar">
+        <div class="nav-container">
+            <a href="./index.html" class="nav-logo">🧠 Harmony AI</a>
+            <ul class="nav-menu">
+                <li><a href="./dashboard.html">📊 Dashboard</a></li>
+                <li><a href="./feature-daily-logs.html">📝 Daily Logs</a></li>
+                <li><a href="./feature-ai-analysis.html" class="active">🤖 AI Analysis</a></li>
+                <li><a href="./feature-recommendations.html">💡 Recommendations</a></li>
+                <li><a href="./feature-sessions.html">👨‍⚕️ Sessions</a></li>
+                <li><a href="./feature-progress.html">📈 Progress</a></li>
+                <li><a href="./feature-crisis.html">🚨 Crisis Support</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="theme-toggle" title="Toggle dark mode">🌙</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="feature-header">
+            <h1 style="margin: 0; font-size: 2rem;">🤖 AI-Based Mood & Journal Analysis</h1>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">NLP-powered insights into your emotional patterns and mental health trends</p>
+        </div>
+
+        <!-- AI Analysis Overview -->
+        <div id="analysisOverview"></div>
+
+        <!-- Risk Scores Chart -->
+        <div class="chart-container">
+            <h3 style="margin-top: 0;">📊 Risk Prediction Scores</h3>
+            <canvas id="riskDistributionChart"></canvas>
+        </div>
+
+        <!-- Emotion Detection -->
+        <div class="chart-container">
+            <h3 style="margin-top: 0;">😊 Emotion Detection Analysis</h3>
+            <canvas id="aiConfidenceChart"></canvas>
+        </div>
+
+        <!-- Recent AI Insights -->
+        <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+            <h3 style="margin-top: 0;">💡 Recent AI Insights</h3>
+            <div id="aiInsightsList"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/patient-data.js"></script>
+    <script src="assets/js/charts-manager.js"></script>
+    <script src="assets/js/theme.js"></script>
+
+    <script>
+        function loadAIAnalysis() {
+            const analysis = PatientData.getAIAnalysis().slice(0, 5);
+            
+            let overviewHtml = '<h3>📈 Analysis Overview</h3><div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">';
+            analysis.forEach((item, idx) => {
+                const riskClass = item.riskScore > 75 ? 'risk-critical' : item.riskScore > 60 ? 'risk-high' : item.riskScore > 40 ? 'risk-moderate' : 'risk-low';
+                overviewHtml += `
+                    <div class="analysis-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h5 style="margin-bottom: 0.5rem;">${item.patientId}</h5>
+                                <p style="margin: 0.5rem 0; font-size: 0.9rem;">Emotion: <strong>${item.dominantEmotion}</strong></p>
+                                <p style="margin: 0.5rem 0; font-size: 0.9rem;">Trend: ${item.emotionalTrend}</p>
+                            </div>
+                            <span class="risk-badge ${riskClass}">${item.riskScore}</span>
+                        </div>
+                        <p style="margin-top: 0.75rem; font-size: 0.85rem; color: #666;">Confidence: ${(item.confidenceScore * 100).toFixed(0)}%</p>
+                    </div>
+                `;
+            });
+            overviewHtml += '</div>';
+            document.getElementById('analysisOverview').innerHTML = overviewHtml;
+
+            // Charts
+            ChartsManager.createRiskDistributionChart();
+            ChartsManager.createAIConfidenceChart();
+
+            // AI Insights
+            let insightsHtml = '';
+            analysis.forEach(item => {
+                insightsHtml += `
+                    <div style="padding: 1rem; border-bottom: 1px solid #eee;">
+                        <h5 style="margin-bottom: 0.5rem;">💭 Analysis for ${item.patientId}</h5>
+                        <p style="margin: 0.5rem 0; font-size: 0.9rem;">
+                            <strong>Dominant Emotion:</strong> ${item.dominantEmotion}<br>
+                            <strong>Sentiment Score:</strong> ${item.sentimentScore}<br>
+                            <strong>Trend:</strong> ${item.emotionalTrend}<br>
+                            <strong>Key Findings:</strong> ${item.keywordFlags.join(', ')}<br>
+                            <strong>Recommendation:</strong> ${item.aiRecommendation}
+                        </p>
+                    </div>
+                `;
+            });
+            document.getElementById('aiInsightsList').innerHTML = insightsHtml;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadAIAnalysis);
+    </script>
+</body>
+
+</html>

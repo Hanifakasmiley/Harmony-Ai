@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crisis Detection & Emergency Support - Harmony AI</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .feature-header { background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; }
+        .alert-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 1.5rem; border-left: 4px solid #ff6b6b; }
+        .alert-critical { border-left-color: #ff6b6b; }
+        .alert-high { border-left-color: #ffa500; }
+        .crisis-banner { background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; }
+        .hotline-card { background: white; padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+        .hotline-number { font-size: 1.8rem; font-weight: bold; color: #ff6b6b; margin: 0.5rem 0; }
+        .coping-tip { background: #f0f0f0; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #4facfe; }
+        .chart-container { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 2rem; }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="top-navbar">
+        <div class="nav-container">
+            <a href="./index.html" class="nav-logo">🧠 Harmony AI</a>
+            <ul class="nav-menu">
+                <li><a href="./dashboard.html">📊 Dashboard</a></li>
+                <li><a href="./feature-daily-logs.html">📝 Daily Logs</a></li>
+                <li><a href="./feature-ai-analysis.html">🤖 AI Analysis</a></li>
+                <li><a href="./feature-recommendations.html">💡 Recommendations</a></li>
+                <li><a href="./feature-sessions.html">👨‍⚕️ Sessions</a></li>
+                <li><a href="./feature-progress.html">📈 Progress</a></li>
+                <li><a href="./feature-crisis.html" class="active">🚨 Crisis Support</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="theme-toggle" title="Toggle dark mode">🌙</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="feature-header">
+            <h1 style="margin: 0; font-size: 2rem;">🚨 Crisis Detection & Emergency Support</h1>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">24/7 emergency support and immediate intervention resources</p>
+        </div>
+
+        <!-- Emergency Banner -->
+        <div class="crisis-banner">
+            <h2 style="margin-top: 0;">🆘 Are You in Crisis?</h2>
+            <p style="margin: 1rem 0;">If you or someone you know is experiencing a mental health emergency, please reach out immediately. Help is available 24/7.</p>
+            <button class="btn btn-light btn-lg" onclick="alert('🚨 Emergency services have been notified. A counselor will contact you shortly.')">📞 Call Emergency Services Now</button>
+        </div>
+
+        <!-- Emergency Hotlines -->
+        <div style="margin-bottom: 2rem;">
+            <h3>📞 Emergency Hotlines & Resources</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;" id="hotlinesList"></div>
+        </div>
+
+        <!-- Crisis Timeline Chart -->
+        <div class="chart-container">
+            <h3 style="margin-top: 0;">📊 Crisis Alerts (Last 7 Days)</h3>
+            <canvas id="crisisTimelineChart"></canvas>
+        </div>
+
+        <!-- Recent Alerts -->
+        <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
+            <h3 style="margin-top: 0;">🚨 Recent Crisis Alerts</h3>
+            <div id="alertsList"></div>
+        </div>
+
+        <!-- Coping Strategies -->
+        <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+            <h3 style="margin-top: 0;">💪 Immediate Coping Strategies</h3>
+            <div id="copingStrategies"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/patient-data.js"></script>
+    <script src="assets/js/charts-manager.js"></script>
+    <script src="assets/js/theme.js"></script>
+
+    <script>
+        function loadCrisisContent() {
+            // Emergency Contacts
+            const emergencyContacts = PatientData.getEmergencyContacts();
+            let hotlinesHtml = '';
+            emergencyContacts.forEach(contact => {
+                hotlinesHtml += `
+                    <div class="hotline-card">
+                        <h5>${contact.country}</h5>
+                        <div class="hotline-number">${contact.number}</div>
+                        <p style="margin: 0.5rem 0 0 0;"><strong>${contact.service}</strong></p>
+                        <p style="margin: 0.25rem 0 0 0; color: #666; font-size: 0.9rem;">${contact.available}</p>
+                    </div>
+                `;
+            });
+            document.getElementById('hotlinesList').innerHTML = hotlinesHtml;
+
+            // Crisis Alerts
+            const alerts = PatientData.getCrisisAlerts();
+            let alertsHtml = '';
+            alerts.forEach(alert => {
+                const severityColor = alert.severity === 'Critical' ? '#ff6b6b' : '#ffa500';
+                alertsHtml += `
+                    <div class="alert-card alert-${alert.severity.toLowerCase()}">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <h5 style="margin-bottom: 0.5rem;">🚨 ${alert.patientName}</h5>
+                                <p style="margin: 0.5rem 0; font-size: 0.9rem;">
+                                    <strong>Alert ID:</strong> ${alert.alertId}<br>
+                                    <strong>Severity:</strong> <span style="color: ${severityColor}; font-weight: 600;">${alert.severity}</span><br>
+                                    <strong>Assigned Counselor:</strong> ${alert.assignedCounselor}<br>
+                                    <strong>Emergency Contact:</strong> ${alert.emergencyContact}<br>
+                                    <strong>Status:</strong> ${alert.status}<br>
+                                    <strong>Action Taken:</strong> ${alert.actionTaken}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('alertsList').innerHTML = alertsHtml || '<p style="color: #666;">No active crisis alerts at this time.</p>';
+
+            // Coping Strategies
+            const strategies = [
+                { title: '🧘 Breathing Exercise', desc: 'Practice the 4-7-8 breathing technique: Breathe in for 4 counts, hold for 7, exhale for 8.' },
+                { title: '🚶 Take a Walk', desc: 'Step outside for 10-15 minutes. Fresh air and movement can help calm your nervous system.' },
+                { title: '🎵 Listen to Music', desc: 'Play calming music or nature sounds to help reduce anxiety and stress.' },
+                { title: '📝 Journal', desc: 'Write down your thoughts and feelings. This can help organize your mind and reduce overwhelm.' },
+                { title: '☎️ Call Someone', desc: 'Reach out to a trusted friend, family member, or counselor. You don\'t have to face this alone.' },
+                { title: '🧊 Cold Therapy', desc: 'Splash cold water on your face or hold ice cubes. This activates your calming response.' }
+            ];
+
+            let strategiesHtml = '';
+            strategies.forEach(strategy => {
+                strategiesHtml += `
+                    <div class="coping-tip">
+                        <h5 style="margin-bottom: 0.5rem;">${strategy.title}</h5>
+                        <p style="margin: 0; color: #666; font-size: 0.9rem;">${strategy.desc}</p>
+                    </div>
+                `;
+            });
+            document.getElementById('copingStrategies').innerHTML = strategiesHtml;
+
+            // Chart
+            ChartsManager.createCrisisTimelineChart();
+        }
+
+        document.addEventListener('DOMContentLoaded', loadCrisisContent);
+    </script>
+</body>
+
+</html>
