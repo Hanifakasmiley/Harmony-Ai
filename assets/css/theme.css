@@ -16,15 +16,6 @@
   --text-tertiary: #7a7a7a;
   --border-color: #d1d5db;
 
-  /* Dark Mode */
-  --dark-bg-primary: #0f1419;
-  --dark-bg-secondary: #1a1f2e;
-  --dark-bg-tertiary: #252d3d;
-  --dark-text-primary: #f0f4f8;
-  --dark-text-secondary: #b0b8c8;
-  --dark-text-tertiary: #8890a0;
-  --dark-border-color: #3a4556;
-
   /* Brand Colors */
   --primary-color: #667eea;
   --primary-dark: #5568d3;
@@ -88,11 +79,6 @@ body {
   font-weight: var(--font-weight-normal);
   line-height: 1.6;
   transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-body.dark-mode {
-  background-color: var(--dark-bg-primary);
-  color: var(--dark-text-primary);
 }
 
 /* ===== TOP NAVIGATION BAR ===== */
@@ -180,33 +166,6 @@ body.dark-mode .nav-menu a.active {
 
 .mobile-menu-btn {
   display: none;
-}
-
-.theme-toggle {
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  font-size: var(--font-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-body.dark-mode .theme-toggle {
-  background: var(--dark-bg-tertiary);
-  border-color: var(--dark-border-color);
-  color: var(--dark-text-primary);
-}
-
-.theme-toggle:hover {
-  background: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
 }
 
 /* Polished logout button */
