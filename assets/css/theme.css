@@ -1021,7 +1021,7 @@ tbody tr:hover {
 /* ===== FOOTER ===== */
 .footer {
   background: #2d3748;
-  color: #a0aec0;
+  color: #d0d8e8;
   padding: var(--space-2xl) var(--space-xl) var(--space-lg);
 }
 
@@ -1050,7 +1050,7 @@ tbody tr:hover {
 }
 
 .footer-section a {
-  color: #a0aec0;
+  color: #d0d8e8;
   text-decoration: none;
   transition: color 0.3s ease;
   font-size: var(--font-sm);
@@ -1074,7 +1074,7 @@ tbody tr:hover {
   background: rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-full);
   transition: all 0.3s ease;
-  color: #a0aec0;
+  color: #d0d8e8;
 }
 
 .social-links a:hover {
