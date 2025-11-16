@@ -93,11 +93,6 @@ body {
   transition: all 0.3s ease;
 }
 
-body.dark-mode .top-navbar {
-  background: var(--dark-bg-secondary);
-  border-bottom-color: var(--dark-border-color);
-}
-
 .nav-container {
   max-width: 1400px;
   margin: 0 auto;
@@ -146,16 +141,6 @@ body.dark-mode .top-navbar {
 .nav-menu a.active {
   color: var(--primary-color);
   background: rgba(102, 126, 234, 0.1);
-}
-
-body.dark-mode .nav-menu a {
-  color: var(--dark-text-secondary);
-}
-
-body.dark-mode .nav-menu a:hover,
-body.dark-mode .nav-menu a.active {
-  color: var(--primary-color);
-  background: rgba(102, 126, 234, 0.15);
 }
 
 .nav-actions {
@@ -208,18 +193,8 @@ body.dark-mode .nav-menu a.active {
   outline-offset: 2px;
 }
 
-body.dark-mode .logout-btn {
-  background: linear-gradient(90deg, #4b6bff 0%, #6b8cff 100%);
-  box-shadow: 0 6px 18px rgba(75, 107, 255, 0.16);
-  color: #ffffff;
-}
-
 .nav-actions .logout-btn {
   margin-left: 0.25rem;
-}
-
-body.dark-mode .mobile-menu-btn {
-  color: var(--dark-text-primary);
 }
 
 /* Responsive navigation: collapsed menu on small screens with animated slide down */
@@ -246,11 +221,6 @@ body.dark-mode .mobile-menu-btn {
 
   .mobile-menu-btn svg {
     display: block;
-  }
-
-  body.dark-mode .mobile-menu-btn {
-    border-color: var(--dark-border-color);
-    color: var(--dark-text-primary);
   }
 
   .mobile-menu-btn.open svg {
@@ -289,10 +259,6 @@ body.dark-mode .mobile-menu-btn {
     transition: max-height 300ms ease, opacity 200ms ease;
   }
 
-  body.dark-mode .nav-menu {
-    background: var(--dark-bg-secondary);
-  }
-
   .nav-menu.active {
     max-height: 600px;
     opacity: 1;
@@ -309,16 +275,6 @@ body.dark-mode .mobile-menu-btn {
     border-radius: var(--radius-sm);
     font-size: 0.95rem;
     color: var(--text-secondary);
-  }
-
-  body.dark-mode .nav-menu a {
-    color: var(--dark-text-secondary);
-  }
-
-  body.dark-mode .nav-menu a:hover,
-  body.dark-mode .nav-menu a.active {
-    color: var(--primary-color);
-    background: rgba(102, 126, 234, 0.15);
   }
 
   .nav-actions {
@@ -348,10 +304,6 @@ h1 {
   color: var(--text-primary);
 }
 
-body.dark-mode h1 {
-  color: var(--dark-text-primary);
-}
-
 h2 {
   font-size: var(--font-2xl);
   font-weight: var(--font-weight-bold);
@@ -359,19 +311,11 @@ h2 {
   color: var(--text-primary);
 }
 
-body.dark-mode h2 {
-  color: var(--dark-text-primary);
-}
-
 h3 {
   font-size: var(--font-xl);
   font-weight: var(--font-weight-semibold);
   margin-bottom: var(--space-md);
   color: var(--text-primary);
-}
-
-body.dark-mode h3 {
-  color: var(--dark-text-primary);
 }
 
 h4,
@@ -383,12 +327,6 @@ h6 {
   color: var(--text-primary);
 }
 
-body.dark-mode h4,
-body.dark-mode h5,
-body.dark-mode h6 {
-  color: var(--dark-text-primary);
-}
-
 p {
   font-size: var(--font-sm);
   color: var(--text-secondary);
@@ -396,17 +334,9 @@ p {
   line-height: 1.7;
 }
 
-body.dark-mode p {
-  color: var(--dark-text-secondary);
-}
-
 small {
   font-size: var(--font-xs);
   color: var(--text-tertiary);
-}
-
-body.dark-mode small {
-  color: var(--dark-text-tertiary);
 }
 
 /* ===== BUTTONS ===== */
@@ -441,12 +371,6 @@ body.dark-mode small {
   background: var(--bg-tertiary);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
-}
-
-body.dark-mode .btn-secondary {
-  background: var(--dark-bg-tertiary);
-  color: var(--dark-text-primary);
-  border-color: var(--dark-border-color);
 }
 
 .btn-secondary:hover {
@@ -485,11 +409,6 @@ body.dark-mode .btn-secondary {
   transition: all 0.3s ease;
 }
 
-body.dark-mode .card {
-  background: var(--dark-bg-secondary);
-  border-color: var(--dark-border-color);
-}
-
 .card:hover {
   box-shadow: var(--shadow-md);
   border-color: var(--primary-color);
@@ -510,20 +429,12 @@ section h3 {
   border-bottom: 2px solid var(--border-color);
 }
 
-body.dark-mode section h3 {
-  border-bottom-color: var(--dark-border-color);
-}
-
 label {
   display: block;
   font-size: var(--font-sm);
   font-weight: var(--font-weight-semibold);
   margin-bottom: var(--space-sm);
   color: var(--text-primary);
-}
-
-body.dark-mode label {
-  color: var(--dark-text-primary);
 }
 
 input[type="text"],
@@ -545,14 +456,6 @@ textarea {
   transition: all 0.3s ease;
 }
 
-body.dark-mode input,
-body.dark-mode select,
-body.dark-mode textarea {
-  background: var(--dark-bg-tertiary);
-  border-color: var(--dark-border-color);
-  color: var(--dark-text-primary);
-}
-
 input:focus,
 select:focus,
 textarea:focus {
@@ -572,19 +475,11 @@ thead {
   background: var(--bg-tertiary);
 }
 
-body.dark-mode thead {
-  background: var(--dark-bg-tertiary);
-}
-
 th {
   padding: var(--space-md);
   text-align: left;
   font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
-}
-
-body.dark-mode th {
-  color: var(--dark-text-primary);
 }
 
 td {
@@ -593,17 +488,8 @@ td {
   color: var(--text-secondary);
 }
 
-body.dark-mode td {
-  border-bottom-color: var(--dark-border-color);
-  color: var(--dark-text-secondary);
-}
-
 tbody tr:hover {
   background: var(--bg-tertiary);
-}
-
-body.dark-mode tbody tr:hover {
-  background: var(--dark-bg-tertiary);
 }
 
 /* ===== RESPONSIVE ===== */
@@ -620,10 +506,6 @@ body.dark-mode tbody tr:hover {
     padding: var(--space-lg);
     gap: var(--space-sm);
     box-shadow: var(--shadow-md);
-  }
-
-  body.dark-mode .nav-menu {
-    background: var(--dark-bg-secondary);
   }
 
   .nav-menu.active {
@@ -799,10 +681,6 @@ body.dark-mode tbody tr:hover {
 
 .text-muted {
   color: var(--text-tertiary);
-}
-
-body.dark-mode .text-muted {
-  color: var(--dark-text-tertiary);
 }
 
 .mt-0 {
@@ -985,20 +863,12 @@ body.dark-mode .text-muted {
   padding: var(--space-2xl) var(--space-xl);
 }
 
-body.dark-mode .features {
-  background: var(--dark-bg-primary);
-}
-
 .section-title {
   text-align: center;
   font-size: var(--font-2xl);
   font-weight: var(--font-weight-bold);
   margin-bottom: var(--space-2xl);
   color: var(--text-primary);
-}
-
-body.dark-mode .section-title {
-  color: var(--dark-text-primary);
 }
 
 .features-grid {
@@ -1017,11 +887,6 @@ body.dark-mode .section-title {
   box-shadow: var(--shadow-md);
   transition: all 0.3s ease;
   cursor: pointer;
-}
-
-body.dark-mode .feature-card {
-  background: var(--dark-bg-secondary);
-  border-color: var(--dark-border-color);
 }
 
 .feature-card:hover {
@@ -1043,18 +908,10 @@ body.dark-mode .feature-card {
   color: var(--text-primary);
 }
 
-body.dark-mode .feature-card h3 {
-  color: var(--dark-text-primary);
-}
-
 .feature-card p {
   font-size: var(--font-sm);
   color: var(--text-secondary);
   line-height: 1.7;
-}
-
-body.dark-mode .feature-card p {
-  color: var(--dark-text-secondary);
 }
 
 /* ===== STATS SECTION ===== */
@@ -1104,10 +961,6 @@ body.dark-mode .feature-card p {
   padding: var(--space-2xl) var(--space-xl);
 }
 
-body.dark-mode .crisis-section {
-  background: rgba(243, 156, 18, 0.15);
-}
-
 .crisis-content {
   text-align: center;
   max-width: 900px;
@@ -1121,18 +974,10 @@ body.dark-mode .crisis-section {
   font-weight: var(--font-weight-bold);
 }
 
-body.dark-mode .crisis-content h2 {
-  color: #f39c12;
-}
-
 .crisis-content p {
   color: #856404;
   margin-bottom: var(--space-xl);
   font-size: var(--font-base);
-}
-
-body.dark-mode .crisis-content p {
-  color: #f0ad4e;
 }
 
 .hotline-numbers {
@@ -1150,10 +995,6 @@ body.dark-mode .crisis-content p {
   transition: all 0.3s ease;
 }
 
-body.dark-mode .hotline-card {
-  background: var(--dark-bg-secondary);
-}
-
 .hotline-card:hover {
   transform: translateY(-8px);
   box-shadow: var(--shadow-lg);
@@ -1163,10 +1004,6 @@ body.dark-mode .hotline-card {
   color: #856404;
   margin-bottom: var(--space-sm);
   font-weight: var(--font-weight-semibold);
-}
-
-body.dark-mode .hotline-card h3 {
-  color: #f39c12;
 }
 
 .hotline-number {
@@ -1181,19 +1018,11 @@ body.dark-mode .hotline-card h3 {
   color: var(--text-secondary);
 }
 
-body.dark-mode .hotline-card p {
-  color: var(--dark-text-secondary);
-}
-
 /* ===== FOOTER ===== */
 .footer {
   background: #2d3748;
   color: #a0aec0;
   padding: var(--space-2xl) var(--space-xl) var(--space-lg);
-}
-
-body.dark-mode .footer {
-  background: #1a202c;
 }
 
 .footer-content {
@@ -1270,10 +1099,6 @@ body.dark-mode .footer {
 
 ::-webkit-scrollbar-track {
   background: var(--bg-tertiary);
-}
-
-body.dark-mode ::-webkit-scrollbar-track {
-  background: var(--dark-bg-tertiary);
 }
 
 ::-webkit-scrollbar-thumb {
