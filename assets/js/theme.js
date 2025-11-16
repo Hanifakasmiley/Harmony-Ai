@@ -1,5 +1,4 @@
-// ===== THEME TOGGLE & NAVIGATION FUNCTIONALITY =====
-(function(){
+(function () {
   function init() {
     const htmlElement = document.documentElement;
     const bodyElement = document.body;
@@ -41,7 +40,7 @@
     updateToggleUI();
 
     // Attach listener
-    themeToggle.addEventListener('click', function() {
+    themeToggle.addEventListener('click', function () {
       var isDark = bodyElement.classList.toggle('dark-mode');
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
       htmlElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
@@ -58,26 +57,10 @@
     function applyTheme(t) {
       if (t === 'dark') {
         bodyElement.classList.add('dark-mode');
-        htmlElement.setAttribute('data-theme','dark');
+        htmlElement.setAttribute('data-theme', 'dark');
       } else {
         bodyElement.classList.remove('dark-mode');
-        htmlElement.setAttribute('data-theme','light');
-      }
-    }
-
-    // Add Logout button if not on login page
-    if (navActions && !window.location.href.includes('login')) {
-      // avoid duplicate
-      if (!navActions.querySelector('.logout-btn')) {
-        const logoutBtn = document.createElement('button');
-        logoutBtn.className = 'logout-btn';
-        logoutBtn.innerHTML = '🚪 Logout';
-        logoutBtn.title = 'Return to login page';
-        logoutBtn.addEventListener('click', function() {
-          localStorage.removeItem('theme');
-          window.location.href = './login.html';
-        });
-        navActions.appendChild(logoutBtn);
+        htmlElement.setAttribute('data-theme', 'light');
       }
     }
 
@@ -93,14 +76,14 @@
       mobileMenuBtn.classList.toggle('open', initActive);
       mobileMenuBtn.setAttribute('aria-expanded', initActive ? 'true' : 'false');
 
-      mobileMenuBtn.addEventListener('click', function() {
+      mobileMenuBtn.addEventListener('click', function () {
         const isActive = navMenu.classList.toggle('active');
         mobileMenuBtn.classList.toggle('open', isActive);
         mobileMenuBtn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
       });
 
       document.querySelectorAll('.nav-menu a').forEach(link => {
-        link.addEventListener('click', function() {
+        link.addEventListener('click', function () {
           navMenu.classList.remove('active');
           mobileMenuBtn.classList.remove('open');
           mobileMenuBtn.setAttribute('aria-expanded', 'false');
@@ -136,10 +119,10 @@
     set: (theme) => {
       if (theme === 'dark') {
         document.body.classList.add('dark-mode');
-        localStorage.setItem('theme','dark');
+        localStorage.setItem('theme', 'dark');
       } else {
         document.body.classList.remove('dark-mode');
-        localStorage.setItem('theme','light');
+        localStorage.setItem('theme', 'light');
       }
     }
   };

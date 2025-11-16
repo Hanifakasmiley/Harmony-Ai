@@ -1,10 +1,5 @@
-/**
- * INTERACTIVE CHARTS & ANALYTICS
- * Chart.js implementations for all dashboard visualizations
- */
-
 const ChartsManager = (function () {
-    
+
     let charts = {};
 
     // ===== DESTROY EXISTING CHARTS =====
@@ -23,7 +18,7 @@ const ChartsManager = (function () {
 
         const moodLogs = PatientData.getMoodLogs().slice(0, 30);
         const dates = [...new Set(moodLogs.map(m => m.date))].sort().slice(-14);
-        
+
         const moodScores = dates.map(date => {
             const logsForDate = moodLogs.filter(m => m.date === date);
             const avg = logsForDate.reduce((sum, m) => sum + (m.stressLevel || 0), 0) / logsForDate.length;
@@ -72,7 +67,7 @@ const ChartsManager = (function () {
 
         const stats = PatientData.getStatistics();
         const ctx = canvas.getContext('2d');
-        
+
         charts[canvasId] = new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -304,9 +299,9 @@ const ChartsManager = (function () {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
 
-        const days = Array.from({length: 7}, (_, i) => {
+        const days = Array.from({ length: 7 }, (_, i) => {
             const d = new Date();
-            d.setDate(d.getDate() - (6-i));
+            d.setDate(d.getDate() - (6 - i));
             return d.toISOString().split('T')[0];
         });
 
@@ -420,7 +415,7 @@ const ChartsManager = (function () {
         createCrisisTimelineChart,
         createAdherenceGaugeChart,
         createSessionCompletionChart,
-        
+
         createAllCharts: function () {
             createMoodTrendChart();
             createRiskDistributionChart();

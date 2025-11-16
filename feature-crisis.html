@@ -9,15 +9,69 @@
     <link rel="stylesheet" href="assets/css/theme.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .feature-header { background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; }
-        .alert-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 1.5rem; border-left: 4px solid #ff6b6b; }
-        .alert-critical { border-left-color: #ff6b6b; }
-        .alert-high { border-left-color: #ffa500; }
-        .crisis-banner { background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; }
-        .hotline-card { background: white; padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
-        .hotline-number { font-size: 1.8rem; font-weight: bold; color: #ff6b6b; margin: 0.5rem 0; }
-        .coping-tip { background: #f0f0f0; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #4facfe; }
-        .chart-container { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 2rem; }
+        .feature-header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .alert-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .alert-critical {
+            border-left-color: #ff6b6b;
+        }
+
+        .alert-high {
+            border-left-color: #ffa500;
+        }
+
+        .crisis-banner {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .hotline-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .hotline-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin: 0.5rem 0;
+        }
+
+        .coping-tip {
+            background: #f0f0f0;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #4facfe;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
     </style>
 </head>
 
@@ -45,20 +99,25 @@
     <div class="main-content">
         <div class="feature-header">
             <h1 style="margin: 0; font-size: 2rem;">🚨 Crisis Detection & Emergency Support</h1>
-            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">24/7 emergency support and immediate intervention resources</p>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">24/7 emergency support and immediate intervention resources
+            </p>
         </div>
 
         <!-- Emergency Banner -->
         <div class="crisis-banner">
             <h2 style="margin-top: 0;">🆘 Are You in Crisis?</h2>
-            <p style="margin: 1rem 0;">If you or someone you know is experiencing a mental health emergency, please reach out immediately. Help is available 24/7.</p>
-            <button class="btn btn-light btn-lg" onclick="alert('🚨 Emergency services have been notified. A counselor will contact you shortly.')">📞 Call Emergency Services Now</button>
+            <p style="margin: 1rem 0;">If you or someone you know is experiencing a mental health emergency, please
+                reach out immediately. Help is available 24/7.</p>
+            <button class="btn btn-light btn-lg"
+                onclick="alert('🚨 Emergency services have been notified. A counselor will contact you shortly.')">📞
+                Call Emergency Services Now</button>
         </div>
 
         <!-- Emergency Hotlines -->
         <div style="margin-bottom: 2rem;">
             <h3>📞 Emergency Hotlines & Resources</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;" id="hotlinesList"></div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;"
+                id="hotlinesList"></div>
         </div>
 
         <!-- Crisis Timeline Chart -->
@@ -68,7 +127,8 @@
         </div>
 
         <!-- Recent Alerts -->
-        <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
+        <div
+            style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
             <h3 style="margin-top: 0;">🚨 Recent Crisis Alerts</h3>
             <div id="alertsList"></div>
         </div>

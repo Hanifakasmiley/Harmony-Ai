@@ -9,14 +9,56 @@
     <link rel="stylesheet" href="assets/css/theme.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .feature-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; }
-        .analysis-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 1.5rem; border-left: 4px solid #667eea; }
-        .chart-container { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 2rem; }
-        .risk-badge { display: inline-block; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; color: white; }
-        .risk-critical { background: #ff6b6b; }
-        .risk-high { background: #ffa500; }
-        .risk-moderate { background: #FFD700; color: #333; }
-        .risk-low { background: #90ee90; color: #333; }
+        .feature-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .analysis-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .risk-critical {
+            background: #ff6b6b;
+        }
+
+        .risk-high {
+            background: #ffa500;
+        }
+
+        .risk-moderate {
+            background: #FFD700;
+            color: #333;
+        }
+
+        .risk-low {
+            background: #90ee90;
+            color: #333;
+        }
     </style>
 </head>
 
@@ -44,7 +86,8 @@
     <div class="main-content">
         <div class="feature-header">
             <h1 style="margin: 0; font-size: 2rem;">🤖 AI-Based Mood & Journal Analysis</h1>
-            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">NLP-powered insights into your emotional patterns and mental health trends</p>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">NLP-powered insights into your emotional patterns and mental
+                health trends</p>
         </div>
 
         <!-- AI Analysis Overview -->
@@ -78,7 +121,7 @@
     <script>
         function loadAIAnalysis() {
             const analysis = PatientData.getAIAnalysis().slice(0, 5);
-            
+
             let overviewHtml = '<h3>📈 Analysis Overview</h3><div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">';
             analysis.forEach((item, idx) => {
                 const riskClass = item.riskScore > 75 ? 'risk-critical' : item.riskScore > 60 ? 'risk-high' : item.riskScore > 40 ? 'risk-moderate' : 'risk-low';

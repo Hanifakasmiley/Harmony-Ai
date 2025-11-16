@@ -1,8 +1,3 @@
-/**
- * DESIGNATION-SPECIFIC DASHBOARDS
- * Generates role-appropriate views for all 9 designations
- */
-
 const DashboardGenerators = (function () {
 
     // Helper function to generate HTML table

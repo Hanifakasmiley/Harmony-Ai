@@ -1,9 +1,3 @@
-/**
- * HARMONY AI - COMPREHENSIVE PATIENT DATA MODULE
- * Contains 20 sample patients with complete datasets for all 6 features
- * All data is static and requires no database
- */
-
 const PatientData = (function () {
 
     // ===== 20 PATIENT PROFILES =====
@@ -326,14 +320,14 @@ const PatientData = (function () {
         getRecommendations: () => JSON.parse(JSON.stringify(generateRecommendations())),
         getCrisisAlerts: () => JSON.parse(JSON.stringify(generateCrisisAlerts())),
         getEmergencyContacts: () => JSON.parse(JSON.stringify(generateEmergencyContacts())),
-        
+
         // Utility functions
         getPatientById: (id) => patients.find(p => p.id === id),
         getCriticalPatients: () => patients.filter(p => p.riskScore > 75),
         getHighRiskPatients: () => patients.filter(p => p.riskScore >= 60 && p.riskScore <= 75),
         getModeratePatients: () => patients.filter(p => p.riskScore >= 40 && p.riskScore < 60),
         getLowRiskPatients: () => patients.filter(p => p.riskScore < 40),
-        
+
         // Statistics
         getStatistics: () => {
             const all = patients;

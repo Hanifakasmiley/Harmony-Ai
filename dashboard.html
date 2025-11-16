@@ -115,6 +115,7 @@
                 opacity: 0;
                 transform: translateY(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -217,17 +218,19 @@
 
         <!-- Dashboard Header -->
         <div class="dashboard-header">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                 <div>
                     <h1 id="dashboardTitle" style="margin: 0; font-size: 2rem;">Dashboard</h1>
-                    <p id="dashboardSubtitle" style="margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 1rem;">Welcome to Harmony AI</p>
+                    <p id="dashboardSubtitle" style="margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 1rem;">Welcome to
+                        Harmony AI</p>
                 </div>
                 <div class="role-badge" id="roleBadge">Loading...</div>
             </div>
         </div>
 
-        <!-- Statistics -->
-        <div class="stats-grid" id="statsGrid">
+        <!-- Statistics (Hidden for Patients) -->
+        <div class="stats-grid" id="statsGrid" style="display: none;">
             <div class="stat-card">
                 <div style="font-size: 1.5rem;">👥</div>
                 <div class="stat-value" id="totalPatients">0</div>
@@ -307,19 +310,22 @@
             document.getElementById('dashboardTitle').textContent = `${designation} Dashboard`;
             document.getElementById('roleBadge').textContent = `👤 ${designation}`;
 
-            // Update stats
-            const stats = PatientData.getStatistics();
-            document.getElementById('totalPatients').textContent = stats.totalPatients;
-            document.getElementById('criticalCount').textContent = stats.criticalCount;
-            document.getElementById('highRiskCount').textContent = stats.highRiskCount;
-            document.getElementById('avgRiskScore').textContent = stats.avgRiskScore;
+            // Update stats (only show for non-patient roles)
+            if (userRole !== 'patient') {
+                const stats = PatientData.getStatistics();
+                document.getElementById('totalPatients').textContent = stats.totalPatients;
+                document.getElementById('criticalCount').textContent = stats.criticalCount;
+                document.getElementById('highRiskCount').textContent = stats.highRiskCount;
+                document.getElementById('avgRiskScore').textContent = stats.avgRiskScore;
+                document.getElementById('statsGrid').style.display = 'grid';
+            }
 
             // Check for critical alerts
             const criticalAlerts = PatientData.getCrisisAlerts();
             if (criticalAlerts.length > 0 && userRole !== 'patient') {
                 const banner = document.getElementById('crisisBanner');
                 banner.classList.add('show');
-                document.getElementById('crisisMessage').textContent = 
+                document.getElementById('crisisMessage').textContent =
                     `${criticalAlerts.length} critical patient(s) require immediate attention. Please review crisis alerts.`;
             }
 
