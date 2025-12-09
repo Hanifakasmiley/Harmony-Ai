@@ -74,7 +74,8 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             localStorage.setItem('userName', name);
             localStorage.setItem('userEmail', email);
-            localStorage.setItem('userPassword', password);
+            // Do NOT store plaintext passwords in localStorage — security risk.
+            // localStorage.setItem('userPassword', password);
             localStorage.setItem('userRole', selectedRole);
             localStorage.setItem('designation', designationText);
         } catch (err) {

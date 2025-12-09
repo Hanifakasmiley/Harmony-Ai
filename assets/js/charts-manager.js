@@ -21,6 +21,7 @@ const ChartsManager = (function () {
 
         const moodScores = dates.map(date => {
             const logsForDate = moodLogs.filter(m => m.date === date);
+            if (!logsForDate.length) return 0;
             const avg = logsForDate.reduce((sum, m) => sum + (m.stressLevel || 0), 0) / logsForDate.length;
             return Math.round(avg);
         });
@@ -263,7 +264,7 @@ const ChartsManager = (function () {
         if (!canvas) return;
 
         const analysis = PatientData.getAIAnalysis().slice(0, 5);
-        const avgConfidence = analysis.reduce((sum, a) => sum + parseFloat(a.confidenceScore), 0) / analysis.length;
+        const avgConfidence = analysis.length ? analysis.reduce((sum, a) => sum + parseFloat(a.confidenceScore), 0) / analysis.length : 0;
 
         const ctx = canvas.getContext('2d');
         charts[canvasId] = new Chart(ctx, {

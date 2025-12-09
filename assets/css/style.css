@@ -1,4 +1,4 @@
-/* ===== MODERN HERMONY AI DESIGN ===== */
+/* ===== MODERN HARMONY AI DESIGN ===== */
 
 * {
   margin: 0;
@@ -262,6 +262,29 @@ body {
 
 .feature-card:hover p {
   color: rgba(255, 255, 255, 0.9);
+}
+
+/* Accessibility: ensure text is visible on gradient/colored cards */
+.feature-card h3,
+.feature-card .feature-icon {
+  color: #ffffff !important;
+}
+
+.feature-card p {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Crisis / Hotline visibility */
+.crisis-content h2,
+.crisis-content p,
+.hotline-card h3,
+.hotline-number {
+  color: #ffffff !important;
+}
+
+/* Section titles on colored backgrounds */
+.section-title {
+  color: #ffffff !important;
 }
 
 /* ===== STATS SECTION ===== */

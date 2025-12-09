@@ -1,4 +1,4 @@
-/* ===== HERMONY AI - UNIFIED DARK THEME ===== */
+/* ===== HARMONY AI - UNIFIED DARK THEME ===== */
 
 * {
   margin: 0;
@@ -1181,4 +1181,42 @@ body.dark-mode .footer {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary-dark);
+}
+
+/* Ensure high contrast text on gradient/colored cards and sections */
+.feature-card h3,
+.feature-card .feature-icon,
+.dashboard-header h1,
+.dashboard-header p,
+.section-title,
+.content-section h2,
+.content-section h3,
+.crisis-banner h3,
+.crisis-banner p,
+.crisis-content h2,
+.crisis-content p,
+.hotline-card h3,
+.hotline-number {
+  color: #ffffff !important;
+}
+
+/* Make feature descriptions and small labels more visible on gradients */
+.feature-card p,
+.stat-label,
+.data-table table thead,
+.data-table table thead th {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Strong override: headings inside main content and feature headers should be white
+   This ensures large section titles on colored backgrounds remain readable. */
+.main-content h1,
+.main-content h2,
+.main-content h3,
+.feature-header h1,
+.feature-header h2,
+.feature-header p,
+.features .feature-card h3,
+.hero h1 {
+  color: #ffffff !important;
 }

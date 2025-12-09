@@ -19,6 +19,8 @@ const DashboardGenerators = (function () {
     function generatePatientDashboard() {
         const data = PatientData.getPatients();
         const currentUser = data[0]; // First patient as example
+        const counselorParts = (currentUser && currentUser.counselor) ? currentUser.counselor.split(' ') : [''];
+        const counselorLast = counselorParts.length > 1 ? counselorParts.slice(1).join(' ') : counselorParts[0];
         const moodLogs = PatientData.getMoodLogs().filter(m => m.patientId === currentUser.id).slice(0, 7);
         const sessions = PatientData.getSessions().filter(s => s.patientId === currentUser.id).slice(0, 3);
         const recommendations = PatientData.getRecommendations().filter(r => r.patientId === currentUser.id).slice(0, 3);
@@ -37,7 +39,7 @@ const DashboardGenerators = (function () {
             <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 1rem; border-radius: 8px;">
                 <div style="font-size: 0.9rem; opacity: 0.9;">Sessions Completed</div>
                 <div style="font-size: 2rem; font-weight: bold;">${sessions.length}</div>
-                <div style="font-size: 0.85rem; margin-top: 0.5rem;">With Dr. ${currentUser.counselor.split(' ')[1]}</div>
+                <div style="font-size: 0.85rem; margin-top: 0.5rem;">With Dr. ${counselorLast}</div>
             </div>
             <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 1rem; border-radius: 8px;">
                 <div style="font-size: 0.9rem; opacity: 0.9;">Improvement</div>
