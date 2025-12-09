@@ -203,24 +203,13 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/patient-data.js"></script>
-    <script src="assets/js/api-service.js"></script>
     <script src="assets/js/charts-manager.js"></script>
     <script src="assets/js/theme.js"></script>
 
     <script>
-        async function loadCrisisContent() {
-            // Emergency Contacts - try API first
-            let emergencyContacts;
-            try {
-                emergencyContacts = await API.getEmergencyContacts();
-                if (!emergencyContacts || emergencyContacts.length === 0) {
-                    throw new Error('No data');
-                }
-            } catch (error) {
-                console.log('Using mock emergency contacts:', error.message);
-                emergencyContacts = PatientData.getEmergencyContacts();
-            }
-
+        function loadCrisisContent() {
+            // Emergency Contacts
+            const emergencyContacts = PatientData.getEmergencyContacts();
             let hotlinesHtml = '';
             emergencyContacts.forEach(contact => {
                 hotlinesHtml += `
@@ -234,37 +223,23 @@
             });
             document.getElementById('hotlinesList').innerHTML = hotlinesHtml;
 
-            // Crisis Alerts - try API first
-            let alerts;
-            try {
-                alerts = await API.getCrisisAlerts();
-                if (!alerts) alerts = [];
-            } catch (error) {
-                console.log('Using mock crisis alerts:', error.message);
-                alerts = PatientData.getCrisisAlerts();
-            }
-
+            // Crisis Alerts
+            const alerts = PatientData.getCrisisAlerts();
             let alertsHtml = '';
             alerts.forEach(alert => {
-                const patientName = alert.patient_name || alert.patientName;
-                const alertId = alert.id || alert.alertId;
-                const assignedCounselor = alert.assigned_counselor || alert.assignedCounselor;
-                const emergencyContact = alert.emergency_contact || alert.emergencyContact;
-                const actionTaken = alert.action_taken || alert.actionTaken;
                 const severityColor = alert.severity === 'Critical' ? '#ff6b6b' : '#ffa500';
-
                 alertsHtml += `
                     <div class="alert-card alert-${alert.severity.toLowerCase()}">
                         <div style="display: flex; justify-content: space-between; align-items: start;">
                             <div>
-                                <h5 style="margin-bottom: 0.5rem;">🚨 ${patientName}</h5>
+                                <h5 style="margin-bottom: 0.5rem;">🚨 ${alert.patientName}</h5>
                                 <p style="margin: 0.5rem 0; font-size: 0.9rem;">
-                                    <strong>Alert ID:</strong> ${alertId}<br>
+                                    <strong>Alert ID:</strong> ${alert.alertId}<br>
                                     <strong>Severity:</strong> <span style="color: ${severityColor}; font-weight: 600;">${alert.severity}</span><br>
-                                    <strong>Assigned Counselor:</strong> ${assignedCounselor}<br>
-                                    <strong>Emergency Contact:</strong> ${emergencyContact}<br>
+                                    <strong>Assigned Counselor:</strong> ${alert.assignedCounselor}<br>
+                                    <strong>Emergency Contact:</strong> ${alert.emergencyContact}<br>
                                     <strong>Status:</strong> ${alert.status}<br>
-                                    <strong>Action Taken:</strong> ${actionTaken}
+                                    <strong>Action Taken:</strong> ${alert.actionTaken}
                                 </p>
                             </div>
                         </div>
@@ -294,7 +269,6 @@
             });
             document.getElementById('copingStrategies').innerHTML = strategiesHtml;
 
-            // Chart
             ChartsManager.createCrisisTimelineChart();
         }
 

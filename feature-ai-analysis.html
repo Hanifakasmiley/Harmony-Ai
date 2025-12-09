@@ -149,37 +149,15 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/patient-data.js"></script>
-    <script src="assets/js/api-service.js"></script>
     <script src="assets/js/charts-manager.js"></script>
     <script src="assets/js/theme.js"></script>
 
     <script>
-        async function loadAIAnalysis() {
-            let analysis = [];
-
-            try {
-                const apiAnalysis = await API.getAIAnalysis();
-                if (apiAnalysis && apiAnalysis.length > 0) {
-                    analysis = apiAnalysis.map(a => ({
-                        patientId: a.patient_id,
-                        riskScore: a.risk_score,
-                        dominantEmotion: a.dominant_emotion,
-                        emotionalTrend: a.emotional_trend,
-                        confidenceScore: a.confidence_score,
-                        sentimentScore: a.sentiment_score,
-                        keywordFlags: a.keyword_flags ? a.keyword_flags.split(',') : [],
-                        aiRecommendation: a.ai_recommendation
-                    }));
-                } else {
-                    throw new Error('No data');
-                }
-            } catch (error) {
-                console.log('Using mock AI analysis:', error.message);
-                analysis = PatientData.getAIAnalysis().slice(0, 5);
-            }
+        function loadAIAnalysis() {
+            const analysis = PatientData.getAIAnalysis().slice(0, 5);
 
             let overviewHtml = '<h3>📈 Analysis Overview</h3><div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">';
-            analysis.forEach((item, idx) => {
+            analysis.forEach((item) => {
                 const riskClass = item.riskScore > 75 ? 'risk-critical' : item.riskScore > 60 ? 'risk-high' : item.riskScore > 40 ? 'risk-moderate' : 'risk-low';
                 overviewHtml += `
                     <div class="analysis-card">
@@ -198,14 +176,11 @@
             overviewHtml += '</div>';
             document.getElementById('analysisOverview').innerHTML = overviewHtml;
 
-            // Charts
             ChartsManager.createRiskDistributionChart();
             ChartsManager.createAIConfidenceChart();
 
-            // AI Insights
             let insightsHtml = '';
             analysis.forEach(item => {
-                const keywordFlags = Array.isArray(item.keywordFlags) ? item.keywordFlags.join(', ') : item.keywordFlags;
                 insightsHtml += `
                     <div style="padding: 1rem; border-bottom: 1px solid var(--border-color);">
                         <h5 style="margin-bottom: 0.5rem;">💭 Analysis for ${item.patientId}</h5>
@@ -213,7 +188,7 @@
                             <strong>Dominant Emotion:</strong> ${item.dominantEmotion}<br>
                             <strong>Sentiment Score:</strong> ${item.sentimentScore}<br>
                             <strong>Trend:</strong> ${item.emotionalTrend}<br>
-                            <strong>Key Findings:</strong> ${keywordFlags}<br>
+                            <strong>Key Findings:</strong> ${item.keywordFlags.join(', ')}<br>
                             <strong>Recommendation:</strong> ${item.aiRecommendation}
                         </p>
                     </div>
