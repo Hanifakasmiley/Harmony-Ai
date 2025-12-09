@@ -230,48 +230,50 @@ body {
   background: var(--primary-gradient);
   opacity: 0;
   transition: opacity 0.3s;
-  z-index: -1;
+  z-index: 0;
 }
 
 .feature-card:hover {
   transform: translateY(-15px);
   box-shadow: var(--shadow-lg);
-  color: white;
 }
 
 .feature-card:hover::before {
-  opacity: 0.95;
+  opacity: 1;
 }
 
 .feature-icon {
   font-size: 3.5rem;
   margin-bottom: 1.5rem;
   display: inline-block;
+  position: relative;
+  z-index: 1;
 }
 
 .feature-card h3 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
   font-weight: 600;
+  color: var(--text-dark);
+  position: relative;
+  z-index: 1;
 }
 
 .feature-card p {
   color: var(--text-light);
   line-height: 1.8;
+  position: relative;
+  z-index: 1;
+}
+
+/* Text turns white on hover */
+.feature-card:hover h3,
+.feature-card:hover .feature-icon {
+  color: #ffffff;
 }
 
 .feature-card:hover p {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-/* Accessibility: ensure text is visible on gradient/colored cards */
-.feature-card h3,
-.feature-card .feature-icon {
-  color: #ffffff !important;
-}
-
-.feature-card p {
-  color: rgba(255, 255, 255, 0.95) !important;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 /* Crisis / Hotline visibility */

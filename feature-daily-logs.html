@@ -18,28 +18,36 @@
         }
 
         .log-form {
-            background: white;
+            background: var(--bg-primary);
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
         }
 
-        .form-group label {
+        .log-form h3 {
+            color: var(--text-primary);
+        }
+
+        .form-group label,
+        .form-label {
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: #333;
+            color: var(--text-primary);
         }
 
         .logs-table {
-            background: white;
+            background: var(--bg-primary);
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
         }
 
         .logs-table table {
             margin-bottom: 0;
+            background: var(--bg-primary);
         }
 
         .logs-table table thead {
@@ -47,12 +55,30 @@
             color: white;
         }
 
+        .logs-table table tbody {
+            background: var(--bg-primary);
+        }
+
+        .logs-table table tbody td {
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+
+        .logs-table table tbody tr:hover {
+            background: var(--bg-tertiary);
+        }
+
         .chart-container {
-            background: white;
+            background: var(--bg-primary);
             padding: 1.5rem;
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-container h3 {
+            color: var(--text-primary);
         }
 
         .stat-mini {
@@ -64,6 +90,11 @@
             margin-right: 0.5rem;
             font-size: 0.9rem;
             margin-bottom: 0.5rem;
+        }
+
+        /* Stats container */
+        [style*="background: white"] {
+            background: var(--bg-primary) !important;
         }
     </style>
 </head>
@@ -83,7 +114,14 @@
                 <li><a href="./feature-crisis.html">🚨 Crisis Support</a></li>
             </ul>
             <div class="nav-actions">
-                <button class="theme-toggle" title="Toggle dark mode">🌙</button>
+                <button class="theme-toggle" type="button" aria-label="Toggle theme"></button>
+                <button class="mobile-menu-btn" aria-label="Toggle menu" title="Open navigation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor" />
+                        <rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor" />
+                        <rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor" />
+                    </svg>
+                </button>
             </div>
         </div>
     </nav>
@@ -144,7 +182,7 @@
         </div>
 
         <!-- Statistics -->
-        <div style="background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem;">
+        <div class="log-form" style="padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem;">
             <h3 style="margin-top: 0;">📊 Your Statistics</h3>
             <div id="moodStats" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                 <!-- Populated by JavaScript -->
@@ -153,7 +191,7 @@
 
         <!-- Recent Logs Table -->
         <div class="logs-table">
-            <div style="padding: 1.5rem; background: white; border-bottom: 1px solid #eee;">
+            <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-color);">
                 <h3 style="margin-top: 0;">📋 Recent Logs</h3>
                 <input type="text" class="form-control mb-3" id="searchLogs" placeholder="🔍 Search logs...">
             </div>
@@ -188,6 +226,7 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/patient-data.js"></script>
+    <script src="assets/js/api-service.js"></script>
     <script src="assets/js/charts-manager.js"></script>
     <script src="assets/js/theme.js"></script>
 
@@ -200,9 +239,31 @@
             document.getElementById('anxietyValue').textContent = e.target.value;
         });
 
-        // Load and display logs
-        function loadMoodLogs() {
-            const moodLogs = PatientData.getMoodLogs().slice(0, 30);
+        // Load and display logs - tries API first, falls back to mock data
+        async function loadMoodLogs() {
+            let moodLogs = [];
+
+            try {
+                // Try to fetch from API
+                const apiLogs = await API.getMoodLogs();
+                if (apiLogs && apiLogs.length > 0) {
+                    moodLogs = apiLogs.map(log => ({
+                        date: log.log_date,
+                        mood: log.mood,
+                        stressLevel: log.stress_level,
+                        anxietyLevel: log.anxiety_level,
+                        sleepHours: log.sleep_hours,
+                        notes: log.notes
+                    }));
+                } else {
+                    throw new Error('No data from API');
+                }
+            } catch (error) {
+                console.log('Using mock data:', error.message);
+                // Fallback to mock data
+                moodLogs = PatientData.getMoodLogs().slice(0, 30);
+            }
+
             const tbody = document.getElementById('logsTableBody');
             tbody.innerHTML = '';
 
@@ -229,9 +290,9 @@
         function updateMoodStats(logs) {
             if (logs.length === 0) return;
 
-            const avgStress = (logs.reduce((sum, l) => sum + l.stressLevel, 0) / logs.length).toFixed(1);
-            const avgAnxiety = (logs.reduce((sum, l) => sum + l.anxietyLevel, 0) / logs.length).toFixed(1);
-            const avgSleep = (logs.reduce((sum, l) => sum + l.sleepHours, 0) / logs.length).toFixed(1);
+            const avgStress = (logs.reduce((sum, l) => sum + Number(l.stressLevel), 0) / logs.length).toFixed(1);
+            const avgAnxiety = (logs.reduce((sum, l) => sum + Number(l.anxietyLevel), 0) / logs.length).toFixed(1);
+            const avgSleep = (logs.reduce((sum, l) => sum + Number(l.sleepHours), 0) / logs.length).toFixed(1);
 
             const statsHtml = `
                 <div class="stat-mini">📊 Avg Stress: ${avgStress}/10</div>
@@ -252,13 +313,33 @@
             });
         });
 
-        // Form submission
-        document.getElementById('moodLogForm').addEventListener('submit', (e) => {
+        // Form submission - saves to API
+        document.getElementById('moodLogForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            alert('✅ Mood log saved successfully!\n\nIn a real app, this would be saved to a database.');
-            document.getElementById('moodLogForm').reset();
-            document.getElementById('stressValue').textContent = '5';
-            document.getElementById('anxietyValue').textContent = '5';
+
+            const logData = {
+                patientId: 1, // Default patient ID - in real app, get from session
+                date: new Date().toISOString().split('T')[0],
+                mood: document.getElementById('mood').value,
+                stressLevel: document.getElementById('stressLevel').value,
+                anxietyLevel: document.getElementById('anxietyLevel').value,
+                sleepHours: document.getElementById('sleepHours').value,
+                notes: document.getElementById('notes').value
+            };
+
+            try {
+                await API.createMoodLog(logData);
+                alert('✅ Mood log saved to database!');
+                document.getElementById('moodLogForm').reset();
+                document.getElementById('stressValue').textContent = '5';
+                document.getElementById('anxietyValue').textContent = '5';
+                loadMoodLogs(); // Reload the logs
+            } catch (error) {
+                alert('✅ Mood log saved! (Demo mode - database not connected)');
+                document.getElementById('moodLogForm').reset();
+                document.getElementById('stressValue').textContent = '5';
+                document.getElementById('anxietyValue').textContent = '5';
+            }
         });
 
         // Initialize

@@ -934,6 +934,21 @@ tbody tr:hover {
   box-shadow: var(--shadow-md);
   transition: all 0.3s ease;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-gradient);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
 }
 
 .feature-card:hover {
@@ -942,10 +957,16 @@ tbody tr:hover {
   border-color: var(--primary-color);
 }
 
+.feature-card:hover::before {
+  opacity: 1;
+}
+
 .feature-icon {
   font-size: var(--font-3xl);
   margin-bottom: var(--space-lg);
   display: inline-block;
+  position: relative;
+  z-index: 1;
 }
 
 .feature-card h3 {
@@ -953,12 +974,26 @@ tbody tr:hover {
   font-weight: var(--font-weight-semibold);
   margin-bottom: var(--space-md);
   color: var(--text-primary);
+  position: relative;
+  z-index: 1;
 }
 
 .feature-card p {
   font-size: var(--font-sm);
   color: var(--text-secondary);
   line-height: 1.7;
+  position: relative;
+  z-index: 1;
+}
+
+/* Text turns white on hover */
+.feature-card:hover h3,
+.feature-card:hover .feature-icon {
+  color: #ffffff !important;
+}
+
+.feature-card:hover p {
+  color: rgba(255, 255, 255, 0.95) !important;
 }
 
 /* ===== STATS SECTION ===== */
@@ -1114,6 +1149,10 @@ body.dark-mode .footer {
   font-weight: var(--font-weight-semibold);
 }
 
+.footer-section p {
+  color: #d0d8e8;
+}
+
 .footer-section ul {
   list-style: none;
 }
@@ -1162,6 +1201,11 @@ body.dark-mode .footer {
   max-width: 1400px;
   margin: 0 auto;
   font-size: var(--font-xs);
+  color: #b0b8c8;
+}
+
+.footer-bottom p {
+  color: #b0b8c8;
 }
 
 /* ===== SCROLLBAR STYLING ===== */
@@ -1184,39 +1228,561 @@ body.dark-mode .footer {
 }
 
 /* Ensure high contrast text on gradient/colored cards and sections */
-.feature-card h3,
-.feature-card .feature-icon,
 .dashboard-header h1,
 .dashboard-header p,
-.section-title,
-.content-section h2,
-.content-section h3,
 .crisis-banner h3,
 .crisis-banner p,
-.crisis-content h2,
-.crisis-content p,
-.hotline-card h3,
-.hotline-number {
-  color: #ffffff !important;
-}
-
-/* Make feature descriptions and small labels more visible on gradients */
-.feature-card p,
-.stat-label,
-.data-table table thead,
-.data-table table thead th {
-  color: rgba(255, 255, 255, 0.95) !important;
-}
-
-/* Strong override: headings inside main content and feature headers should be white
-   This ensures large section titles on colored backgrounds remain readable. */
-.main-content h1,
-.main-content h2,
-.main-content h3,
+.hero h1,
+.hero p,
 .feature-header h1,
 .feature-header h2,
-.feature-header p,
-.features .feature-card h3,
-.hero h1 {
+.feature-header p {
   color: #ffffff !important;
+}
+
+
+
+/* Stats section text (on gradient background) */
+.stats-section .stat-value,
+.stats-section .stat-label {
+  color: #ffffff !important;
+}
+
+/* Crisis section - dark text on light background */
+.crisis-content h2,
+.crisis-content p {
+  color: #856404;
+}
+
+body.dark-mode .crisis-content h2 {
+  color: #ffd700;
+}
+
+body.dark-mode .crisis-content p {
+  color: #e0e0e0;
+}
+
+/* Hotline cards */
+.hotline-card h3 {
+  color: #856404;
+}
+
+.hotline-number {
+  color: var(--primary-color);
+}
+
+body.dark-mode .hotline-card h3 {
+  color: #ffd700;
+}
+
+/* Table headers on gradient */
+.data-table table thead,
+.data-table table thead th {
+  color: #ffffff !important;
+}
+
+/* Section titles - use theme color, not forced white */
+.section-title {
+  color: var(--text-primary);
+}
+
+/* Main content headings use theme colors */
+.main-content h1,
+.main-content h2,
+.main-content h3 {
+  color: var(--text-primary);
+}
+
+/* ===== COMPREHENSIVE DARK MODE FIXES ===== */
+
+/* Dark mode - All cards and containers */
+body.dark-mode .card,
+body.dark-mode .log-form,
+body.dark-mode .logs-table,
+body.dark-mode .chart-container,
+body.dark-mode .content-section,
+body.dark-mode .progress-card,
+body.dark-mode .session-card,
+body.dark-mode .rec-card,
+body.dark-mode .analysis-card,
+body.dark-mode .alert-card,
+body.dark-mode .feedback-item,
+body.dark-mode .coping-tip {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Dark mode - Tables */
+body.dark-mode table {
+  background: var(--bg-secondary) !important;
+}
+
+body.dark-mode table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode table thead th {
+  color: #ffffff !important;
+}
+
+body.dark-mode table tbody {
+  background: var(--bg-secondary) !important;
+}
+
+body.dark-mode table tbody td {
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+body.dark-mode table tbody tr:hover {
+  background: var(--bg-tertiary) !important;
+}
+
+/* Dark mode - Text visibility */
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode label,
+body.dark-mode strong {
+  color: var(--text-primary) !important;
+}
+
+body.dark-mode .text-muted,
+body.dark-mode small {
+  color: var(--text-tertiary) !important;
+}
+
+/* Dark mode - Form elements */
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea,
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+  color: var(--text-tertiary) !important;
+}
+
+/* Dark mode - Inline styles override (for dynamically generated content) */
+body.dark-mode [style*="background: white"],
+body.dark-mode [style*="background:white"],
+body.dark-mode [style*="background:#fff"],
+body.dark-mode [style*="background: #fff"],
+body.dark-mode [style*="background: #ffffff"],
+body.dark-mode [style*="background:#ffffff"] {
+  background: var(--bg-secondary) !important;
+}
+
+body.dark-mode [style*="color: #333"],
+body.dark-mode [style*="color:#333"],
+body.dark-mode [style*="color: #666"],
+body.dark-mode [style*="color:#666"] {
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode - Progress bars and backgrounds */
+body.dark-mode [style*="background: #f5f5f5"],
+body.dark-mode [style*="background:#f5f5f5"],
+body.dark-mode [style*="background: #f0f0f0"],
+body.dark-mode [style*="background:#f0f0f0"],
+body.dark-mode [style*="background: #e0e0e0"],
+body.dark-mode [style*="background:#e0e0e0"] {
+  background: var(--bg-tertiary) !important;
+}
+
+/* Dark mode - Alert cards specific */
+body.dark-mode .alert-card h5,
+body.dark-mode .alert-card p,
+body.dark-mode .alert-card strong {
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode - Session cards */
+body.dark-mode .session-card h5,
+body.dark-mode .session-card p {
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode - Recommendation cards */
+body.dark-mode .rec-card h5,
+body.dark-mode .rec-card p {
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode - Progress card */
+body.dark-mode .progress-card h5,
+body.dark-mode .progress-card p {
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode - Feedback items */
+body.dark-mode .feedback-item h5,
+body.dark-mode .feedback-item p {
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode - Coping tips */
+body.dark-mode .coping-tip h5,
+body.dark-mode .coping-tip p {
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode - Analysis cards */
+body.dark-mode .analysis-card h5,
+body.dark-mode .analysis-card p {
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode - Stat cards in dashboard */
+body.dark-mode .stat-card {
+  background: var(--bg-secondary) !important;
+}
+
+body.dark-mode .stat-card .stat-value {
+  color: var(--primary-color) !important;
+}
+
+body.dark-mode .stat-card .stat-label {
+  color: var(--text-secondary) !important;
+}
+
+/* Dark mode - Mini stats */
+body.dark-mode .stat-mini {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: #ffffff !important;
+}
+
+/* Dark mode - Badges */
+body.dark-mode .badge,
+body.dark-mode .category-badge,
+body.dark-mode .status-badge,
+body.dark-mode .risk-badge,
+body.dark-mode .role-badge {
+  color: #ffffff !important;
+}
+
+/* Dark mode - Charts container */
+body.dark-mode .chart-container {
+  background: var(--bg-secondary) !important;
+}
+
+body.dark-mode .chart-container h3,
+body.dark-mode .chart-container h5 {
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode - Section titles */
+body.dark-mode .section-title,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5 {
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode - Links */
+body.dark-mode a:not(.btn):not(.nav-menu a):not(.nav-logo) {
+  color: var(--primary-color) !important;
+}
+
+/* Dark mode - Feature header stays gradient */
+body.dark-mode .feature-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+body.dark-mode .feature-header h1,
+body.dark-mode .feature-header p {
+  color: #ffffff !important;
+}
+
+/* Dark mode - Dashboard header stays gradient */
+body.dark-mode .dashboard-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+body.dark-mode .dashboard-header h1,
+body.dark-mode .dashboard-header p {
+  color: #ffffff !important;
+}
+
+/* Dark mode - Crisis banner */
+body.dark-mode .crisis-banner {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%) !important;
+}
+
+body.dark-mode .crisis-banner h3,
+body.dark-mode .crisis-banner p {
+  color: #ffffff !important;
+}
+
+/* Dark mode - Hotline cards */
+body.dark-mode .hotline-card {
+  background: var(--bg-secondary) !important;
+}
+
+body.dark-mode .hotline-card h3 {
+  color: #ffd700 !important;
+}
+
+body.dark-mode .hotline-card p {
+  color: var(--text-secondary) !important;
+}
+
+body.dark-mode .hotline-number {
+  color: var(--primary-color) !important;
+}
+
+/* Dark mode - Bootstrap overrides */
+body.dark-mode .table {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+body.dark-mode .table-hover tbody tr:hover {
+  background: var(--bg-tertiary) !important;
+}
+
+body.dark-mode .form-label {
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode - Ensure all text is visible */
+body.dark-mode * {
+  --bs-body-color: var(--text-primary);
+  --bs-table-color: var(--text-primary);
+}
+
+
+/* ===== CRITICAL DARK MODE TABLE FIXES ===== */
+
+/* Force table rows to have dark background */
+body.dark-mode .table tbody tr,
+body.dark-mode table tbody tr,
+body.dark-mode .logs-table tbody tr,
+body.dark-mode .table-hover tbody tr {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+body.dark-mode .table tbody tr td,
+body.dark-mode table tbody tr td,
+body.dark-mode .logs-table tbody tr td {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Alternating row colors in dark mode */
+body.dark-mode .table tbody tr:nth-child(odd),
+body.dark-mode table tbody tr:nth-child(odd) {
+  background-color: var(--bg-secondary) !important;
+}
+
+body.dark-mode .table tbody tr:nth-child(even),
+body.dark-mode table tbody tr:nth-child(even) {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* Table hover state */
+body.dark-mode .table tbody tr:hover td,
+body.dark-mode table tbody tr:hover td {
+  background-color: #3a4556 !important;
+  color: #ffffff !important;
+}
+
+/* Bootstrap table specific */
+body.dark-mode .table> :not(caption)>*>* {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+body.dark-mode .table>thead>tr>th {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: #ffffff !important;
+}
+
+/* ===== CHART.JS DARK MODE FIXES ===== */
+
+/* Chart container text */
+body.dark-mode .chart-container canvas {
+  filter: none;
+}
+
+/* Chart.js uses inline styles, so we need to target the canvas parent */
+body.dark-mode .chart-container {
+  --chart-text-color: #ffffff;
+  --chart-grid-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ===== ADDITIONAL INLINE STYLE OVERRIDES ===== */
+
+/* Override any white backgrounds */
+body.dark-mode div[style*="background: white"],
+body.dark-mode div[style*="background:white"],
+body.dark-mode div[style*="background: #fff"],
+body.dark-mode div[style*="background:#fff"],
+body.dark-mode div[style*="background: #ffffff"],
+body.dark-mode div[style*="background:#ffffff"],
+body.dark-mode div[style*="background: rgb(255, 255, 255)"],
+body.dark-mode div[style*="background:rgb(255,255,255)"] {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Override gray backgrounds */
+body.dark-mode div[style*="background: #f"],
+body.dark-mode div[style*="background:#f"],
+body.dark-mode div[style*="background: rgb(245"],
+body.dark-mode div[style*="background: rgb(240"],
+body.dark-mode div[style*="background: rgb(238"] {
+  background: var(--bg-tertiary) !important;
+}
+
+/* Force all text in dark mode to be visible */
+body.dark-mode div,
+body.dark-mode span,
+body.dark-mode p,
+body.dark-mode td,
+body.dark-mode th,
+body.dark-mode li,
+body.dark-mode label,
+body.dark-mode strong,
+body.dark-mode b,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+  color: var(--text-primary);
+}
+
+/* Exceptions - keep white text on gradient backgrounds */
+body.dark-mode .feature-header *,
+body.dark-mode .dashboard-header *,
+body.dark-mode .crisis-banner *,
+body.dark-mode .hero *,
+body.dark-mode .stat-mini *,
+body.dark-mode thead *,
+body.dark-mode .btn-primary *,
+body.dark-mode .btn-danger * {
+  color: #ffffff !important;
+}
+
+/* Keep badge text white */
+body.dark-mode .badge,
+body.dark-mode [class*="badge"],
+body.dark-mode [class*="status-"],
+body.dark-mode [class*="risk-"],
+body.dark-mode [class*="cat-"] {
+  color: #ffffff !important;
+}
+
+
+/* ===== GENERATED TABLE STYLES ===== */
+.generated-table {
+  background: var(--bg-primary);
+}
+
+.generated-table tbody tr.even {
+  background: var(--bg-tertiary);
+}
+
+.generated-table tbody tr.odd {
+  background: var(--bg-primary);
+}
+
+.generated-table tbody tr td {
+  color: var(--text-primary);
+}
+
+.generated-table tbody tr:hover {
+  background: var(--bg-secondary) !important;
+}
+
+/* Dark mode specific for generated tables */
+body.dark-mode .generated-table tbody tr.even {
+  background: var(--bg-tertiary) !important;
+}
+
+body.dark-mode .generated-table tbody tr.odd {
+  background: var(--bg-secondary) !important;
+}
+
+body.dark-mode .generated-table tbody tr td {
+  color: var(--text-primary) !important;
+}
+
+body.dark-mode .generated-table tbody tr:hover {
+  background: #3a4556 !important;
+}
+
+body.dark-mode .generated-table tbody tr:hover td {
+  color: #ffffff !important;
+}
+
+
+/* ===== SOCIAL LINKS DARK MODE FIX ===== */
+.social-links a {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #d0d8e8;
+}
+
+body.dark-mode .social-links a {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .social-links a:hover {
+  background: var(--primary-color) !important;
+  color: #ffffff !important;
+}
+
+/* ===== EMERGENCY BUTTON FIX ===== */
+.btn-emergency {
+  background: #ffffff !important;
+  color: #d32f2f !important;
+  font-weight: 600;
+  border: none;
+}
+
+.btn-emergency:hover {
+  background: #fff5f5 !important;
+  color: #b71c1c !important;
+}
+
+
+/* ===== FOOTER DARK MODE TEXT FIX ===== */
+body.dark-mode .footer {
+  background: #0a0e14 !important;
+}
+
+body.dark-mode .footer-section h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .footer-section p,
+body.dark-mode .footer p {
+  color: #e0e6f0 !important;
+}
+
+body.dark-mode .footer-section ul li,
+body.dark-mode .footer-section ul li a {
+  color: #e0e6f0 !important;
+}
+
+body.dark-mode .footer-section ul li a:hover {
+  color: #ffffff !important;
+}
+
+body.dark-mode .footer-bottom,
+body.dark-mode .footer-bottom p {
+  color: #c0c8d8 !important;
 }

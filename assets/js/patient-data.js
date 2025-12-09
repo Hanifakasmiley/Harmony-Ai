@@ -299,11 +299,13 @@ const PatientData = (function () {
     // ===== EMERGENCY CONTACTS =====
     function generateEmergencyContacts() {
         const contacts = [
-            { country: 'USA', service: 'National Suicide Prevention Lifeline', number: '988', available: '24/7' },
-            { country: 'USA', service: 'Crisis Text Line', number: 'Text HOME to 741741', available: '24/7' },
-            { country: 'UK', service: 'Samaritans', number: '116 123', available: '24/7' },
-            { country: 'UK', service: 'Mind Infoline', number: '0300 123 3393', available: 'Mon-Fri 9-6' },
-            { country: 'International', service: 'International Association for Suicide Prevention', number: 'https://www.iasp.info/resources/Crisis_Centres/', available: 'Online' }
+            { country: '🇺🇸 USA', service: 'National Suicide Prevention Lifeline', number: '988', available: '24/7' },
+            { country: '🇺🇸 USA', service: 'Crisis Text Line', number: 'Text HOME to 741741', available: '24/7' },
+            { country: '🇬🇧 UK', service: 'Samaritans', number: '116 123', available: '24/7' },
+            { country: '🇬🇧 UK', service: 'Mind Infoline', number: '0300 123 3393', available: 'Mon-Fri 9-6' },
+            { country: '🇧🇩 Bangladesh', service: 'Kaan Pete Roi', number: '01779-554391', available: '6 PM - 10 PM' },
+            { country: '🇧🇩 Bangladesh', service: 'NIMH Helpline', number: '16789', available: '24/7' },
+            { country: '🌍 International', service: 'Befrienders Worldwide', number: 'Find Local Help', available: 'befrienders.org' }
         ];
         return contacts;
     }

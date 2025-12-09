@@ -2,13 +2,13 @@ const DashboardGenerators = (function () {
 
     // Helper function to generate HTML table
     function generateTable(headers, rows) {
-        let html = '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem;">';
+        let html = '<div style="overflow-x: auto;"><table class="generated-table" style="width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem;">';
         html += '<thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;"><tr>';
-        headers.forEach(h => html += `<th style="padding: 0.75rem; text-align: left; border: 1px solid #ddd;">${h}</th>`);
+        headers.forEach(h => html += `<th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">${h}</th>`);
         html += '</tr></thead><tbody>';
         rows.forEach((row, idx) => {
-            html += `<tr style="background: ${idx % 2 === 0 ? '#f5f5f5' : 'white'}; border: 1px solid #ddd;">`;
-            row.forEach(cell => html += `<td style="padding: 0.75rem; border: 1px solid #ddd;">${cell}</td>`);
+            html += `<tr class="table-row ${idx % 2 === 0 ? 'even' : 'odd'}">`;
+            row.forEach(cell => html += `<td style="padding: 0.75rem; border: 1px solid var(--border-color);">${cell}</td>`);
             html += '</tr>';
         });
         html += '</tbody></table></div>';

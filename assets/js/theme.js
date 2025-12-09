@@ -14,6 +14,9 @@
     }
     localStorage.setItem('theme', theme);
     updateThemeIcon(isDark);
+
+    // Dispatch custom event for charts to update
+    window.dispatchEvent(new CustomEvent('themeChanged', { detail: { isDark } }));
   }
 
   function updateThemeIcon(isDark) {

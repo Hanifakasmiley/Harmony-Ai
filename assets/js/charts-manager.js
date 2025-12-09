@@ -2,6 +2,48 @@ const ChartsManager = (function () {
 
     let charts = {};
 
+    // ===== DARK MODE DETECTION =====
+    function isDarkMode() {
+        return document.body.classList.contains('dark-mode');
+    }
+
+    function getChartColors() {
+        const dark = isDarkMode();
+        return {
+            textColor: dark ? '#ffffff' : '#333333',
+            gridColor: dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+            backgroundColor: dark ? '#1a1f2e' : '#ffffff'
+        };
+    }
+
+    function getDefaultOptions() {
+        const colors = getChartColors();
+        return {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: colors.textColor
+                    }
+                },
+                title: {
+                    color: colors.textColor
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: colors.textColor },
+                    grid: { color: colors.gridColor }
+                },
+                y: {
+                    ticks: { color: colors.textColor },
+                    grid: { color: colors.gridColor }
+                }
+            }
+        };
+    }
+
     // ===== DESTROY EXISTING CHARTS =====
     function destroyChart(canvasId) {
         if (charts[canvasId]) {
@@ -27,6 +69,9 @@ const ChartsManager = (function () {
         });
 
         const ctx = canvas.getContext('2d');
+        const colors = getChartColors();
+        const defaultOpts = getDefaultOptions();
+
         charts[canvasId] = new Chart(ctx, {
             type: 'line',
             data: {
@@ -47,14 +92,15 @@ const ChartsManager = (function () {
                 }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: true,
+                ...defaultOpts,
                 plugins: {
-                    legend: { display: true, position: 'top' },
-                    title: { display: true, text: '📈 Mood & Stress Trend (Last 14 Days)' }
+                    ...defaultOpts.plugins,
+                    legend: { display: true, position: 'top', labels: { color: colors.textColor } },
+                    title: { display: true, text: '📈 Mood & Stress Trend (Last 14 Days)', color: colors.textColor }
                 },
                 scales: {
-                    y: { beginAtZero: true, max: 10 }
+                    ...defaultOpts.scales,
+                    y: { ...defaultOpts.scales.y, beginAtZero: true, max: 10 }
                 }
             }
         });
@@ -68,6 +114,7 @@ const ChartsManager = (function () {
 
         const stats = PatientData.getStatistics();
         const ctx = canvas.getContext('2d');
+        const colors = getChartColors();
 
         charts[canvasId] = new Chart(ctx, {
             type: 'doughnut',
@@ -76,7 +123,7 @@ const ChartsManager = (function () {
                 datasets: [{
                     data: [stats.criticalCount, stats.highRiskCount, stats.moderateCount, stats.lowRiskCount],
                     backgroundColor: ['#ff6b6b', '#ffa500', '#FFD700', '#90ee90'],
-                    borderColor: '#fff',
+                    borderColor: isDarkMode() ? '#1a1f2e' : '#fff',
                     borderWidth: 2
                 }]
             },
@@ -84,8 +131,8 @@ const ChartsManager = (function () {
                 responsive: true,
                 maintainAspectRatio: true,
                 plugins: {
-                    legend: { display: true, position: 'bottom' },
-                    title: { display: true, text: '🎯 Patient Risk Distribution' }
+                    legend: { display: true, position: 'bottom', labels: { color: colors.textColor } },
+                    title: { display: true, text: '🎯 Patient Risk Distribution', color: colors.textColor }
                 }
             }
         });
@@ -101,6 +148,9 @@ const ChartsManager = (function () {
         const stressData = days.map(() => Math.floor(Math.random() * 8) + 3);
 
         const ctx = canvas.getContext('2d');
+        const colors = getChartColors();
+        const defaultOpts = getDefaultOptions();
+
         charts[canvasId] = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -117,14 +167,14 @@ const ChartsManager = (function () {
                 }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: true,
+                ...defaultOpts,
                 plugins: {
-                    legend: { display: true, position: 'top' },
-                    title: { display: true, text: '📊 Weekly Stress Patterns' }
+                    legend: { display: true, position: 'top', labels: { color: colors.textColor } },
+                    title: { display: true, text: '📊 Weekly Stress Patterns', color: colors.textColor }
                 },
                 scales: {
-                    y: { beginAtZero: true, max: 10 }
+                    ...defaultOpts.scales,
+                    y: { ...defaultOpts.scales.y, beginAtZero: true, max: 10 }
                 }
             }
         });
@@ -144,6 +194,9 @@ const ChartsManager = (function () {
         };
 
         const ctx = canvas.getContext('2d');
+        const colors = getChartColors();
+        const defaultOpts = getDefaultOptions();
+
         charts[canvasId] = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -156,15 +209,15 @@ const ChartsManager = (function () {
                 }]
             },
             options: {
+                ...defaultOpts,
                 indexAxis: 'x',
-                responsive: true,
-                maintainAspectRatio: true,
                 plugins: {
-                    legend: { display: true },
-                    title: { display: true, text: '✅ Session Outcomes' }
+                    legend: { display: true, labels: { color: colors.textColor } },
+                    title: { display: true, text: '✅ Session Outcomes', color: colors.textColor }
                 },
                 scales: {
-                    y: { beginAtZero: true }
+                    ...defaultOpts.scales,
+                    y: { ...defaultOpts.scales.y, beginAtZero: true }
                 }
             }
         });
@@ -181,6 +234,9 @@ const ChartsManager = (function () {
         const copingSkills = [50, 54, 58, 62, 65, 68, 70, 73, 75, 77, 79, 81];
 
         const ctx = canvas.getContext('2d');
+        const colors = getChartColors();
+        const defaultOpts = getDefaultOptions();
+
         charts[canvasId] = new Chart(ctx, {
             type: 'line',
             data: {
@@ -207,14 +263,14 @@ const ChartsManager = (function () {
                 ]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: true,
+                ...defaultOpts,
                 plugins: {
-                    legend: { display: true, position: 'top' },
-                    title: { display: true, text: '📈 12-Week Progress Tracking' }
+                    legend: { display: true, position: 'top', labels: { color: colors.textColor } },
+                    title: { display: true, text: '📈 12-Week Progress Tracking', color: colors.textColor }
                 },
                 scales: {
-                    y: { beginAtZero: true, max: 100 }
+                    ...defaultOpts.scales,
+                    y: { ...defaultOpts.scales.y, beginAtZero: true, max: 100 }
                 }
             }
         });
@@ -233,6 +289,8 @@ const ChartsManager = (function () {
         });
 
         const ctx = canvas.getContext('2d');
+        const colors = getChartColors();
+
         charts[canvasId] = new Chart(ctx, {
             type: 'pie',
             data: {
@@ -242,7 +300,7 @@ const ChartsManager = (function () {
                     backgroundColor: [
                         '#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b'
                     ],
-                    borderColor: '#fff',
+                    borderColor: isDarkMode() ? '#1a1f2e' : '#fff',
                     borderWidth: 2
                 }]
             },
@@ -250,8 +308,8 @@ const ChartsManager = (function () {
                 responsive: true,
                 maintainAspectRatio: true,
                 plugins: {
-                    legend: { display: true, position: 'bottom' },
-                    title: { display: true, text: '🏥 Condition Distribution' }
+                    legend: { display: true, position: 'bottom', labels: { color: colors.textColor } },
+                    title: { display: true, text: '🏥 Condition Distribution', color: colors.textColor }
                 }
             }
         });
@@ -267,6 +325,8 @@ const ChartsManager = (function () {
         const avgConfidence = analysis.length ? analysis.reduce((sum, a) => sum + parseFloat(a.confidenceScore), 0) / analysis.length : 0;
 
         const ctx = canvas.getContext('2d');
+        const colors = getChartColors();
+
         charts[canvasId] = new Chart(ctx, {
             type: 'radar',
             data: {
@@ -284,11 +344,17 @@ const ChartsManager = (function () {
                 responsive: true,
                 maintainAspectRatio: true,
                 plugins: {
-                    legend: { display: true, position: 'top' },
-                    title: { display: true, text: '🤖 AI Model Confidence Scores' }
+                    legend: { display: true, position: 'top', labels: { color: colors.textColor } },
+                    title: { display: true, text: '🤖 AI Model Confidence Scores', color: colors.textColor }
                 },
                 scales: {
-                    r: { beginAtZero: true, max: 100 }
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: { color: colors.textColor },
+                        pointLabels: { color: colors.textColor },
+                        grid: { color: colors.gridColor }
+                    }
                 }
             }
         });
@@ -309,6 +375,9 @@ const ChartsManager = (function () {
         const alertCounts = days.map(() => Math.floor(Math.random() * 3));
 
         const ctx = canvas.getContext('2d');
+        const colors = getChartColors();
+        const defaultOpts = getDefaultOptions();
+
         charts[canvasId] = new Chart(ctx, {
             type: 'line',
             data: {
@@ -327,14 +396,14 @@ const ChartsManager = (function () {
                 }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: true,
+                ...defaultOpts,
                 plugins: {
-                    legend: { display: true },
-                    title: { display: true, text: '🚨 Crisis Alerts (Last 7 Days)' }
+                    legend: { display: true, labels: { color: colors.textColor } },
+                    title: { display: true, text: '🚨 Crisis Alerts (Last 7 Days)', color: colors.textColor }
                 },
                 scales: {
-                    y: { beginAtZero: true }
+                    ...defaultOpts.scales,
+                    y: { ...defaultOpts.scales.y, beginAtZero: true }
                 }
             }
         });
@@ -350,14 +419,16 @@ const ChartsManager = (function () {
         const adherence = stats.recommendationAdherence;
 
         const ctx = canvas.getContext('2d');
+        const colors = getChartColors();
+
         charts[canvasId] = new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: ['Adherent', 'Non-Adherent'],
                 datasets: [{
                     data: [adherence, 100 - adherence],
-                    backgroundColor: ['#90ee90', '#e0e0e0'],
-                    borderColor: '#fff',
+                    backgroundColor: ['#90ee90', isDarkMode() ? '#3a4556' : '#e0e0e0'],
+                    borderColor: isDarkMode() ? '#1a1f2e' : '#fff',
                     borderWidth: 3
                 }]
             },
@@ -382,6 +453,8 @@ const ChartsManager = (function () {
         const completionRate = stats.sessionCompletionRate;
 
         const ctx = canvas.getContext('2d');
+        const colors = getChartColors();
+
         charts[canvasId] = new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -389,7 +462,7 @@ const ChartsManager = (function () {
                 datasets: [{
                     data: [completionRate, 100 - completionRate],
                     backgroundColor: ['#4facfe', '#ffa500'],
-                    borderColor: '#fff',
+                    borderColor: isDarkMode() ? '#1a1f2e' : '#fff',
                     borderWidth: 3
                 }]
             },
@@ -397,8 +470,8 @@ const ChartsManager = (function () {
                 responsive: true,
                 maintainAspectRatio: true,
                 plugins: {
-                    legend: { display: true, position: 'bottom' },
-                    title: { display: true, text: '✅ Session Completion Rate' }
+                    legend: { display: true, position: 'bottom', labels: { color: colors.textColor } },
+                    title: { display: true, text: '✅ Session Completion Rate', color: colors.textColor }
                 }
             }
         });
@@ -438,6 +511,15 @@ const ChartsManager = (function () {
         }
     };
 })();
+
+// Listen for theme changes and recreate all charts
+window.addEventListener('themeChanged', function () {
+    // Small delay to ensure CSS variables are updated
+    setTimeout(function () {
+        ChartsManager.destroyAllCharts();
+        ChartsManager.createAllCharts();
+    }, 100);
+});
 
 // Export for use
 if (typeof module !== 'undefined' && module.exports) {

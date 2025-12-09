@@ -18,12 +18,19 @@
         }
 
         .alert-card {
-            background: white;
+            background: var(--bg-primary);
             padding: 1.5rem;
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             margin-bottom: 1.5rem;
             border-left: 4px solid #ff6b6b;
+            color: var(--text-primary);
+        }
+
+        .alert-card h5,
+        .alert-card p,
+        .alert-card strong {
+            color: var(--text-primary);
         }
 
         .alert-critical {
@@ -42,12 +49,35 @@
             margin-bottom: 2rem;
         }
 
+        .btn-emergency {
+            background: #ffffff;
+            color: #ff5252 !important;
+            font-weight: 600;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-emergency:hover {
+            background: #fff5f5;
+            color: #ff3333 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
         .hotline-card {
-            background: white;
+            background: var(--bg-primary);
             padding: 1.5rem;
             border-radius: 10px;
             text-align: center;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            color: var(--text-primary);
+        }
+
+        .hotline-card h5,
+        .hotline-card p {
+            color: var(--text-primary);
         }
 
         .hotline-number {
@@ -58,19 +88,43 @@
         }
 
         .coping-tip {
-            background: #f0f0f0;
+            background: var(--bg-tertiary);
             padding: 1rem;
             border-radius: 8px;
             margin-bottom: 1rem;
             border-left: 4px solid #4facfe;
+            color: var(--text-primary);
+        }
+
+        .coping-tip h5,
+        .coping-tip p {
+            color: var(--text-primary);
         }
 
         .chart-container {
-            background: white;
+            background: var(--bg-primary);
             padding: 1.5rem;
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-container h3 {
+            color: var(--text-primary);
+        }
+
+        .content-section {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .content-section h3 {
+            color: var(--text-primary);
         }
     </style>
 </head>
@@ -90,7 +144,14 @@
                 <li><a href="./feature-crisis.html" class="active">🚨 Crisis Support</a></li>
             </ul>
             <div class="nav-actions">
-                <button class="theme-toggle" title="Toggle dark mode">🌙</button>
+                <button class="theme-toggle" type="button" aria-label="Toggle theme"></button>
+                <button class="mobile-menu-btn" aria-label="Toggle menu" title="Open navigation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor" />
+                        <rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor" />
+                        <rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor" />
+                    </svg>
+                </button>
             </div>
         </div>
     </nav>
@@ -108,7 +169,7 @@
             <h2 style="margin-top: 0;">🆘 Are You in Crisis?</h2>
             <p style="margin: 1rem 0;">If you or someone you know is experiencing a mental health emergency, please
                 reach out immediately. Help is available 24/7.</p>
-            <button class="btn btn-light btn-lg"
+            <button class="btn btn-emergency btn-lg" style="background: #ffffff; color: #d32f2f !important;"
                 onclick="alert('🚨 Emergency services have been notified. A counselor will contact you shortly.')">📞
                 Call Emergency Services Now</button>
         </div>
@@ -127,14 +188,13 @@
         </div>
 
         <!-- Recent Alerts -->
-        <div
-            style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
+        <div class="content-section" style="margin-bottom: 2rem;">
             <h3 style="margin-top: 0;">🚨 Recent Crisis Alerts</h3>
             <div id="alertsList"></div>
         </div>
 
         <!-- Coping Strategies -->
-        <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+        <div class="content-section">
             <h3 style="margin-top: 0;">💪 Immediate Coping Strategies</h3>
             <div id="copingStrategies"></div>
         </div>
@@ -143,13 +203,24 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/patient-data.js"></script>
+    <script src="assets/js/api-service.js"></script>
     <script src="assets/js/charts-manager.js"></script>
     <script src="assets/js/theme.js"></script>
 
     <script>
-        function loadCrisisContent() {
-            // Emergency Contacts
-            const emergencyContacts = PatientData.getEmergencyContacts();
+        async function loadCrisisContent() {
+            // Emergency Contacts - try API first
+            let emergencyContacts;
+            try {
+                emergencyContacts = await API.getEmergencyContacts();
+                if (!emergencyContacts || emergencyContacts.length === 0) {
+                    throw new Error('No data');
+                }
+            } catch (error) {
+                console.log('Using mock emergency contacts:', error.message);
+                emergencyContacts = PatientData.getEmergencyContacts();
+            }
+
             let hotlinesHtml = '';
             emergencyContacts.forEach(contact => {
                 hotlinesHtml += `
@@ -157,36 +228,50 @@
                         <h5>${contact.country}</h5>
                         <div class="hotline-number">${contact.number}</div>
                         <p style="margin: 0.5rem 0 0 0;"><strong>${contact.service}</strong></p>
-                        <p style="margin: 0.25rem 0 0 0; color: #666; font-size: 0.9rem;">${contact.available}</p>
+                        <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem;">${contact.available}</p>
                     </div>
                 `;
             });
             document.getElementById('hotlinesList').innerHTML = hotlinesHtml;
 
-            // Crisis Alerts
-            const alerts = PatientData.getCrisisAlerts();
+            // Crisis Alerts - try API first
+            let alerts;
+            try {
+                alerts = await API.getCrisisAlerts();
+                if (!alerts) alerts = [];
+            } catch (error) {
+                console.log('Using mock crisis alerts:', error.message);
+                alerts = PatientData.getCrisisAlerts();
+            }
+
             let alertsHtml = '';
             alerts.forEach(alert => {
+                const patientName = alert.patient_name || alert.patientName;
+                const alertId = alert.id || alert.alertId;
+                const assignedCounselor = alert.assigned_counselor || alert.assignedCounselor;
+                const emergencyContact = alert.emergency_contact || alert.emergencyContact;
+                const actionTaken = alert.action_taken || alert.actionTaken;
                 const severityColor = alert.severity === 'Critical' ? '#ff6b6b' : '#ffa500';
+
                 alertsHtml += `
                     <div class="alert-card alert-${alert.severity.toLowerCase()}">
                         <div style="display: flex; justify-content: space-between; align-items: start;">
                             <div>
-                                <h5 style="margin-bottom: 0.5rem;">🚨 ${alert.patientName}</h5>
+                                <h5 style="margin-bottom: 0.5rem;">🚨 ${patientName}</h5>
                                 <p style="margin: 0.5rem 0; font-size: 0.9rem;">
-                                    <strong>Alert ID:</strong> ${alert.alertId}<br>
+                                    <strong>Alert ID:</strong> ${alertId}<br>
                                     <strong>Severity:</strong> <span style="color: ${severityColor}; font-weight: 600;">${alert.severity}</span><br>
-                                    <strong>Assigned Counselor:</strong> ${alert.assignedCounselor}<br>
-                                    <strong>Emergency Contact:</strong> ${alert.emergencyContact}<br>
+                                    <strong>Assigned Counselor:</strong> ${assignedCounselor}<br>
+                                    <strong>Emergency Contact:</strong> ${emergencyContact}<br>
                                     <strong>Status:</strong> ${alert.status}<br>
-                                    <strong>Action Taken:</strong> ${alert.actionTaken}
+                                    <strong>Action Taken:</strong> ${actionTaken}
                                 </p>
                             </div>
                         </div>
                     </div>
                 `;
             });
-            document.getElementById('alertsList').innerHTML = alertsHtml || '<p style="color: #666;">No active crisis alerts at this time.</p>';
+            document.getElementById('alertsList').innerHTML = alertsHtml || '<p style="color: var(--text-tertiary);">No active crisis alerts at this time.</p>';
 
             // Coping Strategies
             const strategies = [
@@ -203,7 +288,7 @@
                 strategiesHtml += `
                     <div class="coping-tip">
                         <h5 style="margin-bottom: 0.5rem;">${strategy.title}</h5>
-                        <p style="margin: 0; color: #666; font-size: 0.9rem;">${strategy.desc}</p>
+                        <p style="margin: 0; font-size: 0.9rem;">${strategy.desc}</p>
                     </div>
                 `;
             });
