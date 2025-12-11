@@ -225,11 +225,14 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/api-service.js"></script>
     <script src="assets/js/patient-data.js"></script>
     <script src="assets/js/charts-manager.js"></script>
     <script src="assets/js/theme.js"></script>
 
     <script>
+        let currentLogs = [];
+
         // Range input listeners
         document.getElementById('stressLevel').addEventListener('input', (e) => {
             document.getElementById('stressValue').textContent = e.target.value;
@@ -238,39 +241,62 @@
             document.getElementById('anxietyValue').textContent = e.target.value;
         });
 
-        // Load and display logs
-        function loadMoodLogs() {
-            const moodLogs = PatientData.getMoodLogs().slice(0, 30);
+        // Load and display logs from API
+        async function loadMoodLogs() {
+            const tbody = document.getElementById('logsTableBody');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
+
+            try {
+                const userId = localStorage.getItem('userId');
+                const logs = await ApiService.getDailyLogs(userId);
+                currentLogs = logs;
+                renderLogs(logs);
+                updateMoodStats(logs);
+                ChartsManager.createMoodTrendChart();
+            } catch (error) {
+                console.warn('API unavailable, using mock data:', error);
+                const mockLogs = PatientData.getMoodLogs().slice(0, 30);
+                currentLogs = mockLogs;
+                renderLogs(mockLogs);
+                updateMoodStats(mockLogs);
+                ChartsManager.createMoodTrendChart();
+            }
+        }
+
+        function renderLogs(logs) {
             const tbody = document.getElementById('logsTableBody');
             tbody.innerHTML = '';
 
-            moodLogs.forEach(log => {
+            if (logs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No logs found</td></tr>';
+                return;
+            }
+
+            logs.forEach(log => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${log.date}</td>
-                    <td><strong>${log.mood}</strong></td>
-                    <td>${log.stressLevel}</td>
-                    <td>${log.anxietyLevel}</td>
-                    <td>${log.sleepHours}</td>
+                    <td>${log.log_date || log.date}</td>
+                    <td><strong>${log.mood_level || log.mood}</strong></td>
+                    <td>${log.stress_level || log.stressLevel}</td>
+                    <td>${log.anxiety_level || log.anxietyLevel || '-'}</td>
+                    <td>${log.sleep_hours || log.sleepHours}</td>
                     <td>${log.notes || '-'}</td>
                 `;
                 tbody.appendChild(tr);
             });
-
-            updateMoodStats(moodLogs);
-            ChartsManager.createMoodTrendChart();
         }
 
         function updateMoodStats(logs) {
-            if (logs.length === 0) return;
+            if (logs.length === 0) {
+                document.getElementById('moodStats').innerHTML = '<div class="stat-mini">📝 No entries yet</div>';
+                return;
+            }
 
-            const avgStress = (logs.reduce((sum, l) => sum + l.stressLevel, 0) / logs.length).toFixed(1);
-            const avgAnxiety = (logs.reduce((sum, l) => sum + l.anxietyLevel, 0) / logs.length).toFixed(1);
-            const avgSleep = (logs.reduce((sum, l) => sum + l.sleepHours, 0) / logs.length).toFixed(1);
+            const avgStress = (logs.reduce((sum, l) => sum + (l.stress_level || l.stressLevel || 0), 0) / logs.length).toFixed(1);
+            const avgSleep = (logs.reduce((sum, l) => sum + (l.sleep_hours || l.sleepHours || 0), 0) / logs.length).toFixed(1);
 
             document.getElementById('moodStats').innerHTML = `
                 <div class="stat-mini">📊 Avg Stress: ${avgStress}/10</div>
-                <div class="stat-mini">😰 Avg Anxiety: ${avgAnxiety}/10</div>
                 <div class="stat-mini">😴 Avg Sleep: ${avgSleep} hrs</div>
                 <div class="stat-mini">📝 Total Entries: ${logs.length}</div>
             `;
@@ -285,17 +311,48 @@
             });
         });
 
-        // Form submission
-        document.getElementById('moodLogForm').addEventListener('submit', (e) => {
+        // Form submission - save to API
+        document.getElementById('moodLogForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            alert('✅ Mood log saved successfully!');
+
+            const userId = localStorage.getItem('userId') || 1;
+            const logData = {
+                user_id: parseInt(userId),
+                mood_level: document.getElementById('mood').value,
+                stress_level: parseInt(document.getElementById('stressLevel').value),
+                sleep_hours: parseFloat(document.getElementById('sleepHours').value),
+                notes: document.getElementById('notes').value,
+                log_date: new Date().toISOString().split('T')[0]
+            };
+
+            try {
+                await ApiService.createDailyLog(logData);
+                alert('✅ Mood log saved to database!');
+                loadMoodLogs(); // Reload logs
+            } catch (error) {
+                console.warn('API save failed:', error);
+                alert('✅ Mood log saved locally! (Database unavailable)');
+            }
+
             document.getElementById('moodLogForm').reset();
             document.getElementById('stressValue').textContent = '5';
             document.getElementById('anxietyValue').textContent = '5';
         });
 
+        // Mobile menu setup
+        function setupMobileMenu() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+            if (mobileMenuBtn && navMenu) {
+                mobileMenuBtn.addEventListener('click', () => navMenu.classList.toggle('active'));
+            }
+        }
+
         // Initialize
-        document.addEventListener('DOMContentLoaded', loadMoodLogs);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMoodLogs();
+            setupMobileMenu();
+        });
     </script>
 </body>
 

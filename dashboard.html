@@ -218,11 +218,12 @@
             <ul class="nav-menu">
                 <li><a href="./index.html">🏠 Home</a></li>
                 <li><a href="./dashboard.html" class="active">📊 Dashboard</a></li>
+                <li><a href="./admin.html">⚙️ Admin</a></li>
                 <li><a href="./feature-daily-logs.html">📝 Daily Logs</a></li>
                 <li><a href="./feature-ai-analysis.html">🤖 AI Analysis</a></li>
                 <li><a href="./feature-recommendations.html">💡 Recommendations</a></li>
-                <li><a href="./feature-sessions.html">👨‍⚕️ Sessions</a></li>
-                <li><a href="./feature-progress.html">📈 Progress</a></li>
+                <li><a href="./feature-sessions.html">�‍⚕️o Sessions</a></li>
+                <li><a href="./feature-progress.html">� Prog ress</a></li>
                 <li><a href="./feature-crisis.html">🚨 Crisis Support</a></li>
             </ul>
             <div class="nav-actions">
@@ -324,6 +325,7 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/api-service.js"></script>
     <script src="assets/js/patient-data.js"></script>
     <script src="assets/js/dashboard-generators.js"></script>
     <script src="assets/js/charts-manager.js"></script>
@@ -331,7 +333,7 @@
 
     <script>
         // Initialize Dashboard
-        function initDashboard() {
+        async function initDashboard() {
             const userRole = localStorage.getItem('userRole') || 'patient';
             const designation = localStorage.getItem('designation') || 'Patient/User';
 
@@ -343,21 +345,42 @@
 
             // Update stats (only show for non-patient roles)
             if (userRole !== 'patient') {
-                const stats = PatientData.getStatistics();
-                document.getElementById('totalPatients').textContent = stats.totalPatients;
-                document.getElementById('criticalCount').textContent = stats.criticalCount;
-                document.getElementById('highRiskCount').textContent = stats.highRiskCount;
-                document.getElementById('avgRiskScore').textContent = stats.avgRiskScore;
+                try {
+                    // Try to get stats from API
+                    const apiStats = await ApiService.getStatistics();
+                    document.getElementById('totalPatients').textContent = apiStats.totalUsers || 0;
+                    document.getElementById('criticalCount').textContent = apiStats.highRiskUsers || 0;
+                    document.getElementById('highRiskCount').textContent = apiStats.highRiskUsers || 0;
+                    document.getElementById('avgRiskScore').textContent = apiStats.avgRiskScore || 0;
+                    console.log('✅ Stats loaded from API');
+                } catch (error) {
+                    console.warn('API unavailable, using mock data:', error);
+                    const stats = PatientData.getStatistics();
+                    document.getElementById('totalPatients').textContent = stats.totalPatients;
+                    document.getElementById('criticalCount').textContent = stats.criticalCount;
+                    document.getElementById('highRiskCount').textContent = stats.highRiskCount;
+                    document.getElementById('avgRiskScore').textContent = stats.avgRiskScore;
+                }
                 document.getElementById('statsGrid').style.display = 'grid';
             }
 
             // Check for critical alerts
-            const criticalAlerts = PatientData.getCrisisAlerts();
-            if (criticalAlerts.length > 0 && userRole !== 'patient') {
-                const banner = document.getElementById('crisisBanner');
-                banner.classList.add('show');
-                document.getElementById('crisisMessage').textContent =
-                    `${criticalAlerts.length} critical patient(s) require immediate attention. Please review crisis alerts.`;
+            try {
+                const crisisAlerts = await ApiService.getCrisisAlerts();
+                if (crisisAlerts.length > 0 && userRole !== 'patient') {
+                    const banner = document.getElementById('crisisBanner');
+                    banner.classList.add('show');
+                    document.getElementById('crisisMessage').textContent =
+                        `${crisisAlerts.length} critical alert(s) require immediate attention. Please review crisis alerts.`;
+                }
+            } catch (error) {
+                const criticalAlerts = PatientData.getCrisisAlerts();
+                if (criticalAlerts.length > 0 && userRole !== 'patient') {
+                    const banner = document.getElementById('crisisBanner');
+                    banner.classList.add('show');
+                    document.getElementById('crisisMessage').textContent =
+                        `${criticalAlerts.length} critical patient(s) require immediate attention. Please review crisis alerts.`;
+                }
             }
 
             // Generate role-specific content

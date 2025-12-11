@@ -148,56 +148,88 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/api-service.js"></script>
     <script src="assets/js/patient-data.js"></script>
     <script src="assets/js/charts-manager.js"></script>
     <script src="assets/js/theme.js"></script>
 
     <script>
-        function loadAIAnalysis() {
-            const analysis = PatientData.getAIAnalysis().slice(0, 5);
+        async function loadAIAnalysis() {
+            document.getElementById('analysisOverview').innerHTML = '<p>Loading AI analysis...</p>';
 
+            let analysis = [];
+            try {
+                const userId = localStorage.getItem('userId');
+                analysis = await ApiService.getAIAnalysis(userId);
+                console.log('✅ AI Analysis loaded from API');
+            } catch (error) {
+                console.warn('API unavailable, using mock data:', error);
+                analysis = PatientData.getAIAnalysis().slice(0, 5);
+            }
+
+            renderAnalysis(analysis);
+            ChartsManager.createRiskDistributionChart();
+            ChartsManager.createAIConfidenceChart();
+        }
+
+        function renderAnalysis(analysis) {
             let overviewHtml = '<h3>📈 Analysis Overview</h3><div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">';
+
             analysis.forEach((item) => {
-                const riskClass = item.riskScore > 75 ? 'risk-critical' : item.riskScore > 60 ? 'risk-high' : item.riskScore > 40 ? 'risk-moderate' : 'risk-low';
+                const riskScore = item.risk_score || item.riskScore || 0;
+                const emotion = item.emotion_label || item.dominantEmotion || 'N/A';
+                const sentiment = item.sentiment_value || item.sentimentScore || 0;
+                const riskClass = riskScore > 75 ? 'risk-critical' : riskScore > 60 ? 'risk-high' : riskScore > 40 ? 'risk-moderate' : 'risk-low';
+
                 overviewHtml += `
                     <div class="analysis-card">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div>
-                                <h5 style="margin-bottom: 0.5rem;">${item.patientId}</h5>
-                                <p style="margin: 0.5rem 0; font-size: 0.9rem;">Emotion: <strong>${item.dominantEmotion}</strong></p>
-                                <p style="margin: 0.5rem 0; font-size: 0.9rem;">Trend: ${item.emotionalTrend}</p>
+                                <h5 style="margin-bottom: 0.5rem;">Analysis #${item.analysis_id || item.analysisId}</h5>
+                                <p style="margin: 0.5rem 0; font-size: 0.9rem;">Emotion: <strong>${emotion}</strong></p>
+                                <p style="margin: 0.5rem 0; font-size: 0.9rem;">Sentiment: ${sentiment}</p>
                             </div>
-                            <span class="risk-badge ${riskClass}">${item.riskScore}</span>
+                            <span class="risk-badge ${riskClass}">${riskScore}</span>
                         </div>
-                        <p style="margin-top: 0.75rem; font-size: 0.85rem;">Confidence: ${(item.confidenceScore * 100).toFixed(0)}%</p>
                     </div>
                 `;
             });
             overviewHtml += '</div>';
             document.getElementById('analysisOverview').innerHTML = overviewHtml;
 
-            ChartsManager.createRiskDistributionChart();
-            ChartsManager.createAIConfidenceChart();
-
             let insightsHtml = '';
             analysis.forEach(item => {
+                const riskScore = item.risk_score || item.riskScore || 0;
+                const emotion = item.emotion_label || item.dominantEmotion || 'N/A';
+                const sentiment = item.sentiment_value || item.sentimentScore || 0;
+
                 insightsHtml += `
                     <div style="padding: 1rem; border-bottom: 1px solid var(--border-color);">
-                        <h5 style="margin-bottom: 0.5rem;">💭 Analysis for ${item.patientId}</h5>
+                        <h5 style="margin-bottom: 0.5rem;">💭 Analysis #${item.analysis_id || item.analysisId}</h5>
                         <p style="margin: 0.5rem 0; font-size: 0.9rem;">
-                            <strong>Dominant Emotion:</strong> ${item.dominantEmotion}<br>
-                            <strong>Sentiment Score:</strong> ${item.sentimentScore}<br>
-                            <strong>Trend:</strong> ${item.emotionalTrend}<br>
-                            <strong>Key Findings:</strong> ${item.keywordFlags.join(', ')}<br>
-                            <strong>Recommendation:</strong> ${item.aiRecommendation}
+                            <strong>Emotion Label:</strong> ${emotion}<br>
+                            <strong>Sentiment Value:</strong> ${sentiment}<br>
+                            <strong>Risk Score:</strong> ${riskScore}
                         </p>
                     </div>
                 `;
             });
-            document.getElementById('aiInsightsList').innerHTML = insightsHtml;
+            document.getElementById('aiInsightsList').innerHTML = insightsHtml || '<p>No analysis data available.</p>';
         }
 
-        document.addEventListener('DOMContentLoaded', loadAIAnalysis);
+        // Mobile menu
+        function setupMobileMenu() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+            if (mobileMenuBtn && navMenu) {
+                mobileMenuBtn.addEventListener('click', () => navMenu.classList.toggle('active'));
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAIAnalysis();
+            setupMobileMenu();
+        });
     </script>
 </body>
 

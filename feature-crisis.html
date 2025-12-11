@@ -202,16 +202,44 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/api-service.js"></script>
     <script src="assets/js/patient-data.js"></script>
     <script src="assets/js/charts-manager.js"></script>
     <script src="assets/js/theme.js"></script>
 
     <script>
-        function loadCrisisContent() {
-            // Emergency Contacts
-            const emergencyContacts = PatientData.getEmergencyContacts();
+        async function loadCrisisContent() {
+            // Load Emergency Contacts from API or fallback
+            try {
+                const userId = localStorage.getItem('userId');
+                const contacts = await ApiService.getEmergencyContacts(userId);
+                renderEmergencyContacts(contacts);
+            } catch (error) {
+                console.warn('API unavailable for contacts, using mock data');
+                renderEmergencyContacts(PatientData.getEmergencyContacts());
+            }
+
+            // Load Crisis Alerts from API or fallback
+            try {
+                const alerts = await ApiService.getCrisisAlerts();
+                renderCrisisAlerts(alerts);
+            } catch (error) {
+                console.warn('API unavailable for alerts, using mock data');
+                renderCrisisAlerts(PatientData.getCrisisAlerts());
+            }
+
+            // Coping Strategies (static content)
+            renderCopingStrategies();
+            ChartsManager.createCrisisTimelineChart();
+        }
+
+        function renderEmergencyContacts(contacts) {
+            // Add default hotlines if API returns user-specific contacts
+            const defaultHotlines = PatientData.getEmergencyContacts();
             let hotlinesHtml = '';
-            emergencyContacts.forEach(contact => {
+
+            // Show default hotlines first
+            defaultHotlines.forEach(contact => {
                 hotlinesHtml += `
                     <div class="hotline-card">
                         <h5>${contact.country}</h5>
@@ -221,34 +249,58 @@
                     </div>
                 `;
             });
-            document.getElementById('hotlinesList').innerHTML = hotlinesHtml;
 
-            // Crisis Alerts
-            const alerts = PatientData.getCrisisAlerts();
+            // Show user's personal emergency contacts if available
+            if (contacts && contacts.length > 0 && contacts[0].contact_name) {
+                hotlinesHtml += '<div style="grid-column: 1 / -1; margin-top: 1rem;"><h4>Your Emergency Contacts</h4></div>';
+                contacts.forEach(contact => {
+                    hotlinesHtml += `
+                        <div class="hotline-card">
+                            <h5>👤 ${contact.contact_name}</h5>
+                            <div class="hotline-number">${contact.contact_phone}</div>
+                            <p style="margin: 0.5rem 0 0 0;"><strong>${contact.relation || 'Emergency Contact'}</strong></p>
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('hotlinesList').innerHTML = hotlinesHtml;
+        }
+
+        function renderCrisisAlerts(alerts) {
             let alertsHtml = '';
-            alerts.forEach(alert => {
-                const severityColor = alert.severity === 'Critical' ? '#ff6b6b' : '#ffa500';
-                alertsHtml += `
-                    <div class="alert-card alert-${alert.severity.toLowerCase()}">
-                        <div style="display: flex; justify-content: space-between; align-items: start;">
-                            <div>
-                                <h5 style="margin-bottom: 0.5rem;">🚨 ${alert.patientName}</h5>
-                                <p style="margin: 0.5rem 0; font-size: 0.9rem;">
-                                    <strong>Alert ID:</strong> ${alert.alertId}<br>
-                                    <strong>Severity:</strong> <span style="color: ${severityColor}; font-weight: 600;">${alert.severity}</span><br>
-                                    <strong>Assigned Counselor:</strong> ${alert.assignedCounselor}<br>
-                                    <strong>Emergency Contact:</strong> ${alert.emergencyContact}<br>
-                                    <strong>Status:</strong> ${alert.status}<br>
-                                    <strong>Action Taken:</strong> ${alert.actionTaken}
-                                </p>
+
+            if (!alerts || alerts.length === 0) {
+                alertsHtml = '<p style="color: var(--text-tertiary);">No active crisis alerts at this time.</p>';
+            } else {
+                alerts.forEach(alert => {
+                    const riskLevel = alert.risk_level || alert.severity || 'Unknown';
+                    const severityColor = riskLevel === 'Critical' || riskLevel === 'High' ? '#ff6b6b' : '#ffa500';
+                    const patientName = alert.patientName || `User #${alert.user_id}`;
+                    const counsellorName = alert.counsellor_name || alert.assignedCounselor || 'Pending';
+
+                    alertsHtml += `
+                        <div class="alert-card alert-${riskLevel.toLowerCase()}">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <h5 style="margin-bottom: 0.5rem;">🚨 ${patientName}</h5>
+                                    <p style="margin: 0.5rem 0; font-size: 0.9rem;">
+                                        <strong>Alert ID:</strong> ${alert.alert_id || alert.alertId}<br>
+                                        <strong>Risk Level:</strong> <span style="color: ${severityColor}; font-weight: 600;">${riskLevel}</span><br>
+                                        <strong>Timestamp:</strong> ${alert.alert_timestamp || alert.timestamp || 'N/A'}<br>
+                                        <strong>Assigned Counselor:</strong> ${counsellorName}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
-            });
-            document.getElementById('alertsList').innerHTML = alertsHtml || '<p style="color: var(--text-tertiary);">No active crisis alerts at this time.</p>';
+                    `;
+                });
+            }
 
-            // Coping Strategies
+            document.getElementById('alertsList').innerHTML = alertsHtml;
+        }
+
+        function renderCopingStrategies() {
             const strategies = [
                 { title: '🧘 Breathing Exercise', desc: 'Practice the 4-7-8 breathing technique: Breathe in for 4 counts, hold for 7, exhale for 8.' },
                 { title: '🚶 Take a Walk', desc: 'Step outside for 10-15 minutes. Fresh air and movement can help calm your nervous system.' },
@@ -268,11 +320,21 @@
                 `;
             });
             document.getElementById('copingStrategies').innerHTML = strategiesHtml;
-
-            ChartsManager.createCrisisTimelineChart();
         }
 
-        document.addEventListener('DOMContentLoaded', loadCrisisContent);
+        // Mobile menu
+        function setupMobileMenu() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+            if (mobileMenuBtn && navMenu) {
+                mobileMenuBtn.addEventListener('click', () => navMenu.classList.toggle('active'));
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCrisisContent();
+            setupMobileMenu();
+        });
     </script>
 </body>
 

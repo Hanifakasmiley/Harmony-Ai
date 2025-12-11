@@ -131,59 +131,85 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/api-service.js"></script>
     <script src="assets/js/patient-data.js"></script>
     <script src="assets/js/charts-manager.js"></script>
     <script src="assets/js/theme.js"></script>
 
     <script>
-        function loadProgress() {
-            const progress = PatientData.getProgress().slice(0, 1)[0];
-            const feedback = PatientData.getFeedback().slice(0, 3);
+        async function loadProgress() {
+            document.getElementById('progressOverview').innerHTML = '<p>Loading progress data...</p>';
 
-            // Progress overview
-            if (progress) {
-                const overviewHtml = `
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-                        <div class="progress-card">
-                            <h5 style="margin-top: 0;">Emotional Stability</h5>
-                            <div style="font-size: 2.5rem; font-weight: bold; color: #667eea;">${progress.emotionalStability}%</div>
-                            <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">Week ${progress.sessionCount}</p>
-                        </div>
-                        <div class="progress-card">
-                            <h5 style="margin-top: 0;">Functioning Level</h5>
-                            <div style="font-size: 2.5rem; font-weight: bold; color: #764ba2;">${progress.functioningLevel}%</div>
-                            <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">Overall capacity</p>
-                        </div>
-                        <div class="progress-card">
-                            <h5 style="margin-top: 0;">Coping Skills</h5>
-                            <div style="font-size: 2.5rem; font-weight: bold; color: #f093fb;">${progress.copingSkills}%</div>
-                            <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">Management ability</p>
-                        </div>
-                        <div class="progress-card">
-                            <h5 style="margin-top: 0;">Overall Improvement</h5>
-                            <div style="font-size: 2.5rem; font-weight: bold; color: #4facfe;">${progress.improvementPercentage}%</div>
-                            <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">This month</p>
-                        </div>
-                    </div>
-                `;
-                document.getElementById('progressOverview').innerHTML = overviewHtml;
+            let progressData = [];
+            let feedbackData = [];
+
+            try {
+                const userId = localStorage.getItem('userId');
+                progressData = await ApiService.getProgress(userId);
+                feedbackData = await ApiService.getFeedback(userId);
+                console.log('✅ Progress data loaded from API');
+            } catch (error) {
+                console.warn('API unavailable, using mock data:', error);
+                progressData = PatientData.getProgress().slice(0, 1);
+                feedbackData = PatientData.getFeedback().slice(0, 3);
             }
 
-            // Feedback list
+            renderProgress(progressData[0] || progressData);
+            renderFeedback(feedbackData);
+            ChartsManager.createProgressTrackingChart();
+        }
+
+        function renderProgress(progress) {
+            if (!progress) {
+                document.getElementById('progressOverview').innerHTML = '<p>No progress data available.</p>';
+                return;
+            }
+
+            const emotionalStability = progress.emotional_stability_score || progress.emotionalStability || 0;
+            const improvement = progress.improvement_percentage || progress.improvementPercentage || 0;
+            const trendNotes = progress.trend_notes || progress.notes || 'N/A';
+
+            const overviewHtml = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <div class="progress-card">
+                        <h5 style="margin-top: 0;">Emotional Stability</h5>
+                        <div style="font-size: 2.5rem; font-weight: bold; color: #667eea;">${emotionalStability}%</div>
+                        <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">Current Score</p>
+                    </div>
+                    <div class="progress-card">
+                        <h5 style="margin-top: 0;">Overall Improvement</h5>
+                        <div style="font-size: 2.5rem; font-weight: bold; color: #4facfe;">${improvement}%</div>
+                        <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">This period</p>
+                    </div>
+                    <div class="progress-card" style="grid-column: span 2;">
+                        <h5 style="margin-top: 0;">Trend Notes</h5>
+                        <p style="font-size: 1rem; margin: 0;">${trendNotes}</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('progressOverview').innerHTML = overviewHtml;
+        }
+
+        function renderFeedback(feedback) {
+            if (!feedback || feedback.length === 0) {
+                document.getElementById('feedbackList').innerHTML = '<p>No feedback available.</p>';
+                return;
+            }
+
             let feedbackHtml = '';
             feedback.forEach(item => {
-                const stars = '⭐'.repeat(item.rating);
+                const rating = item.rating || 0;
+                const stars = '⭐'.repeat(rating);
+                const comments = item.comments || item.comment || 'No comments';
+
                 feedbackHtml += `
                     <div class="feedback-item">
                         <div style="display: flex; justify-content: space-between; align-items: start;">
                             <div>
-                                <h5 style="margin-bottom: 0.5rem;">Session: ${item.sessionId}</h5>
+                                <h5 style="margin-bottom: 0.5rem;">Feedback #${item.feedback_id || item.feedbackId}</h5>
                                 <p style="margin: 0.5rem 0; font-size: 0.9rem;">
-                                    <strong>Counselor Rating:</strong> <span class="rating">${stars}</span><br>
-                                    <strong>Comment:</strong> ${item.comment}<br>
-                                    <strong>Strong Points:</strong> ${item.strongPoints.join(', ')}<br>
-                                    <strong>Improvement Areas:</strong> ${item.improvementAreas.join(', ')}<br>
-                                    <strong>Next Steps:</strong> ${item.nextSteps}
+                                    <strong>Rating:</strong> <span class="rating">${stars}</span> (${rating}/5)<br>
+                                    <strong>Comments:</strong> ${comments}
                                 </p>
                             </div>
                         </div>
@@ -191,12 +217,21 @@
                 `;
             });
             document.getElementById('feedbackList').innerHTML = feedbackHtml;
-
-            // Chart
-            ChartsManager.createProgressTrackingChart();
         }
 
-        document.addEventListener('DOMContentLoaded', loadProgress);
+        // Mobile menu
+        function setupMobileMenu() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+            if (mobileMenuBtn && navMenu) {
+                mobileMenuBtn.addEventListener('click', () => navMenu.classList.toggle('active'));
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProgress();
+            setupMobileMenu();
+        });
     </script>
 </body>
 

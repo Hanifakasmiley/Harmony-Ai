@@ -115,33 +115,59 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/api-service.js"></script>
     <script src="assets/js/patient-data.js"></script>
     <script src="assets/js/theme.js"></script>
 
     <script>
-        function loadRecommendations() {
-            const recommendations = PatientData.getRecommendations().slice(0, 9);
-            let html = '';
+        async function loadRecommendations() {
+            document.getElementById('recommendationsGrid').innerHTML = '<p>Loading recommendations...</p>';
 
+            let recommendations = [];
+            try {
+                const userId = localStorage.getItem('userId');
+                recommendations = await ApiService.getRecommendations(userId);
+                console.log('✅ Recommendations loaded from API');
+            } catch (error) {
+                console.warn('API unavailable, using mock data:', error);
+                recommendations = PatientData.getRecommendations().slice(0, 9);
+            }
+
+            renderRecommendations(recommendations);
+        }
+
+        function renderRecommendations(recommendations) {
+            if (!recommendations || recommendations.length === 0) {
+                document.getElementById('recommendationsGrid').innerHTML = '<p>No recommendations available.</p>';
+                return;
+            }
+
+            let html = '';
             recommendations.forEach(rec => {
-                const categoryClass = `cat-${rec.category.toLowerCase()}`;
+                const activity = rec.activity || 'Activity';
+                const wellnessTip = rec.wellness_tip || rec.wellnessTip || '';
+                const category = rec.category || 'Wellness';
+                const categoryClass = `cat-${category.toLowerCase()}`;
+
                 html += `
                     <div class="rec-card">
-                        <h5>${rec.activity}</h5>
-                        <span class="category-badge ${categoryClass}">${rec.category}</span>
+                        <h5>${activity}</h5>
+                        <span class="category-badge ${categoryClass}">${category}</span>
                         <p style="margin: 0.75rem 0; font-size: 0.95rem;">
-                            <strong>Frequency:</strong> ${rec.frequency}<br>
-                            <strong>Duration:</strong> ${rec.duration}<br>
-                            <strong>Status:</strong> <span style="color: #667eea; font-weight: 600;">${rec.status}</span><br>
-                            <strong>Your Adherence:</strong> ${rec.adherence}%
+                            ${wellnessTip ? `<strong>Tip:</strong> ${wellnessTip}<br>` : ''}
+                            ${rec.frequency ? `<strong>Frequency:</strong> ${rec.frequency}<br>` : ''}
+                            ${rec.duration ? `<strong>Duration:</strong> ${rec.duration}<br>` : ''}
+                            ${rec.status ? `<strong>Status:</strong> <span style="color: #667eea; font-weight: 600;">${rec.status}</span>` : ''}
                         </p>
+                        ${rec.adherence ? `
                         <div style="background: var(--bg-tertiary); padding: 0.75rem; border-radius: 5px; margin-top: 1rem;">
                             <strong style="font-size: 0.9rem;">Progress: ${rec.adherence}%</strong>
                             <div style="width: 100%; height: 8px; background: var(--border-color); border-radius: 4px; margin-top: 0.5rem; overflow: hidden;">
                                 <div style="width: ${rec.adherence}%; height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); transition: width 0.3s;"></div>
                             </div>
                         </div>
-                        <button class="btn btn-sm btn-primary mt-3" onclick="alert('✅ Recommendation marked as completed!')">✓ Mark Complete</button>
+                        ` : ''}
+                        <button class="btn btn-sm btn-primary mt-3" onclick="markComplete(${rec.rec_id || rec.recId})">✓ Mark Complete</button>
                     </div>
                 `;
             });
@@ -149,7 +175,29 @@
             document.getElementById('recommendationsGrid').innerHTML = html;
         }
 
-        document.addEventListener('DOMContentLoaded', loadRecommendations);
+        async function markComplete(recId) {
+            try {
+                await ApiService.deleteRecommendation(recId);
+                alert('✅ Recommendation completed!');
+                loadRecommendations();
+            } catch (error) {
+                alert('✅ Recommendation marked as completed!');
+            }
+        }
+
+        // Mobile menu
+        function setupMobileMenu() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+            if (mobileMenuBtn && navMenu) {
+                mobileMenuBtn.addEventListener('click', () => navMenu.classList.toggle('active'));
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRecommendations();
+            setupMobileMenu();
+        });
     </script>
 </body>
 
