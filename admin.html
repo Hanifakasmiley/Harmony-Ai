@@ -489,34 +489,34 @@
         <!-- Header -->
         <div class="admin-header">
             <a href="./dashboard.html" class="back-link">← Back to Dashboard</a>
-            <h1>⚙️ Database Admin Panel</h1>
+            <h1>Database Admin Panel</h1>
             <p>Manage all 10 database tables with full CRUD operations</p>
         </div>
 
         <!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="icon">👥</div>
+                <div class="icon" style="font-size: 1.5rem;">&#128101;</div>
                 <div class="number" id="statUsers">-</div>
                 <div class="label">Users</div>
             </div>
             <div class="stat-card">
-                <div class="icon">📝</div>
+                <div class="icon" style="font-size: 1.5rem;">&#128221;</div>
                 <div class="number" id="statLogs">-</div>
                 <div class="label">Daily Logs</div>
             </div>
             <div class="stat-card">
-                <div class="icon">👨‍⚕️</div>
+                <div class="icon" style="font-size: 1.5rem;">&#128105;</div>
                 <div class="number" id="statCounsellors">-</div>
                 <div class="label">Counsellors</div>
             </div>
             <div class="stat-card">
-                <div class="icon">📅</div>
+                <div class="icon" style="font-size: 1.5rem;">&#128197;</div>
                 <div class="number" id="statSessions">-</div>
                 <div class="label">Sessions</div>
             </div>
             <div class="stat-card">
-                <div class="icon">🚨</div>
+                <div class="icon" style="font-size: 1.5rem;">&#128680;</div>
                 <div class="number" id="statAlerts">-</div>
                 <div class="label">Crisis Alerts</div>
             </div>
@@ -524,23 +524,23 @@
 
         <!-- Table Tabs -->
         <div class="table-tabs">
-            <button class="table-tab active" data-table="users">👥 Users</button>
-            <button class="table-tab" data-table="dailylogs">📝 Daily Logs</button>
-            <button class="table-tab" data-table="counsellors">👨‍⚕️ Counsellors</button>
-            <button class="table-tab" data-table="sessions">📅 Sessions</button>
-            <button class="table-tab" data-table="feedback">💬 Feedback</button>
-            <button class="table-tab" data-table="progress">📈 Progress</button>
-            <button class="table-tab" data-table="recommendations">💡 Recommendations</button>
-            <button class="table-tab" data-table="ai_analysis">🤖 AI Analysis</button>
-            <button class="table-tab" data-table="crisisalerts">🚨 Crisis Alerts</button>
-            <button class="table-tab" data-table="emergencycontacts">📞 Emergency Contacts</button>
+            <button class="table-tab active" data-table="users">Users</button>
+            <button class="table-tab" data-table="dailylogs">Daily Logs</button>
+            <button class="table-tab" data-table="counsellors">Counsellors</button>
+            <button class="table-tab" data-table="sessions">Sessions</button>
+            <button class="table-tab" data-table="feedback">Feedback</button>
+            <button class="table-tab" data-table="progress">Progress</button>
+            <button class="table-tab" data-table="recommendations">Recommendations</button>
+            <button class="table-tab" data-table="ai_analysis">AI Analysis</button>
+            <button class="table-tab" data-table="crisisalerts">Crisis Alerts</button>
+            <button class="table-tab" data-table="emergencycontacts">Emergency Contacts</button>
         </div>
 
         <!-- Data Section -->
         <div class="data-section">
             <div class="data-header">
-                <h2 id="tableTitle">👥 Users</h2>
-                <button class="btn-add" onclick="openCreateModal()">➕ Add New Record</button>
+                <h2 id="tableTitle">Users</h2>
+                <button class="btn-add" onclick="openCreateModal()">+ Add New Record</button>
             </div>
             <div class="data-table-wrapper" id="dataTableContainer">
                 <div class="loading-state">
@@ -586,7 +586,7 @@
         // Table schemas
         const tableSchemas = {
             users: {
-                title: '👥 Users',
+                title: 'Users',
                 idField: 'user_id',
                 fields: [
                     { name: 'full_name', label: 'Full Name', type: 'text', required: true },
@@ -600,7 +600,7 @@
                 ]
             },
             dailylogs: {
-                title: '📝 Daily Logs',
+                title: 'Daily Logs',
                 idField: 'log_id',
                 fields: [
                     { name: 'user_id', label: 'User ID', type: 'number', required: true },
@@ -612,7 +612,7 @@
                 ]
             },
             counsellors: {
-                title: '👨‍⚕️ Counsellors',
+                title: 'Counsellors',
                 idField: 'counsellor_id',
                 fields: [
                     { name: 'name', label: 'Name', type: 'text', required: true },
@@ -623,7 +623,7 @@
                 ]
             },
             sessions: {
-                title: '📅 Sessions',
+                title: 'Sessions',
                 idField: 'session_id',
                 fields: [
                     { name: 'user_id', label: 'User ID', type: 'number', required: true },
@@ -634,7 +634,7 @@
                 ]
             },
             feedback: {
-                title: '💬 Feedback',
+                title: 'Feedback',
                 idField: 'feedback_id',
                 fields: [
                     { name: 'session_id', label: 'Session ID', type: 'number', required: true },
@@ -644,7 +644,7 @@
                 ]
             },
             progress: {
-                title: '📈 Progress',
+                title: 'Progress',
                 idField: 'progress_id',
                 fields: [
                     { name: 'user_id', label: 'User ID', type: 'number', required: true },
@@ -654,7 +654,7 @@
                 ]
             },
             recommendations: {
-                title: '💡 Recommendations',
+                title: 'Recommendations',
                 idField: 'rec_id',
                 fields: [
                     { name: 'user_id', label: 'User ID', type: 'number', required: true },
@@ -663,7 +663,7 @@
                 ]
             },
             ai_analysis: {
-                title: '🤖 AI Analysis',
+                title: 'AI Analysis',
                 idField: 'analysis_id',
                 fields: [
                     { name: 'user_id', label: 'User ID', type: 'number', required: true },
@@ -673,7 +673,7 @@
                 ]
             },
             crisisalerts: {
-                title: '🚨 Crisis Alerts',
+                title: 'Crisis Alerts',
                 idField: 'alert_id',
                 fields: [
                     { name: 'user_id', label: 'User ID', type: 'number', required: true },
@@ -683,7 +683,7 @@
                 ]
             },
             emergencycontacts: {
-                title: '📞 Emergency Contacts',
+                title: 'Emergency Contacts',
                 idField: 'contact_id',
                 fields: [
                     { name: 'user_id', label: 'User ID', type: 'number', required: true },
