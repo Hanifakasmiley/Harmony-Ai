@@ -4,8 +4,8 @@
  */
 
 const ApiService = (function () {
-    // API base URL - adjust if your XAMPP setup is different
-    const API_BASE = 'http://localhost/Harmony-Ai/backend/api.php';
+    // API base URL - using port 3000 for XAMPP
+    const API_BASE = 'http://localhost:3000/Harmony-Ai/backend/api.php';
 
     // Helper function for API calls
     async function apiCall(endpoint, method = 'GET', data = null, params = {}) {
