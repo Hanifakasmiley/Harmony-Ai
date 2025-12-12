@@ -7,27 +7,32 @@
 }
 
 :root {
-  /* Light Mode (default) */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f5f7fa;
-  --bg-tertiary: #e8ecf1;
+  /* Light Mode (default) - Harmony AI Palette */
+  --bg-primary: #F7F9F9;
+  /* Cool Off-White - Canvas Color */
+  --bg-secondary: #EEF2F2;
+  --bg-tertiary: #E5EAEA;
   --text-primary: #1a1a1a;
   --text-secondary: #4a4a4a;
   --text-tertiary: #7a7a7a;
   --border-color: #d1d5db;
   --mode: light;
 
-  /* Brand Colors */
-  --primary-color: #667eea;
-  --primary-dark: #5568d3;
-  --secondary-color: #764ba2;
-  --accent-color: #1abc9c;
-  --danger-color: #e74c3c;
-  --warning-color: #f39c12;
-  --success-color: #27ae60;
+  /* Harmony AI Brand Colors */
+  --primary-color: #2A9D8F;
+  /* Teal Blue - Primary */
+  --primary-dark: #238B7E;
+  --secondary-color: #1F7A6E;
+  --accent-color: #8AB17D;
+  /* Sage Green - Growth */
+  --danger-color: #E76F51;
+  /* Soft Coral - Alert */
+  --warning-color: #E9A84A;
+  --success-color: #8AB17D;
+  /* Sage Green - Success */
 
   /* Gradients */
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --primary-gradient: linear-gradient(135deg, #2A9D8F 0%, #1F7A6E 100%);
 
   /* Shadows */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -82,7 +87,7 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Dark Mode */
+/* Dark Mode - Harmony AI */
 body.dark-mode {
   --bg-primary: #0f1419;
   --bg-secondary: #1a1f2e;
@@ -91,6 +96,12 @@ body.dark-mode {
   --text-secondary: #e8e8f0;
   --text-tertiary: #c0c0d0;
   --border-color: #505070;
+  --primary-color: #3DB9A9;
+  /* Lighter Teal for dark mode */
+  --accent-color: #9FC492;
+  /* Lighter Sage for dark mode */
+  --danger-color: #F08A70;
+  /* Lighter Coral for dark mode */
 }
 
 /* ===== TOP NAVIGATION BAR ===== */
@@ -152,7 +163,7 @@ body.dark-mode {
 .nav-menu a:hover,
 .nav-menu a.active {
   color: var(--primary-color);
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(42, 157, 143, 0.1);
 }
 
 .nav-actions {
@@ -177,7 +188,7 @@ body.dark-mode {
 }
 
 .theme-toggle:hover {
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(42, 157, 143, 0.1);
   border-color: var(--primary-color);
   color: var(--primary-color);
 }
@@ -267,8 +278,8 @@ body.dark-mode {
   }
 
   .mobile-menu-btn.open {
-    background: rgba(102, 126, 234, 0.06);
-    border-color: rgba(102, 126, 234, 0.16);
+    background: rgba(42, 157, 143, 0.06);
+    border-color: rgba(42, 157, 143, 0.16);
   }
 
   .nav-logo {
@@ -504,7 +515,7 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.1);
 }
 
 /* ===== TABLES ===== */
@@ -1319,7 +1330,7 @@ body.dark-mode table {
 }
 
 body.dark-mode table thead {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background: linear-gradient(135deg, #2A9D8F 0%, #1F7A6E 100%) !important;
   color: #ffffff !important;
 }
 
@@ -1454,7 +1465,7 @@ body.dark-mode .stat-card .stat-label {
 
 /* Dark mode - Mini stats */
 body.dark-mode .stat-mini {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background: linear-gradient(135deg, #2A9D8F 0%, #1F7A6E 100%) !important;
   color: #ffffff !important;
 }
 
@@ -1493,7 +1504,7 @@ body.dark-mode a:not(.btn):not(.nav-menu a):not(.nav-logo) {
 
 /* Dark mode - Feature header stays gradient */
 body.dark-mode .feature-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background: linear-gradient(135deg, #2A9D8F 0%, #1F7A6E 100%) !important;
 }
 
 body.dark-mode .feature-header h1,
@@ -1503,7 +1514,7 @@ body.dark-mode .feature-header p {
 
 /* Dark mode - Dashboard header stays gradient */
 body.dark-mode .dashboard-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background: linear-gradient(135deg, #2A9D8F 0%, #1F7A6E 100%) !important;
 }
 
 body.dark-mode .dashboard-header h1,
