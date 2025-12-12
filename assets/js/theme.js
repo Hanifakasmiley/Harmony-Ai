@@ -56,26 +56,43 @@
     const navMenu = document.querySelector('.nav-menu');
 
     if (mobileMenuBtn && navMenu) {
-      if (!mobileMenuBtn.hasAttribute('aria-expanded')) {
-        mobileMenuBtn.setAttribute('aria-expanded', 'false');
-      }
+      // Remove any existing event listeners by cloning
+      const newBtn = mobileMenuBtn.cloneNode(true);
+      mobileMenuBtn.parentNode.replaceChild(newBtn, mobileMenuBtn);
 
-      const initActive = navMenu.classList.contains('active');
-      mobileMenuBtn.classList.toggle('open', initActive);
-      mobileMenuBtn.setAttribute('aria-expanded', initActive ? 'true' : 'false');
+      // Set initial state
+      newBtn.setAttribute('aria-expanded', 'false');
+      navMenu.classList.remove('active');
+      newBtn.classList.remove('open');
 
-      mobileMenuBtn.addEventListener('click', function () {
+      // Add click handler
+      newBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
         const isActive = navMenu.classList.toggle('active');
-        mobileMenuBtn.classList.toggle('open', isActive);
-        mobileMenuBtn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+        newBtn.classList.toggle('open', isActive);
+        newBtn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+
+        console.log('Mobile menu toggled:', isActive);
       });
 
+      // Close menu when clicking a link
       document.querySelectorAll('.nav-menu a').forEach(link => {
         link.addEventListener('click', function () {
           navMenu.classList.remove('active');
-          mobileMenuBtn.classList.remove('open');
-          mobileMenuBtn.setAttribute('aria-expanded', 'false');
+          newBtn.classList.remove('open');
+          newBtn.setAttribute('aria-expanded', 'false');
         });
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', function (e) {
+        if (!newBtn.contains(e.target) && !navMenu.contains(e.target)) {
+          navMenu.classList.remove('active');
+          newBtn.classList.remove('open');
+          newBtn.setAttribute('aria-expanded', 'false');
+        }
       });
     }
   }
