@@ -216,15 +216,15 @@
         <div class="nav-container">
             <a href="./index.html" class="nav-logo">🧠 Harmony AI</a>
             <ul class="nav-menu">
-                <li><a href="./index.html">🏠 Home</a></li>
-                <li><a href="./dashboard.html" class="active">📊 Dashboard</a></li>
-                <li><a href="./admin.html">⚙️ Admin</a></li>
-                <li><a href="./feature-daily-logs.html">📝 Daily Logs</a></li>
-                <li><a href="./feature-ai-analysis.html">🤖 AI Analysis</a></li>
-                <li><a href="./feature-recommendations.html">💡 Recommendations</a></li>
-                <li><a href="./feature-sessions.html">�‍⚕️o Sessions</a></li>
-                <li><a href="./feature-progress.html">� Prog ress</a></li>
-                <li><a href="./feature-crisis.html">🚨 Crisis Support</a></li>
+                <li><a href="./index.html">Home</a></li>
+                <li><a href="./dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="./admin.html" id="adminLink" style="display: none;">Admin</a></li>
+                <li><a href="./feature-daily-logs.html">Daily Logs</a></li>
+                <li><a href="./feature-ai-analysis.html">AI Analysis</a></li>
+                <li><a href="./feature-recommendations.html">Recommendations</a></li>
+                <li><a href="./feature-sessions.html">Sessions</a></li>
+                <li><a href="./feature-progress.html">Progress</a></li>
+                <li><a href="./feature-crisis.html">Crisis Support</a></li>
             </ul>
             <div class="nav-actions">
                 <button class="theme-toggle" type="button" aria-label="Toggle theme"></button>
@@ -341,7 +341,12 @@
 
             // Update header
             document.getElementById('dashboardTitle').textContent = `${designation} Dashboard`;
-            document.getElementById('roleBadge').textContent = `👤 ${designation}`;
+            document.getElementById('roleBadge').textContent = `${designation}`;
+
+            // Show Admin link only for System Administrator
+            if (designation === 'System Administrator') {
+                document.getElementById('adminLink').style.display = 'block';
+            }
 
             // Update stats (only show for non-patient roles)
             if (userRole !== 'patient') {

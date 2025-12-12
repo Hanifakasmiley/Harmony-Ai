@@ -464,13 +464,13 @@
     <!-- Navigation -->
     <nav class="top-navbar">
         <div class="nav-container">
-            <a href="./index.html" class="nav-logo">🧠 Harmony AI</a>
+            <a href="./index.html" class="nav-logo">Harmony AI</a>
             <ul class="nav-menu">
-                <li><a href="./dashboard.html">📊 Dashboard</a></li>
-                <li><a href="./admin.html" class="active">⚙️ Admin</a></li>
-                <li><a href="./feature-daily-logs.html">📝 Logs</a></li>
-                <li><a href="./feature-sessions.html">👨‍⚕️ Sessions</a></li>
-                <li><a href="./feature-crisis.html">🚨 Crisis</a></li>
+                <li><a href="./dashboard.html">Dashboard</a></li>
+                <li><a href="./admin.html" class="active">Admin</a></li>
+                <li><a href="./feature-daily-logs.html">Logs</a></li>
+                <li><a href="./feature-sessions.html">Sessions</a></li>
+                <li><a href="./feature-crisis.html">Crisis</a></li>
             </ul>
             <div class="nav-actions">
                 <button class="theme-toggle" type="button" aria-label="Toggle theme"></button>
@@ -710,6 +710,14 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            // Check if user is System Administrator
+            const designation = localStorage.getItem('designation');
+            if (designation !== 'System Administrator') {
+                alert('Access Denied: Only System Administrators can access the Admin Panel.');
+                window.location.href = './dashboard.html';
+                return;
+            }
+
             crudModal = new bootstrap.Modal(document.getElementById('crudModal'));
             setupTabs();
             loadStats();

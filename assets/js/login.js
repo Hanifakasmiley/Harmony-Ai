@@ -18,12 +18,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const roleMap = {
         patient: './feature-daily-logs.html',
         software_engineer: './dashboard.html',
-        ai_engineer: './feature-ai-analysis.html',
         data_scientist: './feature-ai-analysis.html',
         mental_health_admin: './feature-sessions.html',
         emergency_team: './feature-crisis.html',
-        security_analyst: './dashboard.html',
-        financial_team: './dashboard.html',
         system_admin: './dashboard.html'
     };
 
@@ -31,12 +28,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const designationMap = {
         'patient': 'Patient/User',
         'software_engineer': 'Software Engineer',
-        'ai_engineer': 'AI Engineer',
         'data_scientist': 'Data Scientist',
         'mental_health_admin': 'Mental Health Administrator',
         'emergency_team': 'Emergency Contact Team',
-        'security_analyst': 'Security Analyst',
-        'financial_team': 'Financial Team',
         'system_admin': 'System Administrator'
     };
 
@@ -150,10 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
             'System Administrator': 'system_admin',
             'Software Engineer': 'software_engineer',
             'Mental Health Administrator': 'mental_health_admin',
-            'Emergency Contact Team': 'emergency_team',
-            'AI Engineer': 'ai_engineer',
-            'Security Analyst': 'security_analyst',
-            'Financial Team': 'financial_team'
+            'Emergency Contact Team': 'emergency_team'
         };
         return roleMap[designation] || 'patient';
     }
