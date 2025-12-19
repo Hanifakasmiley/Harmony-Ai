@@ -38,14 +38,22 @@
         .chart-container {
             background: var(--bg-primary);
             padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(42, 157, 143, 0.1);
+            margin-bottom: 1.5rem;
             border: 1px solid var(--border-color);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .chart-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(42, 157, 143, 0.15);
         }
 
         .chart-container h3 {
             color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
         }
 
         .risk-badge {
@@ -86,6 +94,68 @@
         .content-section h3 {
             color: var(--text-primary);
         }
+
+        .analysis-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .analysis-table th {
+            background: linear-gradient(135deg, #2A9D8F 0%, #1F7A6E 100%);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .analysis-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .analysis-table tr:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .sentiment-positive {
+            color: #8AB17D;
+            font-weight: 600;
+        }
+
+        .sentiment-negative {
+            color: #E76F51;
+            font-weight: 600;
+        }
+
+        .sentiment-neutral {
+            color: #6c757d;
+            font-weight: 600;
+        }
+
+        .emotion-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .emotion-positive {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .emotion-negative {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .emotion-neutral {
+            background: #e2e3e5;
+            color: #383d41;
+        }
     </style>
 </head>
 
@@ -105,6 +175,26 @@
             </ul>
             <div class="nav-actions">
                 <button class="theme-toggle" type="button" aria-label="Toggle theme"></button>
+
+                <!-- Notification Bell -->
+                <div class="notification-bell" id="notificationBell" style="display: none;">
+                    <span class="bell-icon">🔔</span>
+                    <span class="notification-badge hidden">0</span>
+                    <div class="notification-dropdown">
+                        <div class="notification-header">
+                            <h4>Notifications</h4>
+                            <button class="mark-all-read" onclick="NotificationSystem.markAllAsRead()">Mark all
+                                read</button>
+                        </div>
+                        <div class="notification-list"></div>
+                    </div>
+                </div>
+
+                <!-- User Avatar -->
+                <div class="user-avatar-container" id="userAvatarContainer" style="display: none;"></div>
+
+                <a href="./login.html" class="nav-auth-btn login" id="loginBtn">🔐 Login</a>
+                <button class="nav-auth-btn logout" id="logoutBtn" onclick="logout()">🔓 Logout</button>
                 <button class="mobile-menu-btn" aria-label="Toggle menu" title="Open navigation">
                     <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor" />
@@ -124,19 +214,43 @@
                 health trends</p>
         </div>
 
-        <!-- AI Analysis Overview -->
-        <div id="analysisOverview"></div>
-
-        <!-- Risk Scores Chart -->
-        <div class="chart-container" style="max-width: 500px; height: 350px;">
-            <h3 style="margin-top: 0;">📊 Risk Prediction Scores</h3>
-            <canvas id="riskDistributionChart"></canvas>
+        <!-- AI Analysis Summary Cards -->
+        <div id="analysisSummary"
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
         </div>
 
-        <!-- Emotion Detection -->
+        <!-- AI Analysis Table -->
         <div class="chart-container">
-            <h3 style="margin-top: 0;">😊 Emotion Detection Analysis</h3>
-            <canvas id="aiConfidenceChart"></canvas>
+            <h3 style="margin-top: 0;">📋 Your AI Analysis History</h3>
+            <div style="overflow-x: auto;">
+                <table class="analysis-table" id="analysisTable">
+                    <thead>
+                        <tr>
+                            <th>Analysis ID</th>
+                            <th>Risk Score</th>
+                            <th>Risk Level</th>
+                            <th>Sentiment</th>
+                            <th>Emotion</th>
+                            <th>Analyzed At</th>
+                        </tr>
+                    </thead>
+                    <tbody id="analysisTableBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center;">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Combined Analysis Chart -->
+        <div class="chart-container">
+            <h3 style="margin-top: 0; color: #2A9D8F;">📊 Your Mental Wellness Overview</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Risk score and sentiment
+                trends from your AI analyses</p>
+            <div style="position: relative; height: 350px;">
+                <canvas id="combinedAnalysisChart"></canvas>
+            </div>
         </div>
 
         <!-- Recent AI Insights -->
@@ -152,69 +266,163 @@
     <script src="assets/js/patient-data.js"></script>
     <script src="assets/js/charts-manager.js"></script>
     <script src="assets/js/theme.js"></script>
+    <script src="assets/js/onboarding.js"></script>
 
     <script>
         async function loadAIAnalysis() {
-            document.getElementById('analysisOverview').innerHTML = '<p>Loading AI analysis...</p>';
-
             let analysis = [];
             try {
                 const userId = localStorage.getItem('userId');
                 analysis = await ApiService.getAIAnalysis(userId);
-                console.log('✅ AI Analysis loaded from API');
+                console.log('✅ AI Analysis loaded from API:', analysis);
             } catch (error) {
                 console.warn('API unavailable, using mock data:', error);
-                analysis = PatientData.getAIAnalysis().slice(0, 5);
+                analysis = PatientData.getAIAnalysis().slice(0, 10);
             }
 
-            renderAnalysis(analysis);
-            ChartsManager.createRiskDistributionChart();
-            ChartsManager.createAIConfidenceChart();
+            renderAnalysisSummary(analysis);
+            renderAnalysisTable(analysis);
+            renderInsights(analysis);
+            createPatientCharts(analysis);
         }
 
-        function renderAnalysis(analysis) {
-            let overviewHtml = '<h3>📈 Analysis Overview</h3><div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">';
+        function getRiskLevel(score) {
+            if (score >= 75) return { level: 'Critical', class: 'risk-critical' };
+            if (score >= 60) return { level: 'High', class: 'risk-high' };
+            if (score >= 40) return { level: 'Moderate', class: 'risk-moderate' };
+            return { level: 'Low', class: 'risk-low' };
+        }
 
-            analysis.forEach((item) => {
-                const riskScore = item.risk_score || item.riskScore || 0;
-                const emotion = item.emotion_label || item.dominantEmotion || 'N/A';
-                const sentiment = item.sentiment_value || item.sentimentScore || 0;
-                const riskClass = riskScore > 75 ? 'risk-critical' : riskScore > 60 ? 'risk-high' : riskScore > 40 ? 'risk-moderate' : 'risk-low';
+        function getSentimentClass(value) {
+            if (value > 0.2) return 'sentiment-positive';
+            if (value < -0.2) return 'sentiment-negative';
+            return 'sentiment-neutral';
+        }
 
-                overviewHtml += `
-                    <div class="analysis-card">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <h5 style="margin-bottom: 0.5rem;">Analysis #${item.analysis_id || item.analysisId}</h5>
-                                <p style="margin: 0.5rem 0; font-size: 0.9rem;">Emotion: <strong>${emotion}</strong></p>
-                                <p style="margin: 0.5rem 0; font-size: 0.9rem;">Sentiment: ${sentiment}</p>
-                            </div>
-                            <span class="risk-badge ${riskClass}">${riskScore}</span>
-                        </div>
-                    </div>
+        function getEmotionClass(emotion) {
+            const positive = ['Happy', 'Content', 'Joy', 'Peaceful', 'Optimistic', 'Motivated'];
+            const negative = ['Anxious', 'Depressed', 'Distressed', 'Fearful', 'Angry', 'Sadness'];
+            if (positive.includes(emotion)) return 'emotion-positive';
+            if (negative.includes(emotion)) return 'emotion-negative';
+            return 'emotion-neutral';
+        }
+
+        function renderAnalysisSummary(analysis) {
+            if (!analysis.length) {
+                document.getElementById('analysisSummary').innerHTML = '<div class="analysis-card"><p>No analysis data yet. Submit daily logs to get AI insights.</p></div>';
+                return;
+            }
+
+            // Calculate averages
+            const avgRisk = (analysis.reduce((sum, a) => sum + parseFloat(a.risk_score || 0), 0) / analysis.length).toFixed(1);
+            const avgSentiment = (analysis.reduce((sum, a) => sum + parseFloat(a.sentiment_value || 0), 0) / analysis.length).toFixed(2);
+            const latestEmotion = analysis[0]?.emotion_label || 'N/A';
+            const latestRisk = getRiskLevel(analysis[0]?.risk_score || 0);
+
+            document.getElementById('analysisSummary').innerHTML = `
+                <div class="analysis-card">
+                    <h5 style="margin: 0 0 0.5rem 0;">📊 Average Risk Score</h5>
+                    <p style="font-size: 2rem; margin: 0; font-weight: bold; color: var(--text-primary);">${avgRisk}%</p>
+                </div>
+                <div class="analysis-card">
+                    <h5 style="margin: 0 0 0.5rem 0;">💭 Average Sentiment</h5>
+                    <p style="font-size: 2rem; margin: 0; font-weight: bold;" class="${getSentimentClass(avgSentiment)}">${avgSentiment > 0 ? '+' : ''}${avgSentiment}</p>
+                </div>
+                <div class="analysis-card">
+                    <h5 style="margin: 0 0 0.5rem 0;">😊 Latest Emotion</h5>
+                    <p style="font-size: 1.5rem; margin: 0;"><span class="emotion-badge ${getEmotionClass(latestEmotion)}">${latestEmotion}</span></p>
+                </div>
+                <div class="analysis-card">
+                    <h5 style="margin: 0 0 0.5rem 0;">⚠️ Current Risk Level</h5>
+                    <p style="margin: 0;"><span class="risk-badge ${latestRisk.class}">${latestRisk.level}</span></p>
+                </div>
+            `;
+        }
+
+        function renderAnalysisTable(analysis) {
+            const tbody = document.getElementById('analysisTableBody');
+
+            if (!analysis.length) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No analysis records found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = analysis.map(item => {
+                const riskScore = parseFloat(item.risk_score || 0);
+                const sentiment = parseFloat(item.sentiment_value || 0);
+                const emotion = item.emotion_label || 'N/A';
+                const analyzedAt = item.analyzed_at || item.created_at || 'N/A';
+                const risk = getRiskLevel(riskScore);
+
+                return `
+                    <tr>
+                        <td><strong>#${item.analysis_id}</strong></td>
+                        <td><strong>${riskScore}%</strong></td>
+                        <td><span class="risk-badge ${risk.class}">${risk.level}</span></td>
+                        <td class="${getSentimentClass(sentiment)}">${sentiment > 0 ? '+' : ''}${sentiment.toFixed(2)}</td>
+                        <td><span class="emotion-badge ${getEmotionClass(emotion)}">${emotion}</span></td>
+                        <td>${formatDate(analyzedAt)}</td>
+                    </tr>
                 `;
-            });
-            overviewHtml += '</div>';
-            document.getElementById('analysisOverview').innerHTML = overviewHtml;
+            }).join('');
+        }
 
+        function formatDate(dateStr) {
+            if (!dateStr || dateStr === 'N/A') return 'N/A';
+            try {
+                const date = new Date(dateStr);
+                return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            } catch {
+                return dateStr;
+            }
+        }
+
+        function renderInsights(analysis) {
+            if (!analysis.length) {
+                document.getElementById('aiInsightsList').innerHTML = '<p>No analysis data available. Submit daily logs to receive AI insights.</p>';
+                return;
+            }
+
+            // Generate insights based on data
             let insightsHtml = '';
-            analysis.forEach(item => {
-                const riskScore = item.risk_score || item.riskScore || 0;
-                const emotion = item.emotion_label || item.dominantEmotion || 'N/A';
-                const sentiment = item.sentiment_value || item.sentimentScore || 0;
+
+            // Latest analysis insight
+            const latest = analysis[0];
+            const latestRisk = getRiskLevel(latest.risk_score || 0);
+
+            insightsHtml += `
+                <div style="padding: 1rem; border-bottom: 1px solid var(--border-color);">
+                    <h5 style="margin-bottom: 0.5rem;">🔍 Latest Analysis (#${latest.analysis_id})</h5>
+                    <p style="margin: 0.5rem 0;">
+                        Your most recent analysis shows <strong>${latest.emotion_label}</strong> emotion 
+                        with a <strong>${latestRisk.level}</strong> risk level (${latest.risk_score}%).
+                        ${latest.sentiment_value > 0 ? 'Your journal entries show positive sentiment.' :
+                    latest.sentiment_value < 0 ? 'Your journal entries indicate some concerns.' :
+                        'Your sentiment appears neutral.'}
+                    </p>
+                </div>
+            `;
+
+            // Trend insight
+            if (analysis.length >= 2) {
+                const recentAvg = analysis.slice(0, 3).reduce((sum, a) => sum + parseFloat(a.risk_score || 0), 0) / Math.min(3, analysis.length);
+                const olderAvg = analysis.slice(-3).reduce((sum, a) => sum + parseFloat(a.risk_score || 0), 0) / Math.min(3, analysis.length);
+                const trend = recentAvg < olderAvg ? 'improving' : recentAvg > olderAvg ? 'needs attention' : 'stable';
 
                 insightsHtml += `
                     <div style="padding: 1rem; border-bottom: 1px solid var(--border-color);">
-                        <h5 style="margin-bottom: 0.5rem;">💭 Analysis #${item.analysis_id || item.analysisId}</h5>
-                        <p style="margin: 0.5rem 0; font-size: 0.9rem;">
-                            <strong>Emotion Label:</strong> ${emotion}<br>
-                            <strong>Sentiment Value:</strong> ${sentiment}<br>
-                            <strong>Risk Score:</strong> ${riskScore}
+                        <h5 style="margin-bottom: 0.5rem;">📈 Trend Analysis</h5>
+                        <p style="margin: 0.5rem 0;">
+                            Based on ${analysis.length} analyses, your mental wellness trend is <strong>${trend}</strong>.
+                            ${trend === 'improving' ? '🎉 Great progress! Keep up the good work.' :
+                        trend === 'needs attention' ? '💪 Consider speaking with a counselor for support.' :
+                            '✓ Your wellness levels are consistent.'}
                         </p>
                     </div>
                 `;
-            });
-            document.getElementById('aiInsightsList').innerHTML = insightsHtml || '<p>No analysis data available.</p>';
+            }
+
+            document.getElementById('aiInsightsList').innerHTML = insightsHtml;
         }
 
         // Mobile menu
@@ -226,9 +434,204 @@
             }
         }
 
+        // Store chart instances for cleanup
+        let chartInstances = {};
+
+        function destroyChart(canvasId) {
+            if (chartInstances[canvasId]) {
+                chartInstances[canvasId].destroy();
+                delete chartInstances[canvasId];
+            }
+        }
+
+        function isDarkMode() {
+            return document.body.classList.contains('dark-mode');
+        }
+
+        function getChartColors() {
+            const dark = isDarkMode();
+            return {
+                textColor: dark ? '#ffffff' : '#333333',
+                gridColor: dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                backgroundColor: dark ? '#1a1f2e' : '#ffffff'
+            };
+        }
+
+        // Harmony-AI Color Palette
+        const HARMONY_COLORS = {
+            primary: '#2A9D8F',      // Teal Blue
+            growth: '#8AB17D',       // Sage Green
+            alert: '#E76F51',        // Soft Coral
+            canvas: '#F7F9F9',       // Cool Off-White
+            secondary: '#1F7A6E',    // Darker Teal
+            warning: '#FFB347',      // Soft Orange
+            info: '#5DADE2',         // Light Blue
+            purple: '#9B59B6'        // Purple
+        };
+
+        function createPatientCharts(analysis) {
+            if (!analysis || analysis.length === 0) {
+                console.log('No analysis data for charts');
+                return;
+            }
+
+            const colors = getChartColors();
+            createCombinedChart(analysis, colors);
+        }
+
+        function createCombinedChart(analysis, colors) {
+            destroyChart('combinedAnalysisChart');
+            const canvas = document.getElementById('combinedAnalysisChart');
+            if (!canvas) return;
+
+            // Sort by analysis_id and get entries
+            const sortedData = [...analysis].reverse().slice(-10);
+            const labels = sortedData.map(a => `#${a.analysis_id}`);
+            const riskScores = sortedData.map(a => parseFloat(a.risk_score || 0));
+            const sentiments = sortedData.map(a => parseFloat(a.sentiment_value || 0) * 50 + 50);
+            const emotions = sortedData.map(a => a.emotion_label || 'N/A');
+
+            chartInstances['combinedAnalysisChart'] = new Chart(canvas.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Risk Score (%)',
+                            data: riskScores,
+                            borderColor: HARMONY_COLORS.alert,
+                            backgroundColor: 'rgba(231, 111, 81, 0.15)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 6,
+                            pointBackgroundColor: HARMONY_COLORS.alert,
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointHoverRadius: 9
+                        },
+                        {
+                            label: 'Sentiment (scaled 0-100)',
+                            data: sentiments,
+                            borderColor: HARMONY_COLORS.growth,
+                            backgroundColor: 'rgba(138, 177, 125, 0.15)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 6,
+                            pointBackgroundColor: HARMONY_COLORS.growth,
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointHoverRadius: 9
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                color: colors.textColor,
+                                padding: 20,
+                                font: { size: 13, weight: '600' },
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(42, 157, 143, 0.95)',
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 12 },
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                afterTitle: (ctx) => {
+                                    const idx = ctx[0].dataIndex;
+                                    return `Emotion: ${emotions[idx]}`;
+                                },
+                                label: (ctx) => {
+                                    if (ctx.dataset.label.includes('Risk')) {
+                                        return ` Risk Score: ${ctx.raw}%`;
+                                    } else {
+                                        const original = (ctx.raw - 50) / 50;
+                                        const label = original > 0.2 ? 'Positive' : original < -0.2 ? 'Negative' : 'Neutral';
+                                        return ` Sentiment: ${original.toFixed(2)} (${label})`;
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: colors.textColor,
+                                font: { size: 11 }
+                            },
+                            grid: { color: colors.gridColor, display: false }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                color: colors.textColor,
+                                callback: (val) => val + '%',
+                                font: { size: 11 }
+                            },
+                            grid: { color: colors.gridColor }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Listen for theme changes
+        window.addEventListener('themeChanged', function () {
+            setTimeout(() => {
+                loadAIAnalysis();
+            }, 100);
+        });
+
+        // Auth button visibility
+        function updateAuthButton() {
+            const userId = localStorage.getItem('userId');
+            const userRole = localStorage.getItem('userRole');
+            const loginBtn = document.getElementById('loginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const notificationBell = document.getElementById('notificationBell');
+            const userAvatarContainer = document.getElementById('userAvatarContainer');
+
+            if (userId && userRole) {
+                if (loginBtn) loginBtn.style.display = 'none';
+                if (logoutBtn) logoutBtn.style.display = 'inline-flex';
+                if (notificationBell) notificationBell.style.display = 'flex';
+                if (userAvatarContainer) userAvatarContainer.style.display = 'flex';
+            } else {
+                if (loginBtn) loginBtn.style.display = 'inline-flex';
+                if (logoutBtn) logoutBtn.style.display = 'none';
+                if (notificationBell) notificationBell.style.display = 'none';
+                if (userAvatarContainer) userAvatarContainer.style.display = 'none';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('designation');
+            localStorage.removeItem('currentUser');
+            window.location.href = './login.html';
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             loadAIAnalysis();
             setupMobileMenu();
+            updateAuthButton();
         });
     </script>
 </body>

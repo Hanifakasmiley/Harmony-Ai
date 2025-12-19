@@ -25,6 +25,8 @@
       </ul>
       <div class="nav-actions">
         <button class="theme-toggle" type="button" aria-label="Toggle theme"></button>
+        <a href="./login.html" class="nav-auth-btn login" id="loginBtn">🔐 Login</a>
+        <button class="nav-auth-btn logout" id="logoutBtn" onclick="logout()">🔓 Logout</button>
         <button class="mobile-menu-btn" aria-label="Toggle menu" title="Open navigation">
           <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
             focusable="false">
@@ -224,6 +226,25 @@
   </script>
 
   <script src="assets/js/theme.js"></script>
+  <script>
+    function updateAuthButton() {
+      const userId = localStorage.getItem('userId');
+      const loginBtn = document.getElementById('loginBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (userId) {
+        if (loginBtn) loginBtn.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'inline-flex';
+      } else {
+        if (loginBtn) loginBtn.style.display = 'inline-flex';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+      }
+    }
+    function logout() {
+      localStorage.clear();
+      window.location.href = './login.html';
+    }
+    document.addEventListener('DOMContentLoaded', updateAuthButton);
+  </script>
 </body>
 
 </html>

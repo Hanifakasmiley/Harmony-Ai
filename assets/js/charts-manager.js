@@ -129,9 +129,9 @@ const ChartsManager = (function () {
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
-                    legend: { display: true, position: 'bottom', labels: { color: colors.textColor, font: { size: 12 } } },
+                    legend: { display: true, position: 'bottom', labels: { color: colors.textColor, font: { size: 12 }, padding: 15 } },
                     title: { display: true, text: 'Patient Risk Distribution', color: colors.textColor, font: { size: 14 } }
                 }
             }
