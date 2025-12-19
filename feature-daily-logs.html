@@ -315,23 +315,31 @@
         document.getElementById('moodLogForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const userId = localStorage.getItem('userId') || 1;
+            const userId = localStorage.getItem('userId');
+
+            // Check if user is logged in
+            if (!userId || userId === '0') {
+                alert('⚠️ Please log in first to save your mood log to the database.');
+                return;
+            }
+
             const logData = {
                 user_id: parseInt(userId),
                 mood_level: document.getElementById('mood').value,
                 stress_level: parseInt(document.getElementById('stressLevel').value),
+                anxiety_level: parseInt(document.getElementById('anxietyLevel').value),
                 sleep_hours: parseFloat(document.getElementById('sleepHours').value),
                 notes: document.getElementById('notes').value,
                 log_date: new Date().toISOString().split('T')[0]
             };
 
             try {
-                await ApiService.createDailyLog(logData);
-                alert('✅ Mood log saved to database!');
+                const result = await ApiService.createDailyLog(logData);
+                alert('✅ Mood log saved to database! (Log ID: ' + result.log_id + ')');
                 loadMoodLogs(); // Reload logs
             } catch (error) {
-                console.warn('API save failed:', error);
-                alert('✅ Mood log saved locally! (Database unavailable)');
+                console.error('API save failed:', error);
+                alert('❌ Failed to save: ' + error.message);
             }
 
             document.getElementById('moodLogForm').reset();

@@ -162,18 +162,19 @@ function handleDailyLogs($conn, $method, $id, $userId) {
             break;
         case 'POST':
             $data = getJsonInput();
-            $stmt = $conn->prepare("INSERT INTO dailylogs (user_id, mood_level, stress_level, sleep_hours, notes, log_date) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO dailylogs (user_id, mood_level, stress_level, anxiety_level, sleep_hours, notes, log_date) VALUES (?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([
                 $data['user_id'], $data['mood_level'], $data['stress_level'],
-                $data['sleep_hours'], $data['notes'] ?? null, $data['log_date'] ?? date('Y-m-d')
+                $data['anxiety_level'] ?? null, $data['sleep_hours'], 
+                $data['notes'] ?? null, $data['log_date'] ?? date('Y-m-d')
             ]);
             sendResponse(['success' => true, 'log_id' => $conn->lastInsertId()], 201);
             break;
         case 'PUT':
             if (!$id) sendResponse(['error' => 'Log ID required'], 400);
             $data = getJsonInput();
-            $stmt = $conn->prepare("UPDATE dailylogs SET mood_level = ?, stress_level = ?, sleep_hours = ?, notes = ? WHERE log_id = ?");
-            $stmt->execute([$data['mood_level'], $data['stress_level'], $data['sleep_hours'], $data['notes'] ?? null, $id]);
+            $stmt = $conn->prepare("UPDATE dailylogs SET mood_level = ?, stress_level = ?, anxiety_level = ?, sleep_hours = ?, notes = ? WHERE log_id = ?");
+            $stmt->execute([$data['mood_level'], $data['stress_level'], $data['anxiety_level'] ?? null, $data['sleep_hours'], $data['notes'] ?? null, $id]);
             sendResponse(['success' => true, 'updated' => $stmt->rowCount()]);
             break;
         case 'DELETE':
