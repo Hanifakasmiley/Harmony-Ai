@@ -315,11 +315,24 @@
         document.getElementById('moodLogForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const userId = localStorage.getItem('userId');
+            // Try to get userId from multiple sources
+            let userId = localStorage.getItem('userId');
+            if (!userId || userId === '0' || userId === 'undefined') {
+                // Try to get from currentUser object
+                const currentUser = localStorage.getItem('currentUser');
+                if (currentUser) {
+                    try {
+                        const user = JSON.parse(currentUser);
+                        userId = user.user_id;
+                    } catch (e) {
+                        console.error('Error parsing currentUser:', e);
+                    }
+                }
+            }
 
             // Check if user is logged in
-            if (!userId || userId === '0') {
-                alert('⚠️ Please log in first to save your mood log to the database.');
+            if (!userId || userId === '0' || userId === 0) {
+                alert('⚠️ Please log in first to save your mood log to the database.\n\nGo to: http://localhost:3000/Harmony-Ai/login.html');
                 return;
             }
 

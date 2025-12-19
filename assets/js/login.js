@@ -112,20 +112,23 @@ document.addEventListener('DOMContentLoaded', function () {
             console.warn('API login failed, using fallback mode:', error.message);
 
             // Fallback: Allow login without database (for demo/development)
+            // Generate a temporary user ID based on timestamp
+            const tempUserId = Math.floor(Date.now() / 1000) % 10000;
             const designationText = sel.options[sel.selectedIndex]?.text || selected;
 
             localStorage.setItem('userName', name);
             localStorage.setItem('userEmail', email);
+            localStorage.setItem('userId', '1'); // Default to user 1 for demo
             localStorage.setItem('userRole', selected);
             localStorage.setItem('designation', designationText);
             localStorage.setItem('currentUser', JSON.stringify({
-                user_id: 0,
+                user_id: 1,
                 full_name: name,
                 email: email,
                 designation: designationMap[selected] || 'Patient/User'
             }));
 
-            console.log('⚠️ Fallback login:', name, '| Role:', selected);
+            console.log('⚠️ Fallback login:', name, '| Role:', selected, '| UserId: 1');
 
             const dest = roleMap[selected] || './dashboard.html';
             window.location.href = dest;
