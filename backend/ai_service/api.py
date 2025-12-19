@@ -147,8 +147,13 @@ def realtime_analysis():
 
 
 if __name__ == '__main__':
-    print("=" * 50)
-    print("🧠 Harmony AI - Analysis API Server")
-    print(f"   Running on http://localhost:{SERVICE_PORT}")
-    print("=" * 50)
-    app.run(host='0.0.0.0', port=SERVICE_PORT, debug=True)
+    try:
+        print("=" * 50)
+        print("🧠 Harmony AI - Analysis API Server")
+        print(f"   Running on http://localhost:{SERVICE_PORT}")
+        print("=" * 50)
+        app.run(host='localhost', port=SERVICE_PORT, debug=False)
+    except Exception as e:
+        print(f"Error starting server: {e}")
+        import traceback
+        traceback.print_exc()

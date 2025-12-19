@@ -14,17 +14,18 @@
     <div class="nav-container">
       <a href="./index.html" class="nav-logo">🧠 Harmony AI</a>
       <ul class="nav-menu">
-        <li><a href="./index.html" class="active">🏠 Dashboard</a></li>
+        <li><a href="./index.html" class="active">🏠 Home</a></li>
+        <li><a href="./dashboard.html">📊 Dashboard</a></li>
         <li><a href="./feature-daily-logs.html">📝 Daily Logs</a></li>
         <li><a href="./feature-ai-analysis.html">🤖 AI Analysis</a></li>
         <li><a href="./feature-recommendations.html">💡 Recommendations</a></li>
         <li><a href="./feature-sessions.html">👨‍⚕️ Sessions</a></li>
         <li><a href="./feature-progress.html">📈 Progress</a></li>
-        <li><a href="./feature-crisis.html">Crisis Support</a></li>
-        <li><a href="./login.html" style="color: #2A9D8F; font-weight: bold;">Login</a></li>
+        <li><a href="./feature-crisis.html">🚨 Crisis Support</a></li>
       </ul>
       <div class="nav-actions">
         <button class="theme-toggle" type="button" aria-label="Toggle theme"></button>
+        <a href="./login.html" class="nav-auth-btn login" id="authBtn">🔐 Login</a>
         <button class="mobile-menu-btn" aria-label="Toggle menu" title="Open navigation">
           <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
             focusable="false">
@@ -43,6 +44,7 @@
       <h1>Your Mental Health, Our Priority</h1>
       <p>AI-powered monitoring and support system for better mental well-being</p>
       <div class="cta-buttons">
+        <a href="./login.html" class="btn btn-primary">🚀 Get Started</a>
         <button class="btn btn-secondary"
           onclick="document.querySelector('.features').scrollIntoView({behavior: 'smooth'})">Learn More</button>
       </div>
@@ -224,25 +226,7 @@
   </script>
 
   <script src="assets/js/theme.js"></script>
-  <script>
-    function updateAuthButton() {
-      const userId = localStorage.getItem('userId');
-      const loginBtn = document.getElementById('loginBtn');
-      const logoutBtn = document.getElementById('logoutBtn');
-      if (userId) {
-        if (loginBtn) loginBtn.style.display = 'none';
-        if (logoutBtn) logoutBtn.style.display = 'inline-flex';
-      } else {
-        if (loginBtn) loginBtn.style.display = 'inline-flex';
-        if (logoutBtn) logoutBtn.style.display = 'none';
-      }
-    }
-    function logout() {
-      localStorage.clear();
-      window.location.href = './login.html';
-    }
-    document.addEventListener('DOMContentLoaded', updateAuthButton);
-  </script>
+  <script src="assets/js/auth.js"></script>
 </body>
 
 </html>
