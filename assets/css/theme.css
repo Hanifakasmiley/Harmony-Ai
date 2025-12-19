@@ -2331,40 +2331,41 @@ textarea:hover {
 
 /* ===== ATTRACTIVE LOGIN/LOGOUT BUTTONS ===== */
 .nav-auth-btn {
-  padding: 0.7rem 1.5rem;
-  border-radius: 12px;
-  font-size: 1rem;
+  padding: 0.6rem 1.3rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   text-decoration: none;
   transition: all 0.25s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
 }
 
 .nav-auth-btn.login {
   background: #2A9D8F;
-  color: white;
+  color: white !important;
 }
 
 .nav-auth-btn.login:hover {
   background: #238B7E;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(42, 157, 143, 0.4);
+  box-shadow: 0 5px 15px rgba(42, 157, 143, 0.4);
 }
 
 .nav-auth-btn.logout {
   background: #F87171;
-  color: white;
+  color: white !important;
 }
 
 .nav-auth-btn.logout:hover {
   background: #EF4444;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(248, 113, 113, 0.4);
+  box-shadow: 0 5px 15px rgba(248, 113, 113, 0.4);
 }
 
 /* ===== USER AVATAR IN NAVIGATION ===== */
