@@ -113,12 +113,54 @@
     });
   }
 
+  // ===== ROLE-BASED NAVIGATION =====
+  function updateNavigationForRole() {
+    const userRole = localStorage.getItem('userRole');
+
+    if (userRole === 'system_admin') {
+      // Replace navbar with admin menu
+      const navbar = document.querySelector('.navbar');
+      if (navbar) {
+        navbar.style.borderTop = '3px solid #FFD700'; // Gold border for admin
+        navbar.style.borderBottom = '3px solid #FFD700';
+      }
+
+      // Update logo link to admin.html
+      const logoLink = document.querySelector('.logo a');
+      if (logoLink) {
+        logoLink.href = './admin.html';
+      }
+
+      // Replace nav menu with admin-only menu (Home, Dashboard, Admin)
+      const navMenu = document.querySelector('.nav-menu');
+      if (navMenu) {
+        navMenu.innerHTML = `
+          <a href="./index.html" class="nav-link">Home</a>
+          <a href="./dashboard.html" class="nav-link">Dashboard</a>
+          <a href="./admin.html" class="nav-link">Admin</a>
+        `;
+      }
+
+      // Hide patient-specific nav items if they exist in the original menu
+      const allNavLinks = document.querySelectorAll('.nav-menu a');
+      allNavLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && (href.includes('daily-logs') || href.includes('ai-analysis') ||
+          href.includes('progress') || href.includes('crisis') ||
+          href.includes('recommendations') || href.includes('sessions'))) {
+          link.style.display = 'none';
+        }
+      });
+    }
+  }
+
   // ===== INIT FUNCTION =====
   function init() {
     initTheme();
     initThemeToggle();
     initMobileMenu();
     initActiveNav();
+    updateNavigationForRole();
   }
 
   if (document.readyState === 'loading') {

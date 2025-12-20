@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
         data_scientist: './feature-ai-analysis.html',
         mental_health_admin: './feature-sessions.html',
         emergency_team: './feature-crisis.html',
-        system_admin: './dashboard.html'
+        system_admin: './admin.html'
     };
 
     // Map designation select values to database designation names
@@ -93,6 +93,23 @@ document.addEventListener('DOMContentLoaded', function () {
             if (result.success && result.user) {
                 // Successful login from database
                 const user = result.user;
+
+                // Create backend session
+                try {
+                    await fetch('http://localhost:3000/Harmony-Ai/backend/create_session.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id: user.user_id,
+                            full_name: user.full_name,
+                            email: user.email,
+                            designation: user.designation
+                        })
+                    });
+                } catch (sessionError) {
+                    console.warn('Session creation failed:', sessionError);
+                }
+
                 localStorage.setItem('currentUser', JSON.stringify(user));
                 localStorage.setItem('userName', user.full_name);
                 localStorage.setItem('userEmail', user.email);

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>API Test</title>
+</head>
+
+<body>
+    <h1>API Test</h1>
+    <div id="result"></div>
+
+    <script src="assets/js/api-service.js"></script>
+    <script>
+        async function testAPI() {
+            const result = document.getElementById('result');
+            try {
+                result.innerHTML = '<p>Testing API...</p>';
+
+                console.log('Calling ApiService.getUsers()...');
+                const users = await ApiService.getUsers();
+                console.log('Users:', users);
+
+                result.innerHTML = `<pre>${JSON.stringify(users, null, 2)}</pre>`;
+            } catch (error) {
+                console.error('Error:', error);
+                result.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+
+        // Test on page load
+        window.addEventListener('DOMContentLoaded', testAPI);
+    </script>
+</body>
+
+</html>

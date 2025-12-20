@@ -47,6 +47,9 @@ switch ($endpoint) {
     case 'recommendations':
         handleRecommendations($conn, $method, $id, $userId);
         break;
+    case 'dashboard-stats':
+        handleStatistics($conn);
+        break;
     case 'ai_analysis':
         handleAIAnalysis($conn, $method, $id, $userId);
         break;

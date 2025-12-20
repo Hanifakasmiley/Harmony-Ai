@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Quick API Test</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 20px;
+        }
+
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #2A9D8F;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>✅ API Connection Test</h1>
+    <div id="result"></div>
+
+    <script src="assets/js/api-service.js"></script>
+    <script>
+        async function test() {
+            const result = document.getElementById('result');
+
+            try {
+                result.innerHTML = '<p>Testing API connection...</p>';
+
+                console.log('Fetching users from API...');
+                const users = await ApiService.getUsers();
+
+                console.log('Users received:', users);
+                console.log('User count:', users.length);
+
+                if (users.length === 0) {
+                    result.innerHTML = '<p class="error">❌ No users found in database</p>';
+                    return;
+                }
+
+                let html = `<p class="success">✅ Successfully connected to backend!</p>`;
+                html += `<p><strong>Total Users: ${users.length}</strong></p>`;
+                html += '<table><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th></tr>';
+
+                users.forEach(user => {
+                    html += `<tr>
+                        <td>${user.user_id}</td>
+                        <td>${user.full_name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.designation}</td>
+                    </tr>`;
+                });
+
+                html += '</table>';
+                html += '<p style="margin-top: 20px; color: blue;"><strong>✅ Backend is connected and working!</strong></p>';
+                html += '<p>Now go to <a href="admin.html">admin.html</a> to see all tables and perform CRUD operations.</p>';
+
+                result.innerHTML = html;
+            } catch (error) {
+                console.error('Error:', error);
+                result.innerHTML = `<p class="error">❌ Error: ${error.message}</p>
+                    <p>Make sure:</p>
+                    <ul>
+                        <li>PHP server is running on localhost:3000</li>
+                        <li>Database is connected</li>
+                        <li>API endpoint is working</li>
+                    </ul>`;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', test);
+    </script>
+</body>
+
+</html>

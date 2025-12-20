@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Admin Setup - Harmony AI</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #2A9D8F 0%, #1F7A6E 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #2A9D8F 0%, #1F7A6E 100%);
+            color: white;
+            border-radius: 12px 12px 0 0;
+            padding: 20px;
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            background: #f5f5f5;
+        }
+
+        .check-item.success {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+
+        .check-item.error {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+
+        .check-item.loading {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+
+        .check-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            min-width: 30px;
+        }
+
+        .check-text {
+            flex: 1;
+        }
+
+        .check-text strong {
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .check-text small {
+            color: #666;
+        }
+
+        .btn-group-custom {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-custom {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary-custom {
+            background: #2A9D8F;
+            color: white;
+        }
+
+        .btn-primary-custom:hover {
+            background: #1F7A6E;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(42, 157, 143, 0.3);
+        }
+
+        .btn-secondary-custom {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .btn-secondary-custom:hover {
+            background: #e8e8e8;
+        }
+
+        .summary {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            background: #f5f5f5;
+            text-align: center;
+        }
+
+        .summary.all-good {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+        }
+
+        .summary.has-issues {
+            background: #ffebee;
+            border: 2px solid #f44336;
+        }
+
+        .spinner-small {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #2A9D8F;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2 style="margin: 0;">✅ Admin Setup Verification</h2>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">Harmony AI - Complete System Check</p>
+            </div>
+            <div class="card-body">
+                <div id="checks"></div>
+                <div id="summary"></div>
+                <div class="btn-group-custom">
+                    <button class="btn-custom btn-primary-custom" onclick="runAllChecks()">🔄 Run All Checks</button>
+                    <button class="btn-custom btn-secondary-custom" onclick="openAdmin()">🚀 Open Admin Panel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/api-service.js"></script>
+    <script>
+        const checks = [
+            { id: 'api', name: 'API Connection', fn: checkAPI },
+            { id: 'users', name: 'Users Table', fn: checkUsers },
+            { id: 'logs', name: 'Daily Logs Table', fn: checkLogs },
+            { id: 'counsellors', name: 'Counsellors Table', fn: checkCounsellors },
+            { id: 'sessions', name: 'Sessions Table', fn: checkSessions },
+            { id: 'service', name: 'API Service', fn: checkService },
+            { id: 'admin', name: 'Admin Panel File', fn: checkAdminFile }
+        ];
+
+        let results = {};
+
+        async function runAllChecks() {
+            const container = document.getElementById('checks');
+            container.innerHTML = '';
+            results = {};
+
+            for (const check of checks) {
+                addCheckItem(check.id, check.name, 'loading');
+                try {
+                    const result = await check.fn();
+                    updateCheckItem(check.id, check.name, result.status, result.message);
+                    results[check.id] = result;
+                } catch (error) {
+                    updateCheckItem(check.id, check.name, 'error', error.message);
+                    results[check.id] = { status: 'error', message: error.message };
+                }
+            }
+
+            updateSummary();
+        }
+
+        function addCheckItem(id, name, status) {
+            const container = document.getElementById('checks');
+            const item = document.createElement('div');
+            item.id = `check-${id}`;
+            item.className = `check-item ${status}`;
+            item.innerHTML = `
+                <div class="check-icon">
+                    ${status === 'loading' ? '<div class="spinner-small"></div>' : '⏳'}
+                </div>
+                <div class="check-text">
+                    <strong>${name}</strong>
+                    <small>Checking...</small>
+                </div>
+            `;
+            container.appendChild(item);
+        }
+
+        function updateCheckItem(id, name, status, message) {
+            const item = document.getElementById(`check-${id}`);
+            if (!item) return;
+
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️'
+            };
+
+            item.className = `check-item ${status}`;
+            item.innerHTML = `
+                <div class="check-icon">${icons[status] || '❓'}</div>
+                <div class="check-text">
+                    <strong>${name}</strong>
+                    <small>${message}</small>
+                </div>
+            `;
+        }
+
+        function updateSummary() {
+            const container = document.getElementById('summary');
+            const successCount = Object.values(results).filter(r => r.status === 'success').length;
+            const totalCount = Object.keys(results).length;
+            const allGood = successCount === totalCount;
+
+            container.innerHTML = `
+                <div class="summary ${allGood ? 'all-good' : 'has-issues'}">
+                    <strong>${successCount}/${totalCount} checks passed</strong>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9rem;">
+                        ${allGood ? '✅ All systems operational!' : '⚠️ Some issues detected'}
+                    </p>
+                </div>
+            `;
+        }
+
+        // Check functions
+        async function checkAPI() {
+            const response = await fetch('http://localhost:3000/Harmony-Ai/backend/api.php/users');
+            if (response.ok) {
+                return { status: 'success', message: 'API responding correctly' };
+            } else {
+                throw new Error(`API returned ${response.status}`);
+            }
+        }
+
+        async function checkUsers() {
+            const data = await ApiService.getUsers();
+            if (Array.isArray(data) && data.length > 0) {
+                return { status: 'success', message: `${data.length} users found` };
+            } else {
+                throw new Error('No users found');
+            }
+        }
+
+        async function checkLogs() {
+            const data = await ApiService.getDailyLogs();
+            if (Array.isArray(data) && data.length > 0) {
+                return { status: 'success', message: `${data.length} logs found` };
+            } else {
+                throw new Error('No logs found');
+            }
+        }
+
+        async function checkCounsellors() {
+            const data = await ApiService.getCounsellors();
+            if (Array.isArray(data) && data.length > 0) {
+                return { status: 'success', message: `${data.length} counsellors found` };
+            } else {
+                throw new Error('No counsellors found');
+            }
+        }
+
+        async function checkSessions() {
+            const data = await ApiService.getSessions();
+            if (Array.isArray(data) && data.length > 0) {
+                return { status: 'success', message: `${data.length} sessions found` };
+            } else {
+                throw new Error('No sessions found');
+            }
+        }
+
+        async function checkService() {
+            if (typeof ApiService !== 'undefined' && ApiService.getUsers) {
+                return { status: 'success', message: 'API Service loaded' };
+            } else {
+                throw new Error('API Service not available');
+            }
+        }
+
+        async function checkAdminFile() {
+            const response = await fetch('admin-full.html');
+            if (response.ok) {
+                return { status: 'success', message: 'Admin panel file exists' };
+            } else {
+                throw new Error('Admin panel file not found');
+            }
+        }
+
+        function openAdmin() {
+            window.location.href = 'admin-full.html';
+        }
+
+        // Auto-run on load
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('🔍 Verification tool loaded');
+            runAllChecks();
+        });
+    </script>
+</body>
+
+</html>

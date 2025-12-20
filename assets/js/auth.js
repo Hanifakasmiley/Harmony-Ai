@@ -27,11 +27,25 @@ function updateAuthBtn() {
     }
 }
 
-function logout() {
+async function logout() {
+    // Destroy backend session
+    try {
+        await fetch('http://localhost:3000/Harmony-Ai/backend/destroy_session.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+    } catch (error) {
+        console.warn('Session destruction failed:', error);
+    }
+
+    // Clear localStorage
     localStorage.removeItem('userId');
     localStorage.removeItem('userRole');
     localStorage.removeItem('designation');
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+
     window.location.href = './login.html';
 }
 

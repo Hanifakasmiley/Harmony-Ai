@@ -16,12 +16,15 @@ const PatientData = (function () {
     ];
 
     // ===== DAILY LOGS (matches dailylogs table) =====
+    // mood_level: 1-10 scale (1=very low, 10=very high)
+    // stress_level: 1-10 scale (1=very low, 10=very high)
+    // anxiety_level: 1-10 scale (1=very low, 10=very high)
     const dailylogs = [
-        { log_id: 1, user_id: 1, mood_level: 'Happy', stress_level: 3, sleep_hours: 7.5, notes: 'Feeling good today', log_date: '2025-12-11' },
-        { log_id: 2, user_id: 1, mood_level: 'Anxious', stress_level: 7, sleep_hours: 5, notes: 'Work stress', log_date: '2025-12-10' },
-        { log_id: 3, user_id: 2, mood_level: 'Calm', stress_level: 4, sleep_hours: 8, notes: 'Meditation helped', log_date: '2025-12-11' },
-        { log_id: 4, user_id: 2, mood_level: 'Tired', stress_level: 6, sleep_hours: 4, notes: 'Insomnia issues', log_date: '2025-12-10' },
-        { log_id: 5, user_id: 1, mood_level: 'Neutral', stress_level: 5, sleep_hours: 6, notes: 'Average day', log_date: '2025-12-09' }
+        { log_id: 1, user_id: 1, mood_level: 8, stress_level: 3, anxiety_level: 2, sleep_hours: 7.5, notes: 'Feeling good today', log_date: '2025-12-11' },
+        { log_id: 2, user_id: 1, mood_level: 4, stress_level: 7, anxiety_level: 6, sleep_hours: 5, notes: 'Work stress', log_date: '2025-12-10' },
+        { log_id: 3, user_id: 2, mood_level: 7, stress_level: 4, anxiety_level: 3, sleep_hours: 8, notes: 'Meditation helped', log_date: '2025-12-11' },
+        { log_id: 4, user_id: 2, mood_level: 5, stress_level: 6, anxiety_level: 5, sleep_hours: 4, notes: 'Insomnia issues', log_date: '2025-12-10' },
+        { log_id: 5, user_id: 1, mood_level: 6, stress_level: 5, anxiety_level: 4, sleep_hours: 6, notes: 'Average day', log_date: '2025-12-09' }
     ];
 
     // ===== COUNSELLORS (matches counsellors table) =====

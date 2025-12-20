@@ -9,7 +9,21 @@ import re
 class AIAnalyzer:
     """AI-powered analyzer for mental health data"""
     
-    # Mood to base emotion mapping
+    # Mood level (1-10) to emotion mapping
+    MOOD_LEVEL_EMOTIONS = {
+        1: ('Depression', -0.9),
+        2: ('Sadness', -0.7),
+        3: ('Anxiety', -0.5),
+        4: ('Stress', -0.3),
+        5: ('Neutral', 0.0),
+        6: ('Calm', 0.2),
+        7: ('Content', 0.4),
+        8: ('Happy', 0.6),
+        9: ('Joy', 0.8),
+        10: ('Euphoria', 0.9)
+    }
+    
+    # Mood string to base emotion mapping (for backward compatibility)
     MOOD_EMOTIONS = {
         'happy': ('Joy', 0.8),
         'content': ('Content', 0.6),
@@ -48,7 +62,16 @@ class AIAnalyzer:
         Returns:
             dict with: risk_score, sentiment_value, emotion_label
         """
-        mood = str(log_data.get('mood_level', 'neutral')).lower()
+        # Handle mood_level as either INT (1-10) or STRING
+        raw_mood = log_data.get('mood_level', 5)
+        if isinstance(raw_mood, (int, float)) or (isinstance(raw_mood, str) and raw_mood.isdigit()):
+            mood_int = int(raw_mood)
+            mood_int = max(1, min(10, mood_int))  # Clamp to 1-10
+            mood = str(mood_int)  # Store as string for compatibility
+        else:
+            mood = str(raw_mood).lower()
+            mood_int = 5  # Default to neutral
+        
         stress = int(log_data.get('stress_level', 5))
         anxiety = int(log_data.get('anxiety_level', 5))
         sleep = float(log_data.get('sleep_hours', 7))
@@ -57,12 +80,12 @@ class AIAnalyzer:
         # 1. Sentiment Analysis on notes
         sentiment_value = self._analyze_sentiment(notes)
         
-        # 2. Emotion Detection
-        emotion_label = self._detect_emotion(mood, notes, sentiment_value)
+        # 2. Emotion Detection (pass mood_int for numeric handling)
+        emotion_label = self._detect_emotion(mood, notes, sentiment_value, mood_int)
         
         # 3. Risk Score Calculation
         risk_score = self._calculate_risk_score(
-            mood, stress, anxiety, sleep, notes, sentiment_value
+            mood, stress, anxiety, sleep, notes, sentiment_value, mood_int
         )
         
         return {
@@ -99,11 +122,15 @@ class AIAnalyzer:
             print(f"Sentiment analysis error: {e}")
             return 0.0
 
-    def _detect_emotion(self, mood, notes, sentiment):
+    def _detect_emotion(self, mood, notes, sentiment, mood_int=5):
         """
         Detect primary emotion based on mood, notes, and sentiment
         """
-        # First check mood mapping
+        # First check numeric mood level mapping
+        if mood_int in self.MOOD_LEVEL_EMOTIONS:
+            return self.MOOD_LEVEL_EMOTIONS[mood_int][0]
+        
+        # Then check string mood mapping
         mood_lower = mood.lower().strip()
         if mood_lower in self.MOOD_EMOTIONS:
             return self.MOOD_EMOTIONS[mood_lower][0]
@@ -135,7 +162,7 @@ class AIAnalyzer:
         else:
             return 'Neutral'
 
-    def _calculate_risk_score(self, mood, stress, anxiety, sleep, notes, sentiment):
+    def _calculate_risk_score(self, mood, stress, anxiety, sleep, notes, sentiment, mood_int=5):
         """
         Calculate mental health risk score (0-100)
         Higher score = higher risk
@@ -159,13 +186,21 @@ class AIAnalyzer:
         elif sleep > 10:
             risk += 10  # Oversleeping can indicate depression
         
-        # 4. Mood contribution (0-15 points)
+        # 4. Mood contribution (0-15 points) - using numeric mood level
+        # Lower mood (1-4) = higher risk, higher mood (7-10) = lower risk
+        if mood_int <= 3:
+            risk += 15
+        elif mood_int <= 5:
+            risk += 10
+        elif mood_int <= 6:
+            risk += 5
+        # mood_int 7-10 adds no risk
+        
+        # Also check string mood for backward compatibility
         mood_lower = mood.lower().strip()
         negative_moods = ['sad', 'depressed', 'anxious', 'angry', 'stressed']
         if mood_lower in negative_moods:
-            risk += 15
-        elif mood_lower in ['tired', 'neutral']:
-            risk += 7
+            risk += 5  # Additional risk for negative mood strings
         
         # 5. Sentiment contribution (0-15 points)
         # Negative sentiment adds risk

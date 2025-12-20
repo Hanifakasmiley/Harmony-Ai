@@ -62,90 +62,303 @@ const DashboardGenerators = (function () {
     }
 
     // ===== DATA SCIENTIST DASHBOARD =====
-    function generateDataScientistDashboard() {
-        const stats = PatientData.getStatistics();
-        const analysis = PatientData.getAIAnalysis();
-        const users = PatientData.getUsers();
-
+    async function generateDataScientistDashboard() {
         let html = `<h3>📊 Data Scientist - Analytics Dashboard</h3>`;
         html += `<p>Patient demographics, risk analysis, and statistical insights.</p>`;
 
-        html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
-            <div style="background: #667eea; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
-                <div style="font-size: 0.9rem;">Total Users</div>
-                <div style="font-size: 2rem; font-weight: bold;">${stats.totalUsers}</div>
-            </div>
-            <div style="background: #ff6b6b; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
-                <div style="font-size: 0.9rem;">High Risk Alerts</div>
-                <div style="font-size: 2rem; font-weight: bold;">${stats.highRiskCount}</div>
-            </div>
-            <div style="background: #4facfe; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
-                <div style="font-size: 0.9rem;">Avg Risk Score</div>
-                <div style="font-size: 2rem; font-weight: bold;">${stats.avgRiskScore}</div>
-            </div>
-            <div style="background: #764ba2; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
-                <div style="font-size: 0.9rem;">Total Sessions</div>
-                <div style="font-size: 2rem; font-weight: bold;">${stats.totalSessions}</div>
-            </div>
-        </div>`;
+        try {
+            // Fetch from API
+            const [stats, analysis, users] = await Promise.all([
+                ApiService.getStatistics(),
+                ApiService.getAIAnalysis(),
+                ApiService.getUsers()
+            ]);
 
-        // AI Analysis Data
-        html += `<h4 style="margin-top: 2rem;">🤖 AI Analysis Results</h4>`;
-        const aiHeaders = ['ID', 'User ID', 'Risk Score', 'Sentiment', 'Emotion'];
-        const aiRows = analysis.map(a => [a.analysis_id, a.user_id, a.risk_score, a.sentiment_value, a.emotion_label]);
-        html += generateTable(aiHeaders, aiRows);
+            html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+                <div style="background: #667eea; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">Total Users</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${stats.totalUsers || 0}</div>
+                </div>
+                <div style="background: #ff6b6b; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">High Risk Alerts</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${stats.highRiskUsers || 0}</div>
+                </div>
+                <div style="background: #4facfe; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">Avg Risk Score</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${stats.avgRiskScore || 0}</div>
+                </div>
+                <div style="background: #764ba2; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">Total Sessions</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${stats.totalSessions || 0}</div>
+                </div>
+            </div>`;
 
-        // Users Table
-        html += `<h4 style="margin-top: 2rem;">👥 Users Overview</h4>`;
-        const userHeaders = ['ID', 'Name', 'Email', 'Designation'];
-        const userRows = users.map(u => [u.user_id, u.full_name, u.email, u.designation]);
-        html += generateTable(userHeaders, userRows);
+            // AI Analysis Data
+            html += `<h4 style="margin-top: 2rem;">🤖 AI Analysis Results</h4>`;
+            const aiHeaders = ['ID', 'User ID', 'Risk Score', 'Sentiment', 'Emotion'];
+            const aiRows = analysis.map(a => [a.analysis_id, a.user_id, a.risk_score, a.sentiment_value, a.emotion_label]);
+            html += generateTable(aiHeaders, aiRows);
+
+            // Users Table
+            html += `<h4 style="margin-top: 2rem;">👥 Users Overview (${users.length} total)</h4>`;
+            const userHeaders = ['ID', 'Name', 'Email', 'Designation'];
+            const userRows = users.map(u => [u.user_id, u.full_name, u.email, u.designation]);
+            html += generateTable(userHeaders, userRows);
+        } catch (error) {
+            console.warn('API unavailable, using mock data:', error);
+            const stats = PatientData.getStatistics();
+            const analysis = PatientData.getAIAnalysis();
+            const users = PatientData.getUsers();
+
+            html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+                <div style="background: #667eea; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">Total Users</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${stats.totalUsers}</div>
+                </div>
+                <div style="background: #ff6b6b; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">High Risk Alerts</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${stats.highRiskCount}</div>
+                </div>
+                <div style="background: #4facfe; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">Avg Risk Score</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${stats.avgRiskScore}</div>
+                </div>
+                <div style="background: #764ba2; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">Total Sessions</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${stats.totalSessions}</div>
+                </div>
+            </div>`;
+
+            // AI Analysis Data
+            html += `<h4 style="margin-top: 2rem;">🤖 AI Analysis Results</h4>`;
+            const aiHeaders = ['ID', 'User ID', 'Risk Score', 'Sentiment', 'Emotion'];
+            const aiRows = analysis.map(a => [a.analysis_id, a.user_id, a.risk_score, a.sentiment_value, a.emotion_label]);
+            html += generateTable(aiHeaders, aiRows);
+
+            // Users Table
+            html += `<h4 style="margin-top: 2rem;">👥 Users Overview</h4>`;
+            const userHeaders = ['ID', 'Name', 'Email', 'Designation'];
+            const userRows = users.map(u => [u.user_id, u.full_name, u.email, u.designation]);
+            html += generateTable(userHeaders, userRows);
+        }
 
         return html;
     }
 
     // ===== SYSTEM ADMINISTRATOR DASHBOARD =====
-    function generateSystemAdminDashboard() {
-        const stats = PatientData.getStatistics();
-
+    async function generateSystemAdminDashboard() {
         let html = `<h3>⚙️ System Administrator Dashboard</h3>`;
-        html += `<p>Database overview and system management. <a href="admin.html" style="color: #667eea;">Open Full Admin Panel →</a></p>`;
+        html += `<p>Complete database overview and system management. <a href="admin-full.html" style="color: #667eea; font-weight: bold;">Open Full Admin Panel →</a></p>`;
 
-        html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
-            <div style="background: #667eea; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
-                <div style="font-size: 0.9rem;">Total Users</div>
-                <div style="font-size: 2rem; font-weight: bold;">${stats.totalUsers}</div>
-            </div>
-            <div style="background: #764ba2; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
-                <div style="font-size: 0.9rem;">Counsellors</div>
-                <div style="font-size: 2rem; font-weight: bold;">${stats.totalCounsellors}</div>
-            </div>
-            <div style="background: #f093fb; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
-                <div style="font-size: 0.9rem;">Sessions</div>
-                <div style="font-size: 2rem; font-weight: bold;">${stats.totalSessions}</div>
-            </div>
-            <div style="background: #4facfe; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
-                <div style="font-size: 0.9rem;">Crisis Alerts</div>
-                <div style="font-size: 2rem; font-weight: bold;">${stats.criticalCount}</div>
-            </div>
-        </div>`;
+        try {
+            // Fetch all data from API
+            const [stats, users, logs, counsellors, sessions, feedback, progress, recommendations, analysis, alerts, contacts] = await Promise.all([
+                ApiService.getStatistics(),
+                ApiService.getUsers(),
+                ApiService.getDailyLogs(),
+                ApiService.getCounsellors(),
+                ApiService.getSessions(),
+                ApiService.getFeedback(),
+                ApiService.getProgress(),
+                ApiService.getRecommendations(),
+                ApiService.getAIAnalysis(),
+                ApiService.getCrisisAlerts(),
+                ApiService.getEmergencyContacts()
+            ]);
 
-        // Database Tables
-        html += `<h4 style="margin-top: 2rem;">🗄️ Database Tables (10 Tables)</h4>`;
-        const dbHeaders = ['Table', 'Description', 'Actions'];
-        const dbRows = [
-            ['users', 'User accounts and profiles', '<a href="admin.html">Manage</a>'],
-            ['dailylogs', 'Daily mood and stress logs', '<a href="admin.html">Manage</a>'],
-            ['counsellors', 'Counsellor information', '<a href="admin.html">Manage</a>'],
-            ['sessions', 'Therapy sessions', '<a href="admin.html">Manage</a>'],
-            ['feedback', 'Session feedback', '<a href="admin.html">Manage</a>'],
-            ['progress', 'Patient progress tracking', '<a href="admin.html">Manage</a>'],
-            ['recommendations', 'Wellness recommendations', '<a href="admin.html">Manage</a>'],
-            ['ai_analysis', 'AI risk analysis', '<a href="admin.html">Manage</a>'],
-            ['crisisalerts', 'Crisis alerts', '<a href="admin.html">Manage</a>'],
-            ['emergencycontacts', 'Emergency contacts', '<a href="admin.html">Manage</a>']
-        ];
-        html += generateTable(dbHeaders, dbRows);
+            // Statistics Cards
+            html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+                <div style="background: #667eea; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">👥 Total Users</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${users.length}</div>
+                </div>
+                <div style="background: #764ba2; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">👨‍⚕️ Counsellors</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${counsellors.length}</div>
+                </div>
+                <div style="background: #f093fb; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">📅 Sessions</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${sessions.length}</div>
+                </div>
+                <div style="background: #4facfe; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">🚨 Crisis Alerts</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${alerts.length}</div>
+                </div>
+                <div style="background: #ff6b6b; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">📊 Daily Logs</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${logs.length}</div>
+                </div>
+                <div style="background: #ffa500; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">📈 Progress Records</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${progress.length}</div>
+                </div>
+            </div>`;
+
+            // PATIENTS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #667eea; padding-bottom: 0.5rem;">👥 Patients Data (${users.length} records)</h4>`;
+            const patientHeaders = ['ID', 'Name', 'Email', 'Phone', 'Gender', 'Designation'];
+            const patientRows = users.map(u => [u.user_id, u.full_name, u.email, u.phone || '-', u.gender || '-', u.designation]);
+            html += generateTable(patientHeaders, patientRows);
+
+            // DOCTORS/COUNSELLORS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #764ba2; padding-bottom: 0.5rem;">👨‍⚕️ Doctors/Counsellors Data (${counsellors.length} records)</h4>`;
+            const doctorHeaders = ['ID', 'Name', 'Email', 'Phone', 'Specialization', 'Schedule'];
+            const doctorRows = counsellors.map(c => [c.counsellor_id, c.name, c.email, c.phone || '-', c.specialization || '-', c.schedule || '-']);
+            html += generateTable(doctorHeaders, doctorRows);
+
+            // EMERGENCY CONTACTS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #f093fb; padding-bottom: 0.5rem;">🆘 Emergency Contacts Data (${contacts.length} records)</h4>`;
+            const contactHeaders = ['ID', 'User ID', 'Contact Name', 'Contact Phone', 'Relation'];
+            const contactRows = contacts.map(c => [c.contact_id, c.user_id, c.contact_name, c.contact_phone, c.relation || '-']);
+            html += generateTable(contactHeaders, contactRows);
+
+            // AI ANALYSIS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #4facfe; padding-bottom: 0.5rem;">🤖 AI Analysis Data (${analysis.length} records)</h4>`;
+            const aiHeaders = ['ID', 'User ID', 'Risk Score', 'Sentiment Value', 'Emotion Label'];
+            const aiRows = analysis.map(a => [a.analysis_id, a.user_id, a.risk_score, a.sentiment_value || '-', a.emotion_label || '-']);
+            html += generateTable(aiHeaders, aiRows);
+
+            // DAILY LOGS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #ff6b6b; padding-bottom: 0.5rem;">📊 Daily Logs Data (${logs.length} records)</h4>`;
+            const logHeaders = ['ID', 'User ID', 'Mood', 'Stress', 'Anxiety', 'Sleep (hrs)', 'Date'];
+            const logRows = logs.slice(0, 10).map(l => [l.log_id, l.user_id, l.mood_level, l.stress_level, l.anxiety_level || '-', l.sleep_hours, l.log_date]);
+            html += generateTable(logHeaders, logRows);
+
+            // SESSIONS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #ffa500; padding-bottom: 0.5rem;">📅 Sessions Data (${sessions.length} records)</h4>`;
+            const sessionHeaders = ['ID', 'User ID', 'Counsellor ID', 'Session Time', 'Notes'];
+            const sessionRows = sessions.slice(0, 10).map(s => [s.session_id, s.user_id, s.counsellor_id, s.session_time, s.session_notes || '-']);
+            html += generateTable(sessionHeaders, sessionRows);
+
+            // FEEDBACK DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #667eea; padding-bottom: 0.5rem;">💬 Feedback Data (${feedback.length} records)</h4>`;
+            const feedbackHeaders = ['ID', 'Session ID', 'User ID', 'Rating', 'Comments'];
+            const feedbackRows = feedback.map(f => [f.feedback_id, f.session_id, f.user_id, f.rating, f.comments || '-']);
+            html += generateTable(feedbackHeaders, feedbackRows);
+
+            // PROGRESS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #764ba2; padding-bottom: 0.5rem;">📈 Progress Data (${progress.length} records)</h4>`;
+            const progressHeaders = ['ID', 'User ID', 'Emotional Stability', 'Improvement %', 'Trend Notes'];
+            const progressRows = progress.map(p => [p.progress_id, p.user_id, p.emotional_stability_score, p.improvement_percentage || '-', p.trend_notes || '-']);
+            html += generateTable(progressHeaders, progressRows);
+
+            // RECOMMENDATIONS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #f093fb; padding-bottom: 0.5rem;">💡 Recommendations Data (${recommendations.length} records)</h4>`;
+            const recHeaders = ['ID', 'User ID', 'Wellness Tip', 'Activity'];
+            const recRows = recommendations.map(r => [r.rec_id, r.user_id, r.wellness_tip, r.activity || '-']);
+            html += generateTable(recHeaders, recRows);
+
+            // CRISIS ALERTS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #ff6b6b; padding-bottom: 0.5rem;">🚨 Crisis Alerts Data (${alerts.length} records)</h4>`;
+            const alertHeaders = ['ID', 'User ID', 'Risk Level', 'Timestamp', 'Counsellor ID'];
+            const alertRows = alerts.map(a => [a.alert_id, a.user_id, a.risk_level, a.alert_timestamp, a.contacted_counsellor_id || '-']);
+            html += generateTable(alertHeaders, alertRows);
+
+            // Summary
+            html += `<div style="margin-top: 2rem; padding: 1rem; background: #f0f0f0; border-radius: 8px; border-left: 4px solid #667eea;">
+                <strong>📊 Total Records in Database: ${users.length + logs.length + counsellors.length + sessions.length + feedback.length + progress.length + recommendations.length + analysis.length + alerts.length + contacts.length}</strong>
+                <p style="margin: 0.5rem 0 0 0; color: #666;">All data is synchronized with the backend database in real-time.</p>
+            </div>`;
+
+        } catch (error) {
+            console.warn('API unavailable, using mock data:', error);
+            const stats = PatientData.getStatistics();
+            const users = PatientData.getUsers();
+            const logs = PatientData.getDailyLogs();
+            const counsellors = PatientData.getCounsellors();
+            const sessions = PatientData.getSessions();
+            const feedback = PatientData.getFeedback();
+            const progress = PatientData.getProgress();
+            const recommendations = PatientData.getRecommendations();
+            const analysis = PatientData.getAIAnalysis();
+            const alerts = PatientData.getCrisisAlerts();
+            const contacts = PatientData.getEmergencyContacts();
+
+            html += `<div style="padding: 1rem; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107; margin-bottom: 1rem;">
+                <strong>⚠️ Using Mock Data</strong>
+                <p style="margin: 0.5rem 0 0 0;">API is unavailable. Displaying sample data for demonstration.</p>
+            </div>`;
+
+            // Statistics Cards
+            html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+                <div style="background: #667eea; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">👥 Total Users</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${users.length}</div>
+                </div>
+                <div style="background: #764ba2; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">👨‍⚕️ Counsellors</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${counsellors.length}</div>
+                </div>
+                <div style="background: #f093fb; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">📅 Sessions</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${sessions.length}</div>
+                </div>
+                <div style="background: #4facfe; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.9rem;">🚨 Crisis Alerts</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${alerts.length}</div>
+                </div>
+            </div>`;
+
+            // PATIENTS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #667eea; padding-bottom: 0.5rem;">👥 Patients Data (${users.length} records)</h4>`;
+            const patientHeaders = ['ID', 'Name', 'Email', 'Phone', 'Gender', 'Designation'];
+            const patientRows = users.map(u => [u.user_id, u.full_name, u.email, u.phone || '-', u.gender || '-', u.designation]);
+            html += generateTable(patientHeaders, patientRows);
+
+            // DOCTORS/COUNSELLORS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #764ba2; padding-bottom: 0.5rem;">👨‍⚕️ Doctors/Counsellors Data (${counsellors.length} records)</h4>`;
+            const doctorHeaders = ['ID', 'Name', 'Email', 'Phone', 'Specialization', 'Schedule'];
+            const doctorRows = counsellors.map(c => [c.counsellor_id, c.name, c.email, c.phone || '-', c.specialization || '-', c.schedule || '-']);
+            html += generateTable(doctorHeaders, doctorRows);
+
+            // EMERGENCY CONTACTS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #f093fb; padding-bottom: 0.5rem;">🆘 Emergency Contacts Data (${contacts.length} records)</h4>`;
+            const contactHeaders = ['ID', 'User ID', 'Contact Name', 'Contact Phone', 'Relation'];
+            const contactRows = contacts.map(c => [c.contact_id, c.user_id, c.contact_name, c.contact_phone, c.relation || '-']);
+            html += generateTable(contactHeaders, contactRows);
+
+            // AI ANALYSIS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #4facfe; padding-bottom: 0.5rem;">🤖 AI Analysis Data (${analysis.length} records)</h4>`;
+            const aiHeaders = ['ID', 'User ID', 'Risk Score', 'Sentiment Value', 'Emotion Label'];
+            const aiRows = analysis.map(a => [a.analysis_id, a.user_id, a.risk_score, a.sentiment_value || '-', a.emotion_label || '-']);
+            html += generateTable(aiHeaders, aiRows);
+
+            // DAILY LOGS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #ff6b6b; padding-bottom: 0.5rem;">📊 Daily Logs Data (${logs.length} records)</h4>`;
+            const logHeaders = ['ID', 'User ID', 'Mood', 'Stress', 'Anxiety', 'Sleep (hrs)', 'Date'];
+            const logRows = logs.slice(0, 10).map(l => [l.log_id, l.user_id, l.mood_level, l.stress_level, l.anxiety_level || '-', l.sleep_hours, l.log_date]);
+            html += generateTable(logHeaders, logRows);
+
+            // SESSIONS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #ffa500; padding-bottom: 0.5rem;">📅 Sessions Data (${sessions.length} records)</h4>`;
+            const sessionHeaders = ['ID', 'User ID', 'Counsellor ID', 'Session Time', 'Notes'];
+            const sessionRows = sessions.slice(0, 10).map(s => [s.session_id, s.user_id, s.counsellor_id, s.session_time, s.session_notes || '-']);
+            html += generateTable(sessionHeaders, sessionRows);
+
+            // FEEDBACK DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #667eea; padding-bottom: 0.5rem;">💬 Feedback Data (${feedback.length} records)</h4>`;
+            const feedbackHeaders = ['ID', 'Session ID', 'User ID', 'Rating', 'Comments'];
+            const feedbackRows = feedback.map(f => [f.feedback_id, f.session_id, f.user_id, f.rating, f.comments || '-']);
+            html += generateTable(feedbackHeaders, feedbackRows);
+
+            // PROGRESS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #764ba2; padding-bottom: 0.5rem;">📈 Progress Data (${progress.length} records)</h4>`;
+            const progressHeaders = ['ID', 'User ID', 'Emotional Stability', 'Improvement %', 'Trend Notes'];
+            const progressRows = progress.map(p => [p.progress_id, p.user_id, p.emotional_stability_score, p.improvement_percentage || '-', p.trend_notes || '-']);
+            html += generateTable(progressHeaders, progressRows);
+
+            // RECOMMENDATIONS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #f093fb; padding-bottom: 0.5rem;">💡 Recommendations Data (${recommendations.length} records)</h4>`;
+            const recHeaders = ['ID', 'User ID', 'Wellness Tip', 'Activity'];
+            const recRows = recommendations.map(r => [r.rec_id, r.user_id, r.wellness_tip, r.activity || '-']);
+            html += generateTable(recHeaders, recRows);
+
+            // CRISIS ALERTS DATA TABLE
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #ff6b6b; padding-bottom: 0.5rem;">🚨 Crisis Alerts Data (${alerts.length} records)</h4>`;
+            const alertHeaders = ['ID', 'User ID', 'Risk Level', 'Timestamp', 'Counsellor ID'];
+            const alertRows = alerts.map(a => [a.alert_id, a.user_id, a.risk_level, a.alert_timestamp, a.contacted_counsellor_id || '-']);
+            html += generateTable(alertHeaders, alertRows);
+        }
 
         return html;
     }
@@ -281,7 +494,7 @@ const DashboardGenerators = (function () {
 
     // Public API
     return {
-        generateDashboardByRole: function (role) {
+        generateDashboardByRole: async function (role) {
             const dashboards = {
                 'patient': generatePatientDashboard,
                 'software_engineer': generateSoftwareEngineerDashboard,
@@ -293,7 +506,8 @@ const DashboardGenerators = (function () {
                 'financial_team': generateFinancialTeamDashboard,
                 'system_admin': generateSystemAdminDashboard
             };
-            return (dashboards[role] || generatePatientDashboard)();
+            const generator = dashboards[role] || generatePatientDashboard;
+            return await generator();
         }
     };
 })();
