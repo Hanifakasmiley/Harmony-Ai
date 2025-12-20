@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Admin Dashboard Verification</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <style>
+        body {
+            padding: 2rem;
+            background: var(--bg-primary);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .test-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .info {
+            color: #0066cc;
+            font-weight: bold;
+        }
+
+        button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0.5rem 0;
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+        }
+
+        pre {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-box .value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .stat-box .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="color: var(--primary-color); margin-bottom: 2rem;">🔍 System Admin Dashboard Verification</h1>
+
+        <!-- Test 1: API Connection -->
+        <div class="test-card">
+            <h3>1️⃣ API Connection Test</h3>
+            <p>Verify that the backend API is responding correctly.</p>
+            <button onclick="testAPIConnection()">Test API Connection</button>
+            <div id="apiTest"></div>
+        </div>
+
+        <!-- Test 2: Data Fetching -->
+        <div class="test-card">
+            <h3>2️⃣ Data Fetching Test</h3>
+            <p>Verify that all 10 data tables can be fetched from the API.</p>
+            <button onclick="testDataFetching()">Test Data Fetching</button>
+            <div id="dataTest"></div>
+        </div>
+
+        <!-- Test 3: Dashboard Generation -->
+        <div class="test-card">
+            <h3>3️⃣ Dashboard Generation Test</h3>
+            <p>Verify that the System Admin Dashboard can be generated.</p>
+            <button onclick="testDashboardGeneration()">Test Dashboard Generation</button>
+            <div id="dashboardTest"></div>
+        </div>
+
+        <!-- Test 4: Role Mapping -->
+        <div class="test-card">
+            <h3>4️⃣ Role Mapping Test</h3>
+            <p>Verify that the System Administrator role is correctly mapped.</p>
+            <button onclick="testRoleMapping()">Test Role Mapping</button>
+            <div id="roleTest"></div>
+        </div>
+
+        <!-- Test 5: Full Dashboard Preview -->
+        <div class="test-card">
+            <h3>5️⃣ Full Dashboard Preview</h3>
+            <p>Preview the complete System Admin Dashboard.</p>
+            <button onclick="previewDashboard()">Preview Dashboard</button>
+            <div id="preview" style="max-height: 800px; overflow-y: auto; margin-top: 1rem;"></div>
+        </div>
+
+        <!-- Console Logs -->
+        <div class="test-card">
+            <h3>📋 Console Logs</h3>
+            <button onclick="clearLogs()">Clear Logs</button>
+            <pre id="logs"></pre>
+        </div>
+    </div>
+
+    <script src="assets/js/api-service.js"></script>
+    <script src="assets/js/patient-data.js"></script>
+    <script src="assets/js/dashboard-generators.js"></script>
+
+    <script>
+        const logs = [];
+
+        // Capture console logs
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+
+        console.log = function (...args) {
+            logs.push('LOG: ' + args.join(' '));
+            originalLog.apply(console, args);
+            updateLogs();
+        };
+
+        console.error = function (...args) {
+            logs.push('ERROR: ' + args.join(' '));
+            originalError.apply(console, args);
+            updateLogs();
+        };
+
+        console.warn = function (...args) {
+            logs.push('WARN: ' + args.join(' '));
+            originalWarn.apply(console, args);
+            updateLogs();
+        };
+
+        function updateLogs() {
+            document.getElementById('logs').textContent = logs.join('\n');
+            document.getElementById('logs').scrollTop = document.getElementById('logs').scrollHeight;
+        }
+
+        function clearLogs() {
+            logs.length = 0;
+            updateLogs();
+        }
+
+        async function testAPIConnection() {
+            const result = document.getElementById('apiTest');
+            result.innerHTML = '<p class="info">Testing API connection...</p>';
+            try {
+                const response = await fetch('http://localhost:3000/Harmony-Ai/backend/api.php/users');
+                if (response.ok) {
+                    const data = await response.json();
+                    result.innerHTML = `
+                        <p class="success">✅ API Connection Successful!</p>
+                        <p>Response Status: ${response.status}</p>
+                        <p>Users Fetched: ${data.length}</p>
+                    `;
+                } else {
+                    result.innerHTML = `<p class="error">❌ API Error: ${response.status}</p>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Connection Error: ${error.message}</p>`;
+            }
+        }
+
+        async function testDataFetching() {
+            const result = document.getElementById('dataTest');
+            result.innerHTML = '<p class="info">Fetching all data tables...</p>';
+            try {
+                const [stats, users, logs, counsellors, sessions, feedback, progress, recommendations, analysis, alerts, contacts] = await Promise.all([
+                    ApiService.getStatistics(),
+                    ApiService.getUsers(),
+                    ApiService.getDailyLogs(),
+                    ApiService.getCounsellors(),
+                    ApiService.getSessions(),
+                    ApiService.getFeedback(),
+                    ApiService.getProgress(),
+                    ApiService.getRecommendations(),
+                    ApiService.getAIAnalysis(),
+                    ApiService.getCrisisAlerts(),
+                    ApiService.getEmergencyContacts()
+                ]);
+
+                const total = users.length + logs.length + counsellors.length + sessions.length + feedback.length + progress.length + recommendations.length + analysis.length + alerts.length + contacts.length;
+
+                result.innerHTML = `
+                    <p class="success">✅ All Data Fetched Successfully!</p>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="value">${users.length}</div>
+                            <div class="label">Users</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="value">${logs.length}</div>
+                            <div class="label">Daily Logs</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="value">${counsellors.length}</div>
+                            <div class="label">Counsellors</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="value">${sessions.length}</div>
+                            <div class="label">Sessions</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="value">${feedback.length}</div>
+                            <div class="label">Feedback</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="value">${progress.length}</div>
+                            <div class="label">Progress</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="value">${recommendations.length}</div>
+                            <div class="label">Recommendations</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="value">${analysis.length}</div>
+                            <div class="label">AI Analysis</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="value">${alerts.length}</div>
+                            <div class="label">Crisis Alerts</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="value">${contacts.length}</div>
+                            <div class="label">Emergency Contacts</div>
+                        </div>
+                    </div>
+                    <p><strong>Total Records: ${total}</strong></p>
+                `;
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Error: ${error.message}</p><pre>${error.stack}</pre>`;
+            }
+        }
+
+        async function testDashboardGeneration() {
+            const result = document.getElementById('dashboardTest');
+            result.innerHTML = '<p class="info">Generating System Admin Dashboard...</p>';
+            try {
+                const content = await DashboardGenerators.generateDashboardByRole('system_admin');
+                if (content && content.length > 0) {
+                    result.innerHTML = `
+                        <p class="success">✅ Dashboard Generated Successfully!</p>
+                        <p>HTML Length: ${content.length} characters</p>
+                        <p>Contains tables: ${content.includes('<table') ? '✅ Yes' : '❌ No'}</p>
+                        <p>Contains statistics: ${content.includes('Total Users') ? '✅ Yes' : '❌ No'}</p>
+                    `;
+                } else {
+                    result.innerHTML = `<p class="error">❌ Dashboard is empty!</p>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Error: ${error.message}</p><pre>${error.stack}</pre>`;
+            }
+        }
+
+        function testRoleMapping() {
+            const result = document.getElementById('roleTest');
+            const roleMap = {
+                'Patient/User': 'patient',
+                'Data Scientist': 'data_scientist',
+                'System Administrator': 'system_admin',
+                'Software Engineer': 'software_engineer',
+                'Mental Health Administrator': 'mental_health_admin',
+                'Emergency Contact Team': 'emergency_team'
+            };
+
+            let html = '<p class="success">✅ Role Mapping Test</p>';
+            html += '<table class="table table-sm"><thead><tr><th>Designation</th><th>Role</th></tr></thead><tbody>';
+            for (const [designation, role] of Object.entries(roleMap)) {
+                html += `<tr><td>${designation}</td><td><strong>${role}</strong></td></tr>`;
+            }
+            html += '</tbody></table>';
+            result.innerHTML = html;
+        }
+
+        async function previewDashboard() {
+            const preview = document.getElementById('preview');
+            preview.innerHTML = '<p class="info">Generating dashboard preview...</p>';
+            try {
+                const content = await DashboardGenerators.generateDashboardByRole('system_admin');
+                preview.innerHTML = content;
+            } catch (error) {
+                preview.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+
+        // Auto-run tests on load
+        window.addEventListener('load', () => {
+            console.log('🚀 System Admin Dashboard Verification Page Loaded');
+            console.log('Ready to run tests...');
+        });
+    </script>
+</body>
+
+</html>

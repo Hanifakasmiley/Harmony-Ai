@@ -4,12 +4,12 @@
  */
 
 const ApiService = (function () {
-    // API base URL - using port 3000 for XAMPP
-    const API_BASE = 'http://localhost:3000/Harmony-Ai/backend/api.php';
+    // API base URL - using relative path for flexibility across environments
+    const API_BASE = './backend';
 
     // Helper function for API calls
     async function apiCall(endpoint, method = 'GET', data = null, params = {}) {
-        const url = new URL(`${API_BASE}/${endpoint}`);
+        const url = new URL(`${API_BASE}/api.php/${endpoint}`);
         Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
         const options = {

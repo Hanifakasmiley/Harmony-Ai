@@ -4,17 +4,26 @@
  * Connects to your harmony_db database in phpMyAdmin
  */
 
-// Database credentials - matches your XAMPP setup
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'harmony_db');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+// Load environment variables from .env file if it exists
+if (file_exists(__DIR__ . '/.env')) {
+    $env = parse_ini_file(__DIR__ . '/.env');
+    foreach ($env as $key => $value) {
+        putenv("$key=$value");
+    }
+}
+
+// Database credentials - use environment variables with fallback to defaults
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('DB_NAME', getenv('DB_NAME') ?: 'harmony_db');
+define('DB_USER', getenv('DB_USER') ?: 'root');
+define('DB_PASS', getenv('DB_PASSWORD') ?: '');
+define('DB_PORT', getenv('DB_PORT') ?: '3306');
 
 // Create database connection
 function getConnection() {
     try {
         $conn = new PDO(
-            "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+            "mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME . ";charset=utf8mb4",
             DB_USER,
             DB_PASS,
             [

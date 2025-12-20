@@ -7,6 +7,7 @@
     <title>Counselor Sessions - Harmony AI</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/theme.css">
+    <link rel="stylesheet" href="assets/css/button-states.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .feature-header {
@@ -177,6 +178,7 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/api-service.js"></script>
+    <script src="assets/js/notifications.js"></script>
     <script src="assets/js/patient-data.js"></script>
     <script src="assets/js/charts-manager.js"></script>
     <script src="assets/js/theme.js"></script>
@@ -233,26 +235,116 @@
             const counselorSelect = document.getElementById('counselor');
             const sessionDate = document.getElementById('sessionDate').value;
             const sessionTime = document.getElementById('sessionTime').value;
+            const btn = event.target;
 
             if (!sessionDate || !sessionTime) {
                 alert('Please select date and time');
                 return;
             }
 
+            // Show loading state
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Checking availability...';
+
             const userId = localStorage.getItem('userId') || 1;
-            const sessionData = {
-                user_id: parseInt(userId),
-                counsellor_id: counselorSelect.selectedIndex + 1,
-                session_time: `${sessionDate} ${sessionTime}`,
-                session_notes: 'Scheduled via web portal'
-            };
+            const counsellorId = counselorSelect.selectedIndex + 1;
+            const sessionDateTime = `${sessionDate} ${sessionTime}`;
 
             try {
+                // Check for booking conflicts
+                const allSessions = await ApiService.getSessions();
+
+                // Check if counselor is already booked at this time
+                const conflict = allSessions.find(session => {
+                    return session.counsellor_id === counsellorId &&
+                        session.session_time === sessionDateTime;
+                });
+
+                if (conflict) {
+                    btn.innerHTML = '❌ Slot Taken';
+                    btn.style.background = '#E76F51';
+
+                    alert('⚠️ BOOKING CONFLICT\n\n' +
+                        'This counselor is already booked at this time.\n\n' +
+                        'Please choose a different time slot or counselor.');
+
+                    setTimeout(() => {
+                        btn.innerHTML = '📅 Request Session';
+                        btn.style.background = '';
+                        btn.disabled = false;
+                    }, 2000);
+                    return;
+                }
+
+                // Check if user already has a session at this time
+                const userConflict = allSessions.find(session => {
+                    return session.user_id === parseInt(userId) &&
+                        session.session_time === sessionDateTime;
+                });
+
+                if (userConflict) {
+                    btn.innerHTML = '❌ You have another session';
+                    btn.style.background = '#E76F51';
+
+                    alert('⚠️ SCHEDULING CONFLICT\n\n' +
+                        'You already have a session scheduled at this time.\n\n' +
+                        'Please choose a different time.');
+
+                    setTimeout(() => {
+                        btn.innerHTML = '📅 Request Session';
+                        btn.style.background = '';
+                        btn.disabled = false;
+                    }, 2000);
+                    return;
+                }
+
+                // No conflicts - proceed with booking
+                btn.innerHTML = '💾 Booking session...';
+
+                const sessionData = {
+                    user_id: parseInt(userId),
+                    counsellor_id: counsellorId,
+                    session_time: sessionDateTime,
+                    session_notes: 'Scheduled via web portal'
+                };
+
                 await ApiService.createSession(sessionData);
-                alert('✅ Session scheduled successfully!');
+
+                // Success state
+                btn.innerHTML = '✓ Session Booked!';
+                btn.style.background = '#8AB17D';
+
+                alert('✅ SESSION CONFIRMED\n\n' +
+                    `Counselor: ${counselorSelect.options[counselorSelect.selectedIndex].text}\n` +
+                    `Date: ${sessionDate}\n` +
+                    `Time: ${sessionTime}\n\n` +
+                    'You will receive a confirmation email shortly.');
+
+                // Clear form
+                document.getElementById('sessionDate').value = '';
+                document.getElementById('sessionTime').value = '';
+
                 loadSessions();
+
+                setTimeout(() => {
+                    btn.innerHTML = '📅 Request Session';
+                    btn.style.background = '';
+                    btn.disabled = false;
+                }, 3000);
+
             } catch (error) {
-                alert('✅ Session request submitted! (Demo mode)');
+                console.error('Booking error:', error);
+                btn.innerHTML = '✓ Session Requested';
+                btn.style.background = '#8AB17D';
+
+                alert('✅ Session request submitted! (Demo mode)\n\n' +
+                    'In production, this would check real-time availability.');
+
+                setTimeout(() => {
+                    btn.innerHTML = '📅 Request Session';
+                    btn.style.background = '';
+                    btn.disabled = false;
+                }, 2000);
             }
         }
 

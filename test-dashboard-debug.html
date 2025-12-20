@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Debug Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-section {
+            margin: 2rem 0;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        .info {
+            color: blue;
+        }
+
+        pre {
+            background: #f0f0f0;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0.5rem 0;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔍 Dashboard Debug Test</h1>
+        <p>This page tests the dashboard generation system.</p>
+
+        <div class="test-section">
+            <h2>1. API Connection Test</h2>
+            <button onclick="testAPI()">Test API</button>
+            <div id="apiResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>2. Dashboard Generator Test</h2>
+            <button onclick="testDashboardGenerator()">Test Dashboard Generator</button>
+            <div id="generatorResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>3. System Admin Dashboard Test</h2>
+            <button onclick="testSystemAdminDashboard()">Generate System Admin Dashboard</button>
+            <div id="dashboardResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>4. Console Logs</h2>
+            <button onclick="clearLogs()">Clear Logs</button>
+            <pre id="consoleLogs"></pre>
+        </div>
+    </div>
+
+    <script src="assets/js/api-service.js"></script>
+    <script src="assets/js/patient-data.js"></script>
+    <script src="assets/js/dashboard-generators.js"></script>
+
+    <script>
+        // Capture console logs
+        const logs = [];
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+
+        console.log = function (...args) {
+            logs.push('LOG: ' + args.join(' '));
+            originalLog.apply(console, args);
+            updateConsoleLogs();
+        };
+
+        console.error = function (...args) {
+            logs.push('ERROR: ' + args.join(' '));
+            originalError.apply(console, args);
+            updateConsoleLogs();
+        };
+
+        console.warn = function (...args) {
+            logs.push('WARN: ' + args.join(' '));
+            originalWarn.apply(console, args);
+            updateConsoleLogs();
+        };
+
+        function updateConsoleLogs() {
+            document.getElementById('consoleLogs').textContent = logs.join('\n');
+            document.getElementById('consoleLogs').scrollTop = document.getElementById('consoleLogs').scrollHeight;
+        }
+
+        function clearLogs() {
+            logs.length = 0;
+            updateConsoleLogs();
+        }
+
+        async function testAPI() {
+            const result = document.getElementById('apiResult');
+            result.innerHTML = '<p class="info">Testing API...</p>';
+            try {
+                const users = await ApiService.getUsers();
+                result.innerHTML = `<p class="success">✅ API Working!</p>
+                    <p>Users fetched: ${users.length}</p>
+                    <pre>${JSON.stringify(users.slice(0, 2), null, 2)}</pre>`;
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ API Error: ${error.message}</p>`;
+            }
+        }
+
+        async function testDashboardGenerator() {
+            const result = document.getElementById('generatorResult');
+            result.innerHTML = '<p class="info">Testing dashboard generator...</p>';
+            try {
+                const content = await DashboardGenerators.generateDashboardByRole('system_admin');
+                result.innerHTML = `<p class="success">✅ Dashboard Generator Working!</p>
+                    <p>Generated HTML length: ${content.length} characters</p>
+                    <p>First 500 characters:</p>
+                    <pre>${content.substring(0, 500)}...</pre>`;
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Generator Error: ${error.message}</p>
+                    <pre>${error.stack}</pre>`;
+            }
+        }
+
+        async function testSystemAdminDashboard() {
+            const result = document.getElementById('dashboardResult');
+            result.innerHTML = '<p class="info">Generating system admin dashboard...</p>';
+            try {
+                const content = await DashboardGenerators.generateDashboardByRole('system_admin');
+                result.innerHTML = `<p class="success">✅ Dashboard Generated Successfully!</p>
+                    <p>HTML length: ${content.length} characters</p>
+                    <div style="max-height: 600px; overflow-y: auto; border: 1px solid #ddd; padding: 1rem; border-radius: 4px;">
+                        ${content}
+                    </div>`;
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Error: ${error.message}</p>
+                    <pre>${error.stack}</pre>`;
+            }
+        }
+
+        // Auto-run tests on load
+        window.addEventListener('load', () => {
+            console.log('🚀 Dashboard Debug Test Page Loaded');
+            console.log('Testing API connection...');
+            testAPI();
+        });
+    </script>
+</body>
+
+</html>

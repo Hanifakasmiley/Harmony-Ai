@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Harmony AI</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <style>
+        body {
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2A9D8F 0%, #1F7A6E 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2A9D8F;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 15px;
+            border: none;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #2A9D8F;
+            color: white;
+        }
+
+        .tab-btn:hover {
+            background: #2A9D8F;
+            color: white;
+        }
+
+        .data-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .data-header h2 {
+            margin: 0;
+        }
+
+        .btn-add {
+            background: #2A9D8F;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-add:hover {
+            background: #1F7A6E;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #2A9D8F;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .btn-edit,
+        .btn-delete {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-right: 5px;
+        }
+
+        .btn-edit {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .btn-delete {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2A9D8F;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error {
+            color: red;
+            padding: 20px;
+            background: #ffebee;
+            border-radius: 5px;
+        }
+
+        .success {
+            color: green;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>⚙️ Admin Panel - Harmony AI</h1>
+            <p>Manage all database records</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <div class="number" id="stat-users">-</div>
+                <div class="label">Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="stat-logs">-</div>
+                <div class="label">Daily Logs</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="stat-counsellors">-</div>
+                <div class="label">Counsellors</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="stat-sessions">-</div>
+                <div class="label">Sessions</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="stat-alerts">-</div>
+                <div class="label">Crisis Alerts</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="loadTable('users')">Users</button>
+            <button class="tab-btn" onclick="loadTable('dailylogs')">Daily Logs</button>
+            <button class="tab-btn" onclick="loadTable('counsellors')">Counsellors</button>
+            <button class="tab-btn" onclick="loadTable('sessions')">Sessions</button>
+            <button class="tab-btn" onclick="loadTable('feedback')">Feedback</button>
+            <button class="tab-btn" onclick="loadTable('progress')">Progress</button>
+            <button class="tab-btn" onclick="loadTable('recommendations')">Recommendations</button>
+            <button class="tab-btn" onclick="loadTable('ai_analysis')">AI Analysis</button>
+            <button class="tab-btn" onclick="loadTable('crisisalerts')">Crisis Alerts</button>
+            <button class="tab-btn" onclick="loadTable('emergencycontacts')">Emergency Contacts</button>
+        </div>
+
+        <!-- Data Section -->
+        <div class="data-section">
+            <div class="data-header">
+                <h2 id="table-title">Users</h2>
+                <button class="btn-add" onclick="addRecord()">+ Add New Record</button>
+            </div>
+            <div id="table-container">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading data...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/api-service.js"></script>
+    <script>
+        let currentTable = 'users';
+
+        // Load stats on page load
+        async function loadStats() {
+            try {
+                console.log('Loading stats...');
+                const [users, logs, counsellors, sessions, alerts] = await Promise.all([
+                    ApiService.getUsers(),
+                    ApiService.getDailyLogs(),
+                    ApiService.getCounsellors(),
+                    ApiService.getSessions(),
+                    ApiService.getCrisisAlerts()
+                ]);
+
+                document.getElementById('stat-users').textContent = users.length;
+                document.getElementById('stat-logs').textContent = logs.length;
+                document.getElementById('stat-counsellors').textContent = counsellors.length;
+                document.getElementById('stat-sessions').textContent = sessions.length;
+                document.getElementById('stat-alerts').textContent = alerts.length;
+
+                console.log('✅ Stats loaded successfully');
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Load table data
+        async function loadTable(table) {
+            currentTable = table;
+            const container = document.getElementById('table-container');
+            const title = document.getElementById('table-title');
+
+            // Update title
+            const titles = {
+                users: 'Users',
+                dailylogs: 'Daily Logs',
+                counsellors: 'Counsellors',
+                sessions: 'Sessions',
+                feedback: 'Feedback',
+                progress: 'Progress',
+                recommendations: 'Recommendations',
+                ai_analysis: 'AI Analysis',
+                crisisalerts: 'Crisis Alerts',
+                emergencycontacts: 'Emergency Contacts'
+            };
+            title.textContent = titles[table];
+
+            // Update active tab
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading data...</p></div>';
+
+            try {
+                console.log('Loading table:', table);
+                let data = [];
+
+                // Call appropriate API method
+                if (table === 'users') data = await ApiService.getUsers();
+                else if (table === 'dailylogs') data = await ApiService.getDailyLogs();
+                else if (table === 'counsellors') data = await ApiService.getCounsellors();
+                else if (table === 'sessions') data = await ApiService.getSessions();
+                else if (table === 'feedback') data = await ApiService.getFeedback();
+                else if (table === 'progress') data = await ApiService.getProgress();
+                else if (table === 'recommendations') data = await ApiService.getRecommendations();
+                else if (table === 'ai_analysis') data = await ApiService.getAIAnalysis();
+                else if (table === 'crisisalerts') data = await ApiService.getCrisisAlerts();
+                else if (table === 'emergencycontacts') data = await ApiService.getEmergencyContacts();
+
+                console.log('Data loaded:', data.length, 'records');
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No records found</p>';
+                    return;
+                }
+
+                // Build table
+                let html = '<table><thead><tr>';
+                const keys = Object.keys(data[0]);
+                keys.forEach(key => {
+                    html += `<th>${key}</th>`;
+                });
+                html += '<th>Actions</th></tr></thead><tbody>';
+
+                data.forEach((row, idx) => {
+                    html += '<tr>';
+                    keys.forEach(key => {
+                        let value = row[key];
+                        if (key === 'password') value = '••••••••';
+                        if (typeof value === 'string' && value.length > 50) value = value.substring(0, 50) + '...';
+                        html += `<td>${value || '-'}</td>`;
+                    });
+                    html += `<td>
+                        <button class="btn-edit" onclick="editRecord(${idx})">✏️ Edit</button>
+                        <button class="btn-delete" onclick="deleteRecord(${idx})">🗑️ Delete</button>
+                    </td></tr>`;
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+                console.log('✅ Table rendered successfully');
+            } catch (error) {
+                console.error('Error loading table:', error);
+                container.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        function addRecord() {
+            alert('Add record feature coming soon!');
+        }
+
+        function editRecord(idx) {
+            alert('Edit record feature coming soon!');
+        }
+
+        function deleteRecord(idx) {
+            alert('Delete record feature coming soon!');
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('Admin panel loaded');
+            loadStats();
+            loadTable('users');
+        });
+    </script>
+</body>
+
+</html>

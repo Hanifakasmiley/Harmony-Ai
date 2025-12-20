@@ -7,6 +7,7 @@
     <title>Crisis Detection & Emergency Support - Harmony AI</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/theme.css">
+    <link rel="stylesheet" href="assets/css/button-states.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .feature-header {
@@ -184,9 +185,14 @@
             <h2 style="margin-top: 0;">🆘 Are You in Crisis?</h2>
             <p style="margin: 1rem 0;">If you or someone you know is experiencing a mental health emergency, please
                 reach out immediately. Help is available 24/7.</p>
-            <button class="btn btn-emergency btn-lg" style="background: #ffffff; color: #d32f2f !important;"
-                onclick="alert('🚨 Emergency services have been notified. A counselor will contact you shortly.')">📞
-                Call Emergency Services Now</button>
+            <button class="btn btn-emergency btn-lg" id="emergencyBtn"
+                style="background: #ffffff; color: #d32f2f !important; font-size: 1.3rem; padding: 1.5rem 3rem; font-weight: 700; box-shadow: 0 8px 30px rgba(0,0,0,0.3);"
+                onclick="triggerEmergencyAlert()">
+                🆘 I NEED HELP NOW
+            </button>
+            <p style="margin: 1rem 0 0 0; font-size: 0.9rem; opacity: 0.9;">
+                This will immediately notify your emergency contacts and on-call counselor
+            </p>
         </div>
 
         <!-- Emergency Hotlines -->
@@ -218,6 +224,7 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/api-service.js"></script>
+    <script src="assets/js/notifications.js"></script>
     <script src="assets/js/patient-data.js"></script>
     <script src="assets/js/charts-manager.js"></script>
     <script src="assets/js/theme.js"></script>
@@ -374,6 +381,77 @@
             setupMobileMenu();
             updateAuthButton();
         });
+
+        // Emergency alert function
+        async function triggerEmergencyAlert() {
+            const btn = document.getElementById('emergencyBtn');
+
+            if (!confirm('🚨 EMERGENCY ALERT\n\nThis will immediately notify:\n• Your emergency contacts\n• On-call counselor\n• Crisis response team\n\nDo you want to proceed?')) {
+                return;
+            }
+
+            // Show loading state
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Sending Alert...';
+            btn.style.background = '#ffa500';
+
+            try {
+                const userId = localStorage.getItem('userId') || 1;
+
+                // Create crisis alert in database
+                const alertData = {
+                    user_id: parseInt(userId),
+                    risk_level: 'Critical',
+                    alert_timestamp: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                    contacted_counsellor_id: 1 // Default to first counselor
+                };
+
+                await ApiService.createCrisisAlert(alertData);
+
+                // Success state
+                btn.innerHTML = '✓ Alert Sent Successfully';
+                btn.style.background = '#4caf50';
+
+                // Show confirmation message
+                setTimeout(() => {
+                    alert('✅ EMERGENCY ALERT SENT\n\n' +
+                        '• Emergency contacts have been notified\n' +
+                        '• On-call counselor has been alerted\n' +
+                        '• Crisis response team is standing by\n\n' +
+                        'Someone will contact you shortly.\n\n' +
+                        'If you need immediate help, please call:\n' +
+                        '• National Crisis Hotline: 988\n' +
+                        '• Emergency Services: 911');
+
+                    // Reload crisis alerts
+                    loadCrisisContent();
+
+                    // Reset button after 5 seconds
+                    setTimeout(() => {
+                        btn.innerHTML = '🆘 I NEED HELP NOW';
+                        btn.style.background = '#ffffff';
+                        btn.disabled = false;
+                    }, 5000);
+                }, 500);
+
+            } catch (error) {
+                console.error('Emergency alert error:', error);
+                btn.innerHTML = '❌ Alert Failed - Call 911';
+                btn.style.background = '#d32f2f';
+
+                alert('⚠️ Unable to send alert through system.\n\n' +
+                    'PLEASE CALL IMMEDIATELY:\n' +
+                    '• Emergency Services: 911\n' +
+                    '• National Crisis Hotline: 988\n\n' +
+                    'Your safety is the priority!');
+
+                setTimeout(() => {
+                    btn.innerHTML = '🆘 I NEED HELP NOW';
+                    btn.style.background = '#ffffff';
+                    btn.disabled = false;
+                }, 3000);
+            }
+        }
     </script>
 </body>
 

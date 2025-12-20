@@ -7,6 +7,7 @@
     <title>Admin Panel - Harmony AI</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/theme.css">
+    <link rel="stylesheet" href="assets/css/button-states.css">
     <style>
         * {
             box-sizing: border-box;
@@ -491,6 +492,12 @@
             <a href="./dashboard.html" class="back-link">← Back to Dashboard</a>
             <h1>Database Admin Panel</h1>
             <p>Manage all 10 database tables with full CRUD operations</p>
+            <div style="margin-top: 1rem;">
+                <a href="./admin-dashboard-comprehensive.html"
+                    style="color: white; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600;">
+                    📊 View Comprehensive Dashboard
+                </a>
+            </div>
         </div>
 
         <!-- Stats Grid -->
@@ -574,8 +581,10 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/patient-data.js"></script>
     <script src="assets/js/api-service.js"></script>
     <script src="assets/js/theme.js"></script>
+    <script src="assets/js/notifications.js"></script>
 
     <script>
         let currentTable = 'users';
@@ -710,19 +719,38 @@
         };
 
         // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check if user is System Administrator
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check if user is System Administrator (localStorage check)
             const designation = localStorage.getItem('designation');
-            if (designation !== 'System Administrator') {
-                alert('Access Denied: Only System Administrators can access the Admin Panel.');
+            const userId = localStorage.getItem('userId');
+
+            console.log('Admin Panel - Current designation:', designation);
+            console.log('Admin Panel - Current userId:', userId);
+
+            // Enforce admin-only access
+            if (designation && designation !== 'System Administrator') {
+                console.warn('Access restricted: Only System Administrators can access the Admin Panel.');
                 window.location.href = './dashboard.html';
                 return;
             }
 
-            crudModal = new bootstrap.Modal(document.getElementById('crudModal'));
-            setupTabs();
-            loadStats();
-            loadTableData('users');
+            try {
+                crudModal = new bootstrap.Modal(document.getElementById('crudModal'));
+                setupTabs();
+
+                // Load stats from API
+                console.log('Loading stats from API...');
+                await loadStats();
+                console.log('Stats loaded successfully');
+
+                // Load table data
+                console.log('Loading table data...');
+                await loadTableData('users');
+                console.log('Admin panel initialized successfully');
+            } catch (error) {
+                console.error('Initialization error:', error);
+                alert('Error initializing admin panel: ' + error.message);
+            }
         });
 
         function setupTabs() {
@@ -739,20 +767,35 @@
 
         async function loadStats() {
             try {
-                const [users, logs, counsellors, sessions, alerts] = await Promise.all([
-                    ApiService.getUsers(),
-                    ApiService.getDailyLogs(),
-                    ApiService.getCounsellors(),
-                    ApiService.getSessions(),
-                    ApiService.getCrisisAlerts()
-                ]);
+                console.log("=== Loading Stats ===");
+                console.log("Fetching data from API...");
+
+                const users = await ApiService.getUsers();
+                console.log('Users loaded:', users.length);
+
+                const logs = await ApiService.getDailyLogs();
+                console.log('Logs loaded:', logs.length);
+
+                const counsellors = await ApiService.getCounsellors();
+                console.log('Counsellors loaded:', counsellors.length);
+
+                const sessions = await ApiService.getSessions();
+                console.log('Sessions loaded:', sessions.length);
+
+                const alerts = await ApiService.getCrisisAlerts();
+                console.log('Alerts loaded:', alerts.length);
+
                 document.getElementById('statUsers').textContent = users.length;
                 document.getElementById('statLogs').textContent = logs.length;
                 document.getElementById('statCounsellors').textContent = counsellors.length;
                 document.getElementById('statSessions').textContent = sessions.length;
                 document.getElementById('statAlerts').textContent = alerts.length;
+
+                console.log('✅ Dashboard stats updated successfully');
             } catch (error) {
-                console.error('Stats error:', error);
+                console.error("=== Stats Error ===");
+                console.error("Error:", error);
+                console.error("Stack:", error.stack);
             }
         }
 
@@ -761,10 +804,32 @@
             container.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Loading data...</p></div>';
 
             try {
-                currentData = await apiEndpoints[table].get();
+                console.log('=== Loading Table Data ===');
+                console.log('Table:', table);
+                console.log('API Endpoint:', apiEndpoints[table]);
+
+                const endpoint = apiEndpoints[table];
+                if (!endpoint) {
+                    throw new Error(`No endpoint found for table: ${table}`);
+                }
+
+                console.log('Calling API get function...');
+                currentData = await endpoint.get();
+                console.log('API Response:', currentData);
+
+                // Ensure currentData is an array
+                if (!Array.isArray(currentData)) {
+                    console.warn('Response is not an array, converting...');
+                    currentData = Array.isArray(currentData) ? currentData : [];
+                }
+
+                console.log('Data count:', currentData.length);
                 renderTable(currentData, table);
             } catch (error) {
-                container.innerHTML = `<div class="error-state">❌ Error loading data: ${error.message}<br><small>Make sure XAMPP is running and the API is accessible.</small></div>`;
+                console.error('=== API Error ===');
+                console.error('Error:', error);
+                console.error('Stack:', error.stack);
+                container.innerHTML = `<div class="error-state">❌ Error loading data: ${error.message}<br><small>Check browser console for details</small></div>`;
             }
         }
 
@@ -918,19 +983,29 @@
                 if (value) data[key] = value;
             }
 
+            const saveBtn = document.querySelector('.modal-footer .btn-primary');
+
             try {
+                ButtonState.setLoading(saveBtn, editingId ? 'Updating...' : 'Creating...');
+
                 if (editingId) {
                     await apiEndpoints[currentTable].update(editingId, data);
-                    showToast('✅ Record updated successfully!', 'success');
+                    ToastNotification.success('Record updated successfully!');
                 } else {
                     await apiEndpoints[currentTable].create(data);
-                    showToast('✅ Record created successfully!', 'success');
+                    ToastNotification.success('Record created successfully!');
                 }
-                crudModal.hide();
-                loadTableData(currentTable);
-                loadStats();
+
+                ButtonState.setSuccess(saveBtn, 'Saved!', 1000);
+
+                setTimeout(() => {
+                    crudModal.hide();
+                    loadTableData(currentTable);
+                    loadStats();
+                }, 1000);
             } catch (error) {
-                showToast('❌ Error: ' + error.message, 'error');
+                ButtonState.setError(saveBtn, 'Failed');
+                ToastNotification.error('Error: ' + error.message);
             }
         }
 
@@ -939,16 +1014,12 @@
 
             try {
                 await apiEndpoints[currentTable].delete(id);
-                showToast('✅ Record deleted successfully!', 'success');
+                ToastNotification.success('Record deleted successfully!');
                 loadTableData(currentTable);
                 loadStats();
             } catch (error) {
-                showToast('❌ Error: ' + error.message, 'error');
+                ToastNotification.error('Error: ' + error.message);
             }
-        }
-
-        function showToast(message, type) {
-            alert(message); // Simple alert for now
         }
 
         // Mobile menu is handled by theme.js

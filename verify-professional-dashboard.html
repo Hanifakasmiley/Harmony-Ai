@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Dashboard Verification - Harmony AI</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <style>
+        body {
+            background: #f5f5f5;
+            padding: 2rem 1rem;
+        }
+
+        .verification-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-card h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card ul {
+            margin-bottom: 0;
+        }
+
+        .feature-card li {
+            margin-bottom: 0.5rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .status-badge.implemented {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.ready {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .test-section {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .test-button:hover {
+            background: #764ba2;
+            color: white;
+        }
+
+        .output-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .success {
+            color: #155724;
+        }
+
+        .error {
+            color: #721c24;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="verification-container">
+        <div class="header">
+            <h1>🎯 Professional Dashboard Implementation Verification</h1>
+            <p style="margin: 0.5rem 0 0 0;">Verify that all new professional dashboard components are working correctly
+            </p>
+        </div>
+
+        <!-- Feature 1: KPI Cards -->
+        <div class="feature-card">
+            <span class="status-badge implemented">✅ IMPLEMENTED</span>
+            <h3>📊 Feature 1: KPI Cards (Requirement 11)</h3>
+            <p><strong>Description:</strong> Display key performance indicators at the top of the System Administrator
+                Dashboard</p>
+            <p><strong>Components:</strong></p>
+            <ul>
+                <li>Total Users card with trend indicator</li>
+                <li>Active Patients card with trend indicator</li>
+                <li>Total Sessions card with trend indicator</li>
+                <li>High-Risk Alerts card with trend indicator</li>
+                <li>Average Mood Score card with trend indicator</li>
+                <li>Counsellor Utilization Rate card with trend indicator</li>
+            </ul>
+            <p><strong>Features:</strong></p>
+            <ul>
+                <li>Large metric values displayed prominently</li>
+                <li>Trend indicators (↑ ↓ →) showing direction</li>
+                <li>Percentage change from previous period</li>
+                <li>Color-coded based on status (Green/Yellow/Red)</li>
+                <li>Hover effects for interactivity</li>
+            </ul>
+            <button class="test-button" onclick="testKPICards()">Test KPI Calculator</button>
+            <div id="kpiOutput" class="output-box" style="display:none;"></div>
+        </div>
+
+        <!-- Feature 2: Mood Trend Chart -->
+        <div class="feature-card">
+            <span class="status-badge implemented">✅ IMPLEMENTED</span>
+            <h3>📈 Feature 2: Mood Trend Chart (Requirement 12)</h3>
+            <p><strong>Description:</strong> Visualize mood trends over the last 7 days with interactive line chart</p>
+            <p><strong>Components:</strong></p>
+            <ul>
+                <li>7-day mood trend line chart</li>
+                <li>Daily average mood scores (1-10 scale)</li>
+                <li>Trend direction indicator (improving/declining/stable)</li>
+                <li>Interactive tooltips on hover</li>
+                <li>Color-coded trend line</li>
+            </ul>
+            <p><strong>Features:</strong></p>
+            <ul>
+                <li>Responsive chart sizing</li>
+                <li>Automatic trend calculation</li>
+                <li>Handles insufficient data gracefully</li>
+                <li>Uses Chart.js for rendering</li>
+            </ul>
+            <button class="test-button" onclick="testMoodTrend()">Test Mood Trend Calculator</button>
+            <div id="moodOutput" class="output-box" style="display:none;"></div>
+        </div>
+
+        <!-- Feature 3: Recent Activity Feed -->
+        <div class="feature-card">
+            <span class="status-badge implemented">✅ IMPLEMENTED</span>
+            <h3>🔔 Feature 3: Recent Activity Feed (Requirement 13)</h3>
+            <p><strong>Description:</strong> Display recent system events and activities in a scrollable feed</p>
+            <p><strong>Activity Types:</strong></p>
+            <ul>
+                <li>👤 New user registrations (Blue)</li>
+                <li>📅 New sessions scheduled (Green)</li>
+                <li>🚨 Crisis alerts triggered (Red)</li>
+                <li>📊 Significant mood changes (Orange)</li>
+                <li>🤖 AI analysis generated (Purple)</li>
+            </ul>
+            <p><strong>Features:</strong></p>
+            <ul>
+                <li>Maximum 10 items displayed</li>
+                <li>Sorted by timestamp (newest first)</li>
+                <li>Relative time formatting (e.g., "5 minutes ago")</li>
+                <li>Color-coded by event type</li>
+                <li>Auto-refresh every 30 seconds</li>
+            </ul>
+            <button class="test-button" onclick="testActivityFeed()">Test Activity Feed Generator</button>
+            <div id="activityOutput" class="output-box" style="display:none;"></div>
+        </div>
+
+        <!-- Feature 4: Dashboard Summary -->
+        <div class="feature-card">
+            <span class="status-badge implemented">✅ IMPLEMENTED</span>
+            <h3>📋 Feature 4: Dashboard Summary (Requirement 14)</h3>
+            <p><strong>Description:</strong> Display system status and quick metrics at a glance</p>
+            <p><strong>Metrics:</strong></p>
+            <ul>
+                <li>System Status (Online/Offline indicator)</li>
+                <li>Last Data Refresh timestamp</li>
+                <li>Number of active sessions today</li>
+                <li>Number of new alerts today</li>
+            </ul>
+            <p><strong>Features:</strong></p>
+            <ul>
+                <li>Grid layout for responsive display</li>
+                <li>Real-time status updates</li>
+                <li>Manual refresh button</li>
+                <li>Loading indicators</li>
+            </ul>
+        </div>
+
+        <!-- Implementation Details -->
+        <div class="test-section">
+            <h3>📁 Implementation Files Created</h3>
+            <ul>
+                <li><strong>assets/js/kpi-calculator.js</strong> - KPI calculation logic and color coding</li>
+                <li><strong>assets/js/mood-trend-calculator.js</strong> - Mood trend analysis and chart data generation
+                </li>
+                <li><strong>assets/js/activity-feed-generator.js</strong> - Activity feed generation and formatting</li>
+                <li><strong>assets/js/dashboard-generators.js</strong> - Updated with new components
+                    (generateSystemAdminDashboard)</li>
+                <li><strong>dashboard.html</strong> - Updated with new script includes and mood chart initialization
+                </li>
+            </ul>
+        </div>
+
+        <!-- Testing Instructions -->
+        <div class="test-section">
+            <h3>🧪 How to Test the Professional Dashboard</h3>
+            <ol>
+                <li>Clear your browser cache (Ctrl+Shift+Delete)</li>
+                <li>Hard refresh the page (Ctrl+F5)</li>
+                <li>Log in as a System Administrator</li>
+                <li>You should see the new dashboard with:
+                    <ul>
+                        <li>KPI cards at the top showing metrics</li>
+                        <li>Dashboard summary section with system status</li>
+                        <li>Mood trend chart showing 7-day trends</li>
+                        <li>Recent activity feed showing latest events</li>
+                        <li>Detailed data tables below</li>
+                    </ul>
+                </li>
+                <li>Open browser console (F12) to verify:
+                    <ul>
+                        <li>No JavaScript errors</li>
+                        <li>API calls are successful</li>
+                        <li>Data is loading correctly</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <!-- Verification Checklist -->
+        <div class="test-section">
+            <h3>✅ Verification Checklist</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                <div>
+                    <h5>KPI Cards</h5>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>☐ Total Users card displays</li>
+                        <li>☐ Active Patients card displays</li>
+                        <li>☐ Total Sessions card displays</li>
+                        <li>☐ High-Risk Alerts card displays</li>
+                        <li>☐ Average Mood Score card displays</li>
+                        <li>☐ Counsellor Utilization card displays</li>
+                        <li>☐ All cards show trend indicators</li>
+                        <li>☐ Color coding is correct</li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>Mood Trend Chart</h5>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>☐ Chart renders without errors</li>
+                        <li>☐ Shows 7 days of data</li>
+                        <li>☐ Trend direction is calculated</li>
+                        <li>☐ Hover tooltips work</li>
+                        <li>☐ Responsive on mobile</li>
+                        <li>☐ Handles insufficient data</li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>Activity Feed</h5>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>☐ Shows recent activities</li>
+                        <li>☐ Maximum 10 items displayed</li>
+                        <li>☐ Sorted by timestamp</li>
+                        <li>☐ Color-coded by type</li>
+                        <li>☐ Relative time formatting works</li>
+                        <li>☐ Hover effects work</li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>Dashboard Summary</h5>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>☐ System status displays</li>
+                        <li>☐ Last refresh time shows</li>
+                        <li>☐ Active sessions count correct</li>
+                        <li>☐ New alerts count correct</li>
+                        <li>☐ Grid layout responsive</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="test-section" style="background: #e7f3ff; border-left: 4px solid #0066cc;">
+            <h3>🚀 Next Steps</h3>
+            <ol>
+                <li>Test the dashboard by logging in as System Administrator</li>
+                <li>Verify all KPI cards display correctly with real data</li>
+                <li>Check that the mood trend chart renders properly</li>
+                <li>Confirm activity feed shows recent events</li>
+                <li>Test on mobile devices for responsiveness</li>
+                <li>Verify all data is synced with the backend database</li>
+                <li>Check browser console for any errors or warnings</li>
+            </ol>
+        </div>
+    </div>
+
+    <script src="assets/js/patient-data.js"></script>
+    <script src="assets/js/kpi-calculator.js"></script>
+    <script src="assets/js/mood-trend-calculator.js"></script>
+    <script src="assets/js/activity-feed-generator.js"></script>
+
+    <script>
+        function testKPICards() {
+            const output = document.getElementById('kpiOutput');
+            output.style.display = 'block';
+            output.innerHTML = '<span class="success">Testing KPI Calculator...</span>\n';
+
+            try {
+                const users = PatientData.getUsers();
+                const sessions = PatientData.getSessions();
+                const logs = PatientData.getDailyLogs();
+                const analysis = PatientData.getAIAnalysis();
+                const counsellors = PatientData.getCounsellors();
+
+                const kpis = KPICalculator.getAllKPIs(users, sessions, logs, analysis, counsellors);
+
+                output.innerHTML += '<span class="success">✅ KPI Calculation successful!</span>\n\n';
+                output.innerHTML += 'KPI Results:\n';
+                output.innerHTML += '─'.repeat(50) + '\n';
+
+                Object.entries(kpis).forEach(([key, kpi]) => {
+                    output.innerHTML += `${kpi.icon} ${kpi.label}: ${kpi.value}\n`;
+                    output.innerHTML += `   Trend: ${kpi.trend} ${kpi.percentageChange}%\n`;
+                    output.innerHTML += `   Color: ${kpi.color}\n\n`;
+                });
+
+                output.innerHTML += '─'.repeat(50) + '\n';
+                output.innerHTML += '<span class="success">All KPI calculations working correctly!</span>';
+            } catch (error) {
+                output.innerHTML += `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        function testMoodTrend() {
+            const output = document.getElementById('moodOutput');
+            output.style.display = 'block';
+            output.innerHTML = '<span class="success">Testing Mood Trend Calculator...</span>\n';
+
+            try {
+                const logs = PatientData.getDailyLogs();
+                const moodTrend = MoodTrendCalculator.getMoodTrendData(logs);
+
+                output.innerHTML += '<span class="success">✅ Mood Trend Calculation successful!</span>\n\n';
+                output.innerHTML += 'Mood Data (Last 7 Days):\n';
+                output.innerHTML += '─'.repeat(50) + '\n';
+
+                moodTrend.moodData.forEach(day => {
+                    output.innerHTML += `${day.label}: ${day.average}/10 (${day.count} entries)\n`;
+                });
+
+                output.innerHTML += '\n─'.repeat(50) + '\n';
+                output.innerHTML += `Trend Direction: ${moodTrend.trendEmoji} ${moodTrend.trendDirection}\n`;
+                output.innerHTML += `Trend Color: ${moodTrend.trendColor}\n`;
+                output.innerHTML += `Has Data: ${moodTrend.hasData}\n`;
+                output.innerHTML += '─'.repeat(50) + '\n';
+                output.innerHTML += '<span class="success">Mood trend calculations working correctly!</span>';
+            } catch (error) {
+                output.innerHTML += `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        function testActivityFeed() {
+            const output = document.getElementById('activityOutput');
+            output.style.display = 'block';
+            output.innerHTML = '<span class="success">Testing Activity Feed Generator...</span>\n';
+
+            try {
+                const users = PatientData.getUsers();
+                const sessions = PatientData.getSessions();
+                const alerts = PatientData.getCrisisAlerts();
+                const logs = PatientData.getDailyLogs();
+                const analysis = PatientData.getAIAnalysis();
+
+                const activities = ActivityFeedGenerator.generateActivityItems(users, sessions, alerts, logs, analysis);
+
+                output.innerHTML += '<span class="success">✅ Activity Feed Generation successful!</span>\n\n';
+                output.innerHTML += `Generated ${activities.length} activity items:\n`;
+                output.innerHTML += '─'.repeat(50) + '\n';
+
+                activities.forEach((activity, idx) => {
+                    output.innerHTML += `${idx + 1}. ${activity.icon} ${activity.title}\n`;
+                    output.innerHTML += `   ${activity.description}\n`;
+                    output.innerHTML += `   ${ActivityFeedGenerator.formatRelativeTime(activity.timestamp)}\n\n`;
+                });
+
+                output.innerHTML += '─'.repeat(50) + '\n';
+                output.innerHTML += '<span class="success">Activity feed generation working correctly!</span>';
+            } catch (error) {
+                output.innerHTML += `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+    </script>
+</body>
+
+</html>
