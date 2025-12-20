@@ -151,6 +151,10 @@ const DashboardGenerators = (function () {
         html += `<p>Complete database overview and system management. <a href="admin-full.html" style="color: #667eea; font-weight: bold;">Open Full Admin Panel →</a></p>`;
 
         try {
+<<<<<<< HEAD
+=======
+            console.log('📡 Fetching all data from API...');
+>>>>>>> 47774182e22d6ddbfb3dd838e60e060b948ba508
             // Fetch all data from API
             const [stats, users, logs, counsellors, sessions, feedback, progress, recommendations, analysis, alerts, contacts] = await Promise.all([
                 ApiService.getStatistics(),
@@ -165,6 +169,7 @@ const DashboardGenerators = (function () {
                 ApiService.getCrisisAlerts(),
                 ApiService.getEmergencyContacts()
             ]);
+<<<<<<< HEAD
 
             // Statistics Cards
             html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
@@ -193,6 +198,129 @@ const DashboardGenerators = (function () {
                     <div style="font-size: 2rem; font-weight: bold;">${progress.length}</div>
                 </div>
             </div>`;
+=======
+            console.log('✅ All data fetched successfully:', { stats, users: users.length, logs: logs.length, counsellors: counsellors.length, sessions: sessions.length, feedback: feedback.length, progress: progress.length, recommendations: recommendations.length, analysis: analysis.length, alerts: alerts.length, contacts: contacts.length });
+
+            // ===== KPI CARDS SECTION =====
+            const kpis = KPICalculator.getAllKPIs(users, sessions, logs, analysis, counsellors);
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #667eea; padding-bottom: 0.5rem;">📊 Key Performance Indicators</h4>`;
+            html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">`;
+
+            Object.values(kpis).forEach(kpi => {
+                html += `
+                    <div style="
+                        background: var(--bg-primary);
+                        border: 2px solid ${kpi.color};
+                        border-radius: 10px;
+                        padding: 1.5rem;
+                        text-align: center;
+                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+                        cursor: pointer;
+                    " onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">${kpi.icon}</div>
+                        <div style="font-size: 2.5rem; font-weight: bold; color: ${kpi.color}; margin-bottom: 0.5rem;">${kpi.value}</div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.75rem;">${kpi.label}</div>
+                        <div style="font-size: 0.85rem; color: ${kpi.color}; font-weight: 600;">
+                            ${kpi.trend} ${kpi.percentageChange}%
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+
+            // ===== DASHBOARD SUMMARY SECTION =====
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #764ba2; padding-bottom: 0.5rem;">📋 Dashboard Summary</h4>`;
+            const activeSessions = sessions.filter(s => s.session_status === 'Scheduled').length;
+            const newAlertsToday = alerts.filter(a => {
+                const alertDate = new Date(a.alert_timestamp).toDateString();
+                return alertDate === new Date().toDateString();
+            }).length;
+            const lastRefresh = new Date().toLocaleTimeString();
+
+            html += `
+                <div style="
+                    background: var(--bg-primary);
+                    border-left: 4px solid #764ba2;
+                    border-radius: 8px;
+                    padding: 1.5rem;
+                    margin-bottom: 2rem;
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 1.5rem;
+                ">
+                    <div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;">System Status</div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #2A9D8F;">🟢 Online</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Last Refresh</div>
+                        <div style="font-size: 1rem; font-weight: 600; color: var(--text-primary);">${lastRefresh}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Active Sessions Today</div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #667eea;">${activeSessions}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;">New Alerts Today</div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: ${newAlertsToday > 0 ? '#ff6b6b' : '#2A9D8F'};">${newAlertsToday}</div>
+                    </div>
+                </div>
+            `;
+
+            // ===== MOOD TREND CHART SECTION =====
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #f093fb; padding-bottom: 0.5rem;">📈 Mood Trend (Last 7 Days)</h4>`;
+            const moodTrend = MoodTrendCalculator.getMoodTrendData(logs);
+
+            if (moodTrend.hasData) {
+                html += `
+                    <div style="
+                        background: var(--bg-primary);
+                        border-radius: 10px;
+                        padding: 1.5rem;
+                        margin-bottom: 2rem;
+                        border: 1px solid var(--border-color);
+                    ">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <div>
+                                <div style="font-size: 1rem; color: var(--text-secondary);">Trend Direction</div>
+                                <div style="font-size: 1.5rem; font-weight: bold; color: ${moodTrend.trendColor};">
+                                    ${moodTrend.trendEmoji} ${moodTrend.trendDirection.charAt(0).toUpperCase() + moodTrend.trendDirection.slice(1)}
+                                </div>
+                            </div>
+                        </div>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="systemAdminMoodChart"></canvas>
+                        </div>
+                        <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+                            Average mood over the last 7 days. Data points show daily average mood scores on a 1-10 scale.
+                        </div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div style="
+                        background: #fff3cd;
+                        border-left: 4px solid #ffc107;
+                        border-radius: 8px;
+                        padding: 1rem;
+                        margin-bottom: 2rem;
+                    ">
+                        <strong>⚠️ Insufficient Data</strong>
+                        <p style="margin: 0.5rem 0 0 0;">Not enough mood data available for trend analysis. Please check back later.</p>
+                    </div>
+                `;
+            }
+
+            // ===== RECENT ACTIVITY FEED SECTION =====
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #4facfe; padding-bottom: 0.5rem;">🔔 Recent Activity Feed</h4>`;
+            const activities = ActivityFeedGenerator.generateActivityItems(users, sessions, alerts, logs, analysis);
+            html += ActivityFeedGenerator.generateActivityFeedHTML(activities);
+            html += `<div style="margin-top: 1rem; text-align: center; font-size: 0.9rem; color: var(--text-secondary);">Auto-refreshes every 30 seconds</div>`;
+            html += `<div style="margin-bottom: 2rem;"></div>`;
+
+            // ===== DATA TABLES SECTION =====
+            html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #667eea; padding-bottom: 0.5rem;">📊 Detailed Data Tables</h4>`;
+>>>>>>> 47774182e22d6ddbfb3dd838e60e060b948ba508
 
             // PATIENTS DATA TABLE
             html += `<h4 style="margin-top: 2rem; border-bottom: 2px solid #667eea; padding-bottom: 0.5rem;">👥 Patients Data (${users.length} records)</h4>`;
@@ -261,7 +389,11 @@ const DashboardGenerators = (function () {
             </div>`;
 
         } catch (error) {
+<<<<<<< HEAD
             console.warn('API unavailable, using mock data:', error);
+=======
+            console.warn('⚠️ API unavailable, using mock data:', error);
+>>>>>>> 47774182e22d6ddbfb3dd838e60e060b948ba508
             const stats = PatientData.getStatistics();
             const users = PatientData.getUsers();
             const logs = PatientData.getDailyLogs();
@@ -495,6 +627,10 @@ const DashboardGenerators = (function () {
     // Public API
     return {
         generateDashboardByRole: async function (role) {
+<<<<<<< HEAD
+=======
+            console.log('🎯 Generating dashboard for role:', role);
+>>>>>>> 47774182e22d6ddbfb3dd838e60e060b948ba508
             const dashboards = {
                 'patient': generatePatientDashboard,
                 'software_engineer': generateSoftwareEngineerDashboard,
@@ -507,7 +643,18 @@ const DashboardGenerators = (function () {
                 'system_admin': generateSystemAdminDashboard
             };
             const generator = dashboards[role] || generatePatientDashboard;
+<<<<<<< HEAD
             return await generator();
+=======
+            try {
+                const result = await generator();
+                console.log('✅ Dashboard generated successfully');
+                return result;
+            } catch (error) {
+                console.error('❌ Error in dashboard generator:', error);
+                throw error;
+            }
+>>>>>>> 47774182e22d6ddbfb3dd838e60e060b948ba508
         }
     };
 })();

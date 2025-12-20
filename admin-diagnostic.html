@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel Diagnostic - Harmony AI</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2A9D8F 0%, #1F7A6E 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .test-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-item {
+            padding: 15px;
+            border-left: 4px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 3px;
+        }
+
+        .test-item.success {
+            background: #e8f5e9;
+            border-left-color: #4caf50;
+        }
+
+        .test-item.error {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+
+        .test-item.loading {
+            background: #e3f2fd;
+            border-left-color: #2196f3;
+        }
+
+        .status-icon {
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+
+        .btn-test {
+            background: #2A9D8F;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .btn-test:hover {
+            background: #1F7A6E;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+
+        .table-preview {
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th {
+            background: #2A9D8F;
+            color: white;
+            padding: 8px;
+            text-align: left;
+        }
+
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Admin Panel Diagnostic Tool</h1>
+            <p>Test API connectivity and verify admin panel functionality</p>
+        </div>
+
+        <!-- API Connection Test -->
+        <div class="test-section">
+            <h3>1️⃣ API Connection Test</h3>
+            <div id="apiTest"></div>
+            <button class="btn-test" onclick="testAPI()">Test API Connection</button>
+        </div>
+
+        <!-- Database Tables Test -->
+        <div class="test-section">
+            <h3>2️⃣ Database Tables Test</h3>
+            <div id="tablesTest"></div>
+            <button class="btn-test" onclick="testAllTables()">Test All Tables</button>
+        </div>
+
+        <!-- Admin Panel Test -->
+        <div class="test-section">
+            <h3>3️⃣ Admin Panel Test</h3>
+            <div id="adminTest"></div>
+            <button class="btn-test" onclick="testAdminPanel()">Test Admin Panel</button>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="test-section">
+            <h3>🚀 Quick Links</h3>
+            <p>
+                <a href="admin-full.html" class="btn btn-primary" style="background: #2A9D8F; border: none;">Open Admin
+                    Panel</a>
+                <a href="javascript:void(0)" onclick="openConsole()" class="btn btn-secondary">Open Browser Console
+                    (F12)</a>
+            </p>
+        </div>
+
+        <!-- Instructions -->
+        <div class="test-section">
+            <h3>📋 Instructions</h3>
+            <ol>
+                <li>Click "Test API Connection" to verify backend is running</li>
+                <li>Click "Test All Tables" to verify database has data</li>
+                <li>Click "Test Admin Panel" to verify admin panel loads correctly</li>
+                <li>If all tests pass ✅, click "Open Admin Panel" to use it</li>
+                <li>Press F12 to open browser console and see detailed logs</li>
+            </ol>
+        </div>
+    </div>
+
+    <script src="assets/js/api-service.js"></script>
+    <script>
+        // Test API Connection
+        async function testAPI() {
+            const container = document.getElementById('apiTest');
+            container.innerHTML = '<div class="test-item loading"><span class="status-icon">⏳</span>Testing API connection...</div>';
+
+            try {
+                const response = await fetch('http://localhost:3000/Harmony-Ai/backend/api.php/users');
+                if (response.ok) {
+                    const data = await response.json();
+                    container.innerHTML = `
+                        <div class="test-item success">
+                            <span class="status-icon">✅</span>
+                            <strong>API Connection Successful!</strong>
+                            <div class="code-block">
+                                Endpoint: http://localhost:3000/Harmony-Ai/backend/api.php/users<br>
+                                Status: ${response.status} ${response.statusText}<br>
+                                Records: ${Array.isArray(data) ? data.length : 'N/A'}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="test-item error">
+                            <span class="status-icon">❌</span>
+                            <strong>API Error</strong>
+                            <div class="code-block">Status: ${response.status} ${response.statusText}</div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="test-item error">
+                        <span class="status-icon">❌</span>
+                        <strong>Connection Failed</strong>
+                        <div class="code-block">${error.message}</div>
+                        <p style="margin-top: 10px; color: #d32f2f;">
+                            <strong>Troubleshooting:</strong><br>
+                            1. Make sure XAMPP is running<br>
+                            2. Check if Apache is started<br>
+                            3. Verify MySQL is running<br>
+                            4. Check if backend/api.php exists
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        // Test All Tables
+        async function testAllTables() {
+            const container = document.getElementById('tablesTest');
+            container.innerHTML = '<div class="test-item loading"><span class="status-icon">⏳</span>Testing all tables...</div>';
+
+            const tables = [
+                'users', 'dailylogs', 'counsellors', 'sessions', 'feedback',
+                'progress', 'recommendations', 'ai_analysis', 'crisisalerts', 'emergencycontacts'
+            ];
+
+            let html = '';
+            let totalRecords = 0;
+            let successCount = 0;
+
+            for (const table of tables) {
+                try {
+                    const response = await fetch(`http://localhost:3000/Harmony-Ai/backend/api.php/${table}`);
+                    const data = await response.json();
+                    const count = Array.isArray(data) ? data.length : 0;
+                    totalRecords += count;
+                    successCount++;
+
+                    html += `
+                        <div class="test-item success">
+                            <span class="status-icon">✅</span>
+                            <strong>${table}</strong>: ${count} records
+                        </div>
+                    `;
+                } catch (error) {
+                    html += `
+                        <div class="test-item error">
+                            <span class="status-icon">❌</span>
+                            <strong>${table}</strong>: Error - ${error.message}
+                        </div>
+                    `;
+                }
+            }
+
+            html = `
+                <div class="test-item success">
+                    <span class="status-icon">✅</span>
+                    <strong>Summary: ${successCount}/${tables.length} tables working</strong>
+                    <div class="code-block">Total Records: ${totalRecords}</div>
+                </div>
+            ` + html;
+
+            container.innerHTML = html;
+        }
+
+        // Test Admin Panel
+        async function testAdminPanel() {
+            const container = document.getElementById('adminTest');
+            container.innerHTML = '<div class="test-item loading"><span class="status-icon">⏳</span>Testing admin panel...</div>';
+
+            try {
+                // Test if admin panel file exists
+                const response = await fetch('admin-full.html');
+                if (response.ok) {
+                    // Test API service
+                    if (typeof ApiService !== 'undefined') {
+                        const users = await ApiService.getUsers();
+                        const logs = await ApiService.getDailyLogs();
+                        const counsellors = await ApiService.getCounsellors();
+
+                        container.innerHTML = `
+                            <div class="test-item success">
+                                <span class="status-icon">✅</span>
+                                <strong>Admin Panel Ready!</strong>
+                                <div class="code-block">
+                                    Users: ${users.length}<br>
+                                    Daily Logs: ${logs.length}<br>
+                                    Counsellors: ${counsellors.length}
+                                </div>
+                            </div>
+                            <div class="test-item success">
+                                <span class="status-icon">✅</span>
+                                <strong>API Service Loaded</strong>
+                                <p>All API methods are available</p>
+                            </div>
+                        `;
+                    } else {
+                        container.innerHTML = `
+                            <div class="test-item error">
+                                <span class="status-icon">❌</span>
+                                <strong>API Service Not Loaded</strong>
+                                <p>Make sure assets/js/api-service.js is loaded</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    container.innerHTML = `
+                        <div class="test-item error">
+                            <span class="status-icon">❌</span>
+                            <strong>Admin Panel File Not Found</strong>
+                            <p>admin-full.html is missing</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="test-item error">
+                        <span class="status-icon">❌</span>
+                        <strong>Test Failed</strong>
+                        <div class="code-block">${error.message}</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Open Console
+        function openConsole() {
+            alert('Press F12 to open the browser console. Look for messages starting with 🚀, ✅, ❌, 📊, 📋, 💾, 🗑️');
+        }
+
+        // Auto-run tests on load
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('🔍 Diagnostic tool loaded');
+            console.log('Click buttons to run tests');
+        });
+    </script>
+</body>
+
+</html>

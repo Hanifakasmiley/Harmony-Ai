@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Harmony AI</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <style>
+        body {
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2A9D8F 0%, #1F7A6E 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2A9D8F;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 15px;
+            border: none;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #2A9D8F;
+            color: white;
+        }
+
+        .tab-btn:hover {
+            background: #2A9D8F;
+            color: white;
+        }
+
+        .data-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .data-header h2 {
+            margin: 0;
+        }
+
+        .btn-add {
+            background: #2A9D8F;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-add:hover {
+            background: #1F7A6E;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #2A9D8F;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .btn-edit,
+        .btn-delete {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-right: 5px;
+        }
+
+        .btn-edit {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .btn-delete {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .btn-edit:hover {
+            background: #1976d2;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2A9D8F;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error {
+            color: red;
+            padding: 20px;
+            background: #ffebee;
+            border-radius: 5px;
+        }
+
+        .success {
+            color: green;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 5px;
+        }
+
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            border-radius: 8px;
+        }
+
+        .modal-header {
+            background: #2A9D8F;
+            color: white;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 5px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #2A9D8F;
+            box-shadow: 0 0 0 0.2rem rgba(42, 157, 143, 0.25);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .alert {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>⚙️ Admin Panel - Harmony AI</h1>
+            <p>Manage all database records with full CRUD operations</p>
+        </div>
+
+        <!-- Alert Messages -->
+        <div id="alertContainer"></div>
+
+        <!-- Stats -->
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <div class="number" id="stat-users">-</div>
+                <div class="label">Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="stat-logs">-</div>
+                <div class="label">Daily Logs</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="stat-counsellors">-</div>
+                <div class="label">Counsellors</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="stat-sessions">-</div>
+                <div class="label">Sessions</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="stat-alerts">-</div>
+                <div class="label">Crisis Alerts</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTable('users')">Users</button>
+            <button class="tab-btn" onclick="switchTable('dailylogs')">Daily Logs</button>
+            <button class="tab-btn" onclick="switchTable('counsellors')">Counsellors</button>
+            <button class="tab-btn" onclick="switchTable('sessions')">Sessions</button>
+            <button class="tab-btn" onclick="switchTable('feedback')">Feedback</button>
+            <button class="tab-btn" onclick="switchTable('progress')">Progress</button>
+            <button class="tab-btn" onclick="switchTable('recommendations')">Recommendations</button>
+            <button class="tab-btn" onclick="switchTable('ai_analysis')">AI Analysis</button>
+            <button class="tab-btn" onclick="switchTable('crisisalerts')">Crisis Alerts</button>
+            <button class="tab-btn" onclick="switchTable('emergencycontacts')">Emergency Contacts</button>
+        </div>
+
+        <!-- Data Section -->
+        <div class="data-section">
+            <div class="data-header">
+                <h2 id="table-title">Users</h2>
+                <button class="btn-add" onclick="openAddModal()">+ Add New Record</button>
+            </div>
+            <div class="table-wrapper">
+                <div id="table-container">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading data...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal fade" id="crudModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Add Record</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="crudForm"></form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveRecord()"
+                        style="background: #2A9D8F; border: none;">Save Record</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/api-service.js"></script>
+    <script>
+        let currentTable = 'users';
+        let currentData = [];
+        let editingId = null;
+        let crudModal;
+
+        const tableConfig = {
+            users: { title: 'Users', idField: 'user_id', fields: ['full_name', 'email', 'password', 'phone', 'gender', 'date_of_birth', 'designation', 'preferences'] },
+            dailylogs: { title: 'Daily Logs', idField: 'log_id', fields: ['user_id', 'mood_level', 'stress_level', 'anxiety_level', 'sleep_hours', 'notes', 'log_date'] },
+            counsellors: { title: 'Counsellors', idField: 'counsellor_id', fields: ['name', 'email', 'phone', 'specialization', 'schedule'] },
+            sessions: { title: 'Sessions', idField: 'session_id', fields: ['user_id', 'counsellor_id', 'session_time', 'session_notes', 'feedback'] },
+            feedback: { title: 'Feedback', idField: 'feedback_id', fields: ['session_id', 'user_id', 'rating', 'comments'] },
+            progress: { title: 'Progress', idField: 'progress_id', fields: ['user_id', 'emotional_stability_score', 'improvement_percentage', 'trend_notes'] },
+            recommendations: { title: 'Recommendations', idField: 'rec_id', fields: ['user_id', 'wellness_tip', 'activity'] },
+            ai_analysis: { title: 'AI Analysis', idField: 'analysis_id', fields: ['user_id', 'risk_score', 'sentiment_value', 'emotion_label'] },
+            crisisalerts: { title: 'Crisis Alerts', idField: 'alert_id', fields: ['user_id', 'risk_level', 'alert_timestamp', 'contacted_counsellor_id'] },
+            emergencycontacts: { title: 'Emergency Contacts', idField: 'contact_id', fields: ['user_id', 'contact_name', 'contact_phone', 'relation'] }
+        };
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Admin panel initializing...');
+            crudModal = new bootstrap.Modal(document.getElementById('crudModal'));
+            loadStats();
+            loadTable('users');
+        });
+
+        // Load statistics
+        async function loadStats() {
+            try {
+                console.log('📊 Loading statistics...');
+                const [users, logs, counsellors, sessions, alerts] = await Promise.all([
+                    ApiService.getUsers(),
+                    ApiService.getDailyLogs(),
+                    ApiService.getCounsellors(),
+                    ApiService.getSessions(),
+                    ApiService.getCrisisAlerts()
+                ]);
+
+                document.getElementById('stat-users').textContent = users.length;
+                document.getElementById('stat-logs').textContent = logs.length;
+                document.getElementById('stat-counsellors').textContent = counsellors.length;
+                document.getElementById('stat-sessions').textContent = sessions.length;
+                document.getElementById('stat-alerts').textContent = alerts.length;
+
+                console.log('✅ Statistics loaded successfully');
+            } catch (error) {
+                console.error('❌ Error loading stats:', error);
+                showAlert('Error loading statistics: ' + error.message, 'danger');
+            }
+        }
+
+        // Switch table
+        function switchTable(table) {
+            currentTable = table;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            loadTable(table);
+        }
+
+        // Load table data
+        async function loadTable(table) {
+            const container = document.getElementById('table-container');
+            const config = tableConfig[table];
+            document.getElementById('table-title').textContent = config.title;
+
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading data...</p></div>';
+
+            try {
+                console.log(`📋 Loading table: ${table}`);
+                let data = [];
+
+                if (table === 'users') data = await ApiService.getUsers();
+                else if (table === 'dailylogs') data = await ApiService.getDailyLogs();
+                else if (table === 'counsellors') data = await ApiService.getCounsellors();
+                else if (table === 'sessions') data = await ApiService.getSessions();
+                else if (table === 'feedback') data = await ApiService.getFeedback();
+                else if (table === 'progress') data = await ApiService.getProgress();
+                else if (table === 'recommendations') data = await ApiService.getRecommendations();
+                else if (table === 'ai_analysis') data = await ApiService.getAIAnalysis();
+                else if (table === 'crisisalerts') data = await ApiService.getCrisisAlerts();
+                else if (table === 'emergencycontacts') data = await ApiService.getEmergencyContacts();
+
+                currentData = data;
+                console.log(`✅ Loaded ${data.length} records from ${table}`);
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No records found</p>';
+                    return;
+                }
+
+                renderTable(data, config);
+            } catch (error) {
+                console.error('❌ Error loading table:', error);
+                container.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                showAlert('Error loading table: ' + error.message, 'danger');
+            }
+        }
+
+        // Render table
+        function renderTable(data, config) {
+            const container = document.getElementById('table-container');
+            const keys = Object.keys(data[0]);
+
+            let html = '<table class="table table-striped"><thead><tr>';
+            keys.forEach(key => {
+                html += `<th>${key.replace(/_/g, ' ').toUpperCase()}</th>`;
+            });
+            html += '<th>Actions</th></tr></thead><tbody>';
+
+            data.forEach((row, idx) => {
+                html += '<tr>';
+                keys.forEach(key => {
+                    let value = row[key];
+                    if (key === 'password') value = '••••••••';
+                    if (typeof value === 'string' && value.length > 40) value = value.substring(0, 40) + '...';
+                    html += `<td>${value || '-'}</td>`;
+                });
+                const id = row[config.idField];
+                html += `<td>
+                    <button class="btn-edit" onclick="openEditModal(${idx})">✏️ Edit</button>
+                    <button class="btn-delete" onclick="confirmDelete(${id})">🗑️ Delete</button>
+                </td></tr>`;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+            console.log('✅ Table rendered successfully');
+        }
+
+        // Open add modal
+        function openAddModal() {
+            editingId = null;
+            const config = tableConfig[currentTable];
+            document.getElementById('modalTitle').textContent = `Add ${config.title}`;
+            generateForm(null, config);
+            crudModal.show();
+        }
+
+        // Open edit modal
+        function openEditModal(idx) {
+            editingId = idx;
+            const config = tableConfig[currentTable];
+            const record = currentData[idx];
+            document.getElementById('modalTitle').textContent = `Edit ${config.title}`;
+            generateForm(record, config);
+            crudModal.show();
+        }
+
+        // Generate form
+        function generateForm(data, config) {
+            let html = '<div class="row">';
+            config.fields.forEach(field => {
+                const value = data ? (data[field] || '') : '';
+                html += `<div class="col-md-6 mb-3">
+                    <label class="form-label">${field.replace(/_/g, ' ').toUpperCase()}</label>
+                    <input type="text" class="form-control" name="${field}" value="${value}" placeholder="Enter ${field}">
+                </div>`;
+            });
+            html += '</div>';
+            document.getElementById('crudForm').innerHTML = html;
+        }
+
+        // Save record
+        async function saveRecord() {
+            try {
+                const config = tableConfig[currentTable];
+                const form = document.getElementById('crudForm');
+                const formData = new FormData(form);
+                const data = {};
+
+                for (let [key, value] of formData.entries()) {
+                    if (value) data[key] = value;
+                }
+
+                console.log('💾 Saving record:', data);
+
+                if (editingId !== null) {
+                    // Update
+                    const record = currentData[editingId];
+                    const id = record[config.idField];
+
+                    if (currentTable === 'users') await ApiService.updateUser(id, data);
+                    else if (currentTable === 'dailylogs') await ApiService.updateDailyLog(id, data);
+                    else if (currentTable === 'counsellors') await ApiService.updateCounsellor(id, data);
+                    else if (currentTable === 'sessions') await ApiService.updateSession(id, data);
+                    else if (currentTable === 'feedback') await ApiService.updateFeedback(id, data);
+                    else if (currentTable === 'progress') await ApiService.updateProgress(id, data);
+                    else if (currentTable === 'recommendations') await ApiService.updateRecommendation(id, data);
+                    else if (currentTable === 'ai_analysis') await ApiService.updateAIAnalysis(id, data);
+                    else if (currentTable === 'crisisalerts') await ApiService.updateCrisisAlert(id, data);
+                    else if (currentTable === 'emergencycontacts') await ApiService.updateEmergencyContact(id, data);
+
+                    console.log('✅ Record updated successfully');
+                    showAlert('Record updated successfully!', 'success');
+                } else {
+                    // Create
+                    if (currentTable === 'users') await ApiService.register(data);
+                    else if (currentTable === 'dailylogs') await ApiService.createDailyLog(data);
+                    else if (currentTable === 'counsellors') await ApiService.createCounsellor(data);
+                    else if (currentTable === 'sessions') await ApiService.createSession(data);
+                    else if (currentTable === 'feedback') await ApiService.createFeedback(data);
+                    else if (currentTable === 'progress') await ApiService.createProgress(data);
+                    else if (currentTable === 'recommendations') await ApiService.createRecommendation(data);
+                    else if (currentTable === 'ai_analysis') await ApiService.createAIAnalysis(data);
+                    else if (currentTable === 'crisisalerts') await ApiService.createCrisisAlert(data);
+                    else if (currentTable === 'emergencycontacts') await ApiService.createEmergencyContact(data);
+
+                    console.log('✅ Record created successfully');
+                    showAlert('Record created successfully!', 'success');
+                }
+
+                crudModal.hide();
+                loadTable(currentTable);
+                loadStats();
+            } catch (error) {
+                console.error('❌ Error saving record:', error);
+                showAlert('Error: ' + error.message, 'danger');
+            }
+        }
+
+        // Confirm delete
+        function confirmDelete(id) {
+            if (confirm('Are you sure you want to delete this record?')) {
+                deleteRecord(id);
+            }
+        }
+
+        // Delete record
+        async function deleteRecord(id) {
+            try {
+                console.log('🗑️ Deleting record with ID:', id);
+
+                if (currentTable === 'users') await ApiService.deleteUser(id);
+                else if (currentTable === 'dailylogs') await ApiService.deleteDailyLog(id);
+                else if (currentTable === 'counsellors') await ApiService.deleteCounsellor(id);
+                else if (currentTable === 'sessions') await ApiService.deleteSession(id);
+                else if (currentTable === 'feedback') await ApiService.deleteFeedback(id);
+                else if (currentTable === 'progress') await ApiService.deleteProgress(id);
+                else if (currentTable === 'recommendations') await ApiService.deleteRecommendation(id);
+                else if (currentTable === 'ai_analysis') await ApiService.deleteAIAnalysis(id);
+                else if (currentTable === 'crisisalerts') await ApiService.deleteCrisisAlert(id);
+                else if (currentTable === 'emergencycontacts') await ApiService.deleteEmergencyContact(id);
+
+                console.log('✅ Record deleted successfully');
+                showAlert('Record deleted successfully!', 'success');
+                loadTable(currentTable);
+                loadStats();
+            } catch (error) {
+                console.error('❌ Error deleting record:', error);
+                showAlert('Error: ' + error.message, 'danger');
+            }
+        }
+
+        // Show alert
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertId = 'alert-' + Date.now();
+            const html = `<div id="${alertId}" class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>`;
+            alertContainer.innerHTML += html;
+            setTimeout(() => {
+                const alert = document.getElementById(alertId);
+                if (alert) alert.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+
+</html>

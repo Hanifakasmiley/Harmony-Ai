@@ -18,10 +18,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const roleMap = {
         patient: './feature-daily-logs.html',
         software_engineer: './dashboard.html',
+<<<<<<< HEAD
         data_scientist: './feature-ai-analysis.html',
         mental_health_admin: './feature-sessions.html',
         emergency_team: './feature-crisis.html',
         system_admin: './admin.html'
+=======
+        data_scientist: './dashboard.html',
+        mental_health_admin: './dashboard.html',
+        emergency_team: './dashboard.html',
+        system_admin: './dashboard.html'
+>>>>>>> 47774182e22d6ddbfb3dd838e60e060b948ba508
     };
 
     // Map designation select values to database designation names

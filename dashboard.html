@@ -332,6 +332,9 @@
     <script src="assets/js/api-service.js"></script>
     <script src="assets/js/notifications.js"></script>
     <script src="assets/js/patient-data.js"></script>
+    <script src="assets/js/kpi-calculator.js"></script>
+    <script src="assets/js/mood-trend-calculator.js"></script>
+    <script src="assets/js/activity-feed-generator.js"></script>
     <script src="assets/js/dashboard-generators.js"></script>
     <script src="assets/js/charts-manager.js"></script>
     <script src="assets/js/theme.js"></script>
@@ -399,6 +402,45 @@
             try {
                 const content = await DashboardGenerators.generateDashboardByRole(userRole);
                 roleContent.innerHTML = content;
+
+                // Initialize mood trend chart if it exists (for System Admin)
+                if (userRole === 'system_admin' && document.getElementById('systemAdminMoodChart')) {
+                    setTimeout(async () => {
+                        try {
+                            const logs = await ApiService.getDailyLogs();
+                            const moodTrend = MoodTrendCalculator.getMoodTrendData(logs);
+                            if (moodTrend.hasData) {
+                                const ctx = document.getElementById('systemAdminMoodChart').getContext('2d');
+                                new Chart(ctx, {
+                                    type: 'line',
+                                    data: moodTrend.chartData,
+                                    options: {
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        plugins: {
+                                            legend: {
+                                                display: true,
+                                                position: 'top'
+                                            }
+                                        },
+                                        scales: {
+                                            y: {
+                                                beginAtZero: true,
+                                                max: 10,
+                                                title: {
+                                                    display: true,
+                                                    text: 'Mood Score (1-10)'
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        } catch (error) {
+                            console.warn('Could not initialize mood chart:', error);
+                        }
+                    }, 100);
+                }
             } catch (error) {
                 console.error('Error generating dashboard:', error);
                 roleContent.innerHTML = '<p style="color: red;">Error loading dashboard content</p>';

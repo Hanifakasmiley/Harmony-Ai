@@ -8,6 +8,52 @@ require_once 'config.php';
 
 setCorsHeaders();
 
+// ==================== INPUT VALIDATION ====================
+function validateEmail($email) {
+    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+}
+
+function validateMoodLevel($level) {
+    $validMoods = ['Very Sad', 'Sad', 'Neutral', 'Calm', 'Happy', 'Very Happy', 'Anxious'];
+    return in_array($level, $validMoods);
+}
+
+function validateStressLevel($level) {
+    $level = intval($level);
+    return $level >= 1 && $level <= 10;
+}
+
+function validateAnxietyLevel($level) {
+    $level = intval($level);
+    return $level >= 1 && $level <= 10;
+}
+
+function validateSleepHours($hours) {
+    $hours = floatval($hours);
+    return $hours >= 0 && $hours <= 24;
+}
+
+function validateRiskScore($score) {
+    $score = intval($score);
+    return $score >= 0 && $score <= 100;
+}
+
+function validateRating($rating) {
+    $rating = intval($rating);
+    return $rating >= 1 && $rating <= 5;
+}
+
+function validateDesignation($designation) {
+    $valid = ['Patient/User', 'System Administrator', 'Data Scientist', 'Mental Health Administrator', 'Software Engineer', 'Emergency Team', 'AI Engineer', 'Security Analyst', 'Financial Team'];
+    return in_array($designation, $valid);
+}
+
+function sanitizeString($str) {
+    return trim(htmlspecialchars($str, ENT_QUOTES, 'UTF-8'));
+}
+
+// ==================== API ROUTING ====================
+
 $conn = getConnection();
 $method = $_SERVER['REQUEST_METHOD'];
 $uri = $_SERVER['REQUEST_URI'];

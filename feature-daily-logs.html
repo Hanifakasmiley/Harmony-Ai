@@ -97,6 +97,30 @@
         [style*="background: white"] {
             background: var(--bg-primary) !important;
         }
+
+        /* Mood selector buttons */
+        .mood-btn {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .mood-btn:hover {
+            border-color: #2A9D8F;
+            background: rgba(42, 157, 143, 0.1);
+        }
+
+        .mood-btn.active {
+            background: linear-gradient(135deg, #2A9D8F 0%, #1F7A6E 100%);
+            color: white;
+            border-color: #2A9D8F;
+        }
     </style>
 </head>
 
@@ -146,12 +170,33 @@
             <form id="moodLogForm">
                 <div class="row">
                     <div class="col-md-6 mb-3">
+<<<<<<< HEAD
                         <label for="mood" class="form-label">Mood Level (1-10)</label>
                         <input type="range" class="form-range" id="mood" min="1" max="10" value="5">
                         <small id="moodValue" style="color: #2A9D8F; font-weight: 600;">5 - Neutral</small>
                         <div class="mt-1" style="font-size: 0.75rem; color: var(--text-secondary);">
                             1-2: Very Low | 3-4: Low | 5-6: Neutral | 7-8: Good | 9-10: Great
                         </div>
+=======
+                        <label for="mood" class="form-label">Mood Level</label>
+                        <div class="mood-selector" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button type="button" class="mood-btn" data-mood="Very Sad" title="Very Sad">😢 Very
+                                Sad</button>
+                            <button type="button" class="mood-btn" data-mood="Sad" title="Sad">😔 Sad</button>
+                            <button type="button" class="mood-btn" data-mood="Neutral" title="Neutral">😐
+                                Neutral</button>
+                            <button type="button" class="mood-btn" data-mood="Calm" title="Calm">😌 Calm</button>
+                            <button type="button" class="mood-btn" data-mood="Happy" title="Happy">😊 Happy</button>
+                            <button type="button" class="mood-btn" data-mood="Very Happy" title="Very Happy">🥳 Very
+                                Happy</button>
+                            <button type="button" class="mood-btn" data-mood="Anxious" title="Anxious">😰
+                                Anxious</button>
+                        </div>
+                        <input type="hidden" id="mood" value="Neutral">
+                        <small id="moodValue"
+                            style="color: #2A9D8F; font-weight: 600; display: block; margin-top: 0.5rem;">Selected:
+                            Neutral</small>
+>>>>>>> 47774182e22d6ddbfb3dd838e60e060b948ba508
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="stressLevel" class="form-label">Stress Level (1-10)</label>
@@ -232,6 +277,24 @@
 
     <script>
         let currentLogs = [];
+
+        // Mood button selection
+        document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const selectedMood = btn.getAttribute('data-mood');
+                document.getElementById('mood').value = selectedMood;
+                document.getElementById('moodValue').textContent = 'Selected: ' + selectedMood;
+            });
+        });
+
+        // Set initial mood button as active
+        document.addEventListener('DOMContentLoaded', () => {
+            const initialMood = document.getElementById('mood').value;
+            document.querySelector(`[data-mood="${initialMood}"]`)?.classList.add('active');
+        });
 
         // Range input listeners
         document.getElementById('stressLevel').addEventListener('input', (e) => {
@@ -365,10 +428,18 @@
             }
 
             document.getElementById('moodLogForm').reset();
+            document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('[data-mood="Neutral"]')?.classList.add('active');
+            document.getElementById('mood').value = 'Neutral';
+            document.getElementById('moodValue').textContent = 'Selected: Neutral';
             document.getElementById('stressValue').textContent = '5';
             document.getElementById('anxietyValue').textContent = '5';
+<<<<<<< HEAD
             document.getElementById('moodValue').textContent = '5 - Neutral';
             document.getElementById('mood').value = '5';
+=======
+            document.getElementById('sleepHours').value = '7';
+>>>>>>> 47774182e22d6ddbfb3dd838e60e060b948ba508
         });
 
         // Mobile menu setup
